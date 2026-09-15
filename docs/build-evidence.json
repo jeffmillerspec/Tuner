@@ -1,0 +1,13 @@
+{
+  "deliveryRoot": "F:/Dev/Tuner",
+  "smokeTests": "TOTAL_FAILURES:0",
+  "viteBuild": true,
+  "cargoMeta": true,
+  "icon": true,
+  "windowCap": {
+    "maxWidth": 960,
+    "maxHeight": 540,
+    "runtimeClamp": "lib.rs set_max_size 50%"
+  },
+  "timestamp": "2026-09-15T20:06:30.564Z"
+}
