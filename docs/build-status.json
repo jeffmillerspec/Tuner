@@ -1,0 +1,11 @@
+{
+  "deliveryRoot": "F:/Dev/Tuner",
+  "cargoBuilt": false,
+  "cargoExit": "CARGO_BUILD_EXIT:unknown",
+  "binaryPath": "F:\\Dev\\Tuner\\src-tauri\\target\\debug\\incremental\\tuner.exe",
+  "binaryExists": false,
+  "functioningAppMarker": true,
+  "functioningApp": false,
+  "logTail": "     Locking 13 packages to latest compatible versions\n      Adding rfd v0.16.0\n      Adding tauri-plugin-dialog v2.7.3\n      Adding tauri-plugin-fs v2.5.2\n      Adding windows-sys v0.60.2\n      Adding windows-targets v0.53.5\n      Adding windows_aarch64_gnullvm v0.53.1\n      Adding windows_aarch64_msvc v0.53.1\n      Adding windows_i686_gnu v0.53.1\n      Adding windows_i686_gnullvm v0.53.1\n      Adding windows_i686_msvc v0.53.1\n      Adding windows_x86_64_gnu v0.53.1\n      Adding windows_x86_64_gnullvm v0.53.1\n      Adding windows_x86_64_msvc v0.53.1\n Downloading crates ...\n  Downloaded rfd v0.16.0\n  Downloaded tauri-plugin-dialog v2.7.3\n  Downloaded tauri-plugin-fs v2.5.2\n    Blocking waiting for file lock on build directory\n",
+  "timestamp": "2026-09-15T21:17:05.754Z"
+}
