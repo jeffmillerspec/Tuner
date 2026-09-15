@@ -5,6 +5,6 @@
   "binaryPath": null,
   "binaryExists": false,
   "functioningApp": false,
-  "logTail": "   Compiling url v2.5.8\n   Compiling winapi-util v0.1.11\n   Compiling same-file v1.0.6\n   Compiling html5ever v0.38.0\n   Compiling cfb v0.7.3\n   Compiling jsonptr v0.6.3\n   Compiling erased-serde v0.4.10\n   Compiling time v0.3.55\n   Compiling dom_query v0.27.0\n   Compiling plist v1.10.1\n   Compiling schemars v0.8.22\n",
-  "timestamp": "2026-09-15T21:54:53.411Z"
+  "logTail": "CARGO_BUILD_START:Tue 09/15/2026 17:15:58.62 \r\n   Compiling time v0.3.55\n   Compiling windows v0.61.3\n   Compiling idna v1.1.0\n   Compiling serde_json v1.0.151\n   Compiling tauri-plugin v2.6.3\n   Compiling webview2-com-sys v0.38.2\n   Compiling crossbeam-utils v0.8.23\n   Compiling url v2.5.8\n",
+  "timestamp": "2026-09-15T22:22:25.412Z"
 }
