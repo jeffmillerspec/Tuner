@@ -1,3 +1,5 @@
+=== node-smoke ===
+$ node tests/smoke.mjs
 PASS:package
 PASS:store
 PASS:player
@@ -11,3 +13,23 @@ PASS:window
 PASS:dialog-plugin
 PASS:delivery
 TOTAL_FAILURES:0
+=== npm-test ===
+$ npm test
+> tuner@0.2.0 test
+> node tests/smoke.mjs
+
+PASS:package
+PASS:store
+PASS:player
+PASS:library-ui
+PASS:playback-el
+PASS:persistence
+PASS:persist-roundtrip
+PASS:playlist-crud
+PASS:missing-track-ui
+PASS:window
+PASS:dialog-plugin
+PASS:delivery
+TOTAL_FAILURES:0
+TOTAL_FAILURES:0
+PASSED:true

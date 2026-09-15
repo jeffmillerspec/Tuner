@@ -1,0 +1,24 @@
+{
+  "deliveryRoot": "F:/Dev/Tuner",
+  "smokeTestPath": "tests/smoke.mjs",
+  "testCommand": "npm test",
+  "smokeExit": 0,
+  "npmExit": 0,
+  "totalFailures": 0,
+  "passed": true,
+  "timestamp": "2026-09-15T21:57:40.908Z",
+  "checks": [
+    "package",
+    "store",
+    "player",
+    "library-ui",
+    "playback-el",
+    "persistence",
+    "persist-roundtrip",
+    "playlist-crud",
+    "missing-track-ui",
+    "window",
+    "dialog-plugin",
+    "delivery"
+  ]
+}
