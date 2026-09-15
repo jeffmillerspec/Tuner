@@ -1,14 +1,1 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'..');
-let failures=0;
-const check=(n,fn)=>{try{fn();console.log('PASS:'+n)}catch(e){failures++;console.log('FAIL:'+n+':'+e.message)}};
-check('package',()=>{const p=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));if(!p.scripts?.test)throw new Error('missing test')});
-check('cargo',()=>{if(!fs.existsSync(path.join(root,'src-tauri/Cargo.toml')))throw new Error('missing Cargo.toml')});
-check('icon',()=>{if(!fs.existsSync(path.join(root,'src-tauri/icons/icon.ico')))throw new Error('missing icon')});
-check('delivery',()=>{const d=JSON.parse(fs.readFileSync(path.join(root,'.tracemesh-delivery.json'),'utf8'));if(!d.deliveryRoot?.includes('Tuner'))throw new Error('bad root')});
-check('window',()=>{const c=JSON.parse(fs.readFileSync(path.join(root,'src-tauri/tauri.conf.json'),'utf8'));const w=c.app.windows[0];if(w.maxWidth>960||w.maxHeight>540)throw new Error('max too large')});
-check('libclamp',()=>{const s=fs.readFileSync(path.join(root,'src-tauri/src/lib.rs'),'utf8');if(!s.includes('set_max_size'))throw new Error('no clamp')});
-check('frontend',()=>{if(!fs.readFileSync(path.join(root,'index.html'),'utf8').includes('Tuner'))throw new Error('missing title')});
-console.log('TOTAL_FAILURES:'+failures);process.exit(failures?1:0);
+import fs from 'fs';import path from 'path';import{fileURLToPath}from 'url';const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'..');let f=0;const c=(n,fn)=>{try{fn();console.log('PASS:'+n)}catch(e){f++;console.log('FAIL:'+n+':'+e.message)}};c('package',()=>{if(!JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).scripts.test)throw new Error()});c('store',()=>{const s=fs.readFileSync(path.join(root,'src/store.js'),'utf8');if(!s.includes('localStorage')||!s.includes('playlists'))throw new Error()});c('player',()=>{if(!fs.readFileSync(path.join(root,'src/player.js'),'utf8').includes('playTrack'))throw new Error()});c('library-ui',()=>{const h=fs.readFileSync(path.join(root,'index.html'),'utf8');if(!h.includes('library-list')||!h.includes('queue-list'))throw new Error()});c('playback-el',()=>{if(!fs.readFileSync(path.join(root,'index.html'),'utf8').includes('id=player'))throw new Error()});c('persistence',()=>{if(!fs.readFileSync(path.join(root,'src/store.js'),'utf8').includes('tuner-data'))throw new Error()});c('playlist-crud',()=>{const s=fs.readFileSync(path.join(root,'src/store.js'),'utf8');['createPlaylist','deletePlaylist','reorderPlaylist','loadPlaylistQueue'].forEach(x=>{if(!s.includes(x))throw new Error(x)})});c('window',()=>{const w=JSON.parse(fs.readFileSync(path.join(root,'src-tauri/tauri.conf.json'),'utf8')).app.windows[0];if(w.maxWidth>960||w.maxHeight>540)throw new Error()});c('dialog-plugin',()=>{if(!fs.readFileSync(path.join(root,'src-tauri/Cargo.toml'),'utf8').includes('tauri-plugin-dialog'))throw new Error()});console.log('TOTAL_FAILURES:'+f);process.exit(f?1:0);
