@@ -1,11 +1,10 @@
 {
   "deliveryRoot": "F:/Dev/Tuner",
   "cargoBuilt": false,
-  "cargoExit": "CARGO_BUILD_EXIT:unknown",
+  "cargoExit": "pending",
   "binaryPath": null,
   "binaryExists": false,
-  "functioningAppMarker": false,
   "functioningApp": false,
-  "logTail": "   Compiling phf_codegen v0.13.1\n   Compiling toml_writer v1.1.2+spec-1.1.0\n   Compiling log v0.4.34\n   Compiling deranged v0.5.8\n   Compiling powerfmt v0.2.0\n   Compiling icu_locale_core v2.3.0\n   Compiling parking_lot_core v0.9.12\n   Compiling lock_api v0.4.14\n   Compiling potential_utf v0.1.6\n   Compiling zerotrie v0.2.5\n   Compiling byteorder v1.5.0\n   Compiling icu_provider v2.3.1\n   Compiling icu_collections v2.3.0\n   Compiling parking_lot v0.12.5\n   Compiling typeid v1.0.3\n   Compiling aho-corasick v1.1.5\n   Compiling unic-common v0.9.0\n   Compiling unic-char-range v0.9.0\n   Compiling regex-syntax v0.8.11\n",
-  "timestamp": "2026-09-15T21:34:33.691Z"
+  "logTail": "   Compiling thiserror v1.0.69\n   Compiling web_atoms v0.2.6\n   Compiling regex v1.13.1\n   Compiling unic-ucd-ident v0.9.0\n   Compiling icu_normalizer v2.3.0\n   Compiling icu_properties v2.3.0\n   Compiling quick-xml v0.42.0\n   Compiling serde_spanned v1.1.1\n   Compiling windows-sys v0.61.2\n   Compiling base64 v0.23.1\n   Compiling idna_adapter v1.2.2\n",
+  "timestamp": "2026-09-15T21:43:51.851Z"
 }
