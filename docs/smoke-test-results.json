@@ -6,5 +6,6 @@
   "npmExit": 0,
   "totalFailures": 0,
   "passed": true,
-  "timestamp": "2026-09-15T22:02:40.319Z"
+  "binaryExists": false,
+  "timestamp": "2026-09-15T22:10:11.010Z"
 }
