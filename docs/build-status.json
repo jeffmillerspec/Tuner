@@ -5,6 +5,6 @@
   "binaryPath": null,
   "binaryExists": false,
   "functioningApp": false,
-  "logTail": "   Compiling miniz_oxide v0.8.9\n   Compiling fdeflate v0.3.7\n   Compiling erased-serde v0.4.10\n   Compiling serde_spanned v1.1.1\n   Compiling toml_datetime v1.1.1+spec-1.1.0\n   Compiling bitflags v2.13.2\n   Compiling phf_shared v0.13.1\n   Compiling windows-version v0.1.7\n   Compiling webview2-com-macros v0.8.1\n   Compiling bitflags v1.3.2\n   Compiling rustversion v1.0.23\n",
-  "timestamp": "2026-09-15T22:34:50.998Z"
+  "logTail": "   Compiling windows-version v0.1.7\n   Compiling webview2-com-macros v0.8.1\n   Compiling bitflags v1.3.2\n   Compiling rustversion v1.0.23\n   Compiling pin-project-lite v0.2.17\n   Compiling unicode-segmentation v1.13.3\n   Compiling once_cell v1.21.4\n   Compiling png v0.17.16\n   Compiling phf v0.13.1\n   Compiling toml v1.1.6+spec-1.1.0\n   Compiling webview2-com v0.38.2\n",
+  "timestamp": "2026-09-15T22:42:57.251Z"
 }
