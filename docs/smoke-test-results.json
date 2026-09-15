@@ -6,19 +6,5 @@
   "npmExit": 0,
   "totalFailures": 0,
   "passed": true,
-  "timestamp": "2026-09-15T21:57:40.908Z",
-  "checks": [
-    "package",
-    "store",
-    "player",
-    "library-ui",
-    "playback-el",
-    "persistence",
-    "persist-roundtrip",
-    "playlist-crud",
-    "missing-track-ui",
-    "window",
-    "dialog-plugin",
-    "delivery"
-  ]
+  "timestamp": "2026-09-15T22:02:40.319Z"
 }

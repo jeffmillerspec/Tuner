@@ -5,6 +5,6 @@
   "binaryPath": null,
   "binaryExists": false,
   "functioningApp": false,
-  "logTail": "   Compiling anyhow v1.0.104\n   Compiling selectors v0.36.1\n   Compiling toml_datetime v1.1.1+spec-1.1.0\n   Compiling stable_deref_trait v1.2.1\n   Compiling glob v0.3.4\n   Compiling yoke v0.8.3\n   Compiling toml v1.1.6+spec-1.1.0\n   Compiling cssparser v0.36.0\n   Compiling markup5ever v0.38.0\n   Compiling url v2.5.8\n   Compiling winapi-util v0.1.11\n",
-  "timestamp": "2026-09-15T21:51:40.648Z"
+  "logTail": "   Compiling url v2.5.8\n   Compiling winapi-util v0.1.11\n   Compiling same-file v1.0.6\n   Compiling html5ever v0.38.0\n   Compiling cfb v0.7.3\n   Compiling jsonptr v0.6.3\n   Compiling erased-serde v0.4.10\n   Compiling time v0.3.55\n   Compiling dom_query v0.27.0\n   Compiling plist v1.10.1\n   Compiling schemars v0.8.22\n",
+  "timestamp": "2026-09-15T21:54:53.411Z"
 }

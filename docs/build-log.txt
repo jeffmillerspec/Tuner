@@ -72,3 +72,12 @@ CARGO_BUILD_START:Tue 09/15/2026 16:26:15.29
    Compiling markup5ever v0.38.0
    Compiling url v2.5.8
    Compiling winapi-util v0.1.11
+   Compiling same-file v1.0.6
+   Compiling html5ever v0.38.0
+   Compiling cfb v0.7.3
+   Compiling jsonptr v0.6.3
+   Compiling erased-serde v0.4.10
+   Compiling time v0.3.55
+   Compiling dom_query v0.27.0
+   Compiling plist v1.10.1
+   Compiling schemars v0.8.22
