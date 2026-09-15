@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "tauri": "tauri",
-    "test": "node tests/smoke.mjs"
+    "test": "node tests/smoke.mjs",
+    "test:smoke": "node tests/smoke.mjs",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",

@@ -1,6 +1,8 @@
 {
   "deliveryRoot": "F:/Dev/Tuner",
   "smokeTest": "TOTAL_FAILURES:0",
+  "smokeExit": 0,
+  "npmTestExit": 0,
   "checks": [
     "package",
     "store",
@@ -22,5 +24,5 @@
     "playback-on-select",
     "localStorage-persistence"
   ],
-  "timestamp": "2026-09-15T21:01:31.781Z"
+  "timestamp": "2026-09-15T21:13:03.731Z"
 }

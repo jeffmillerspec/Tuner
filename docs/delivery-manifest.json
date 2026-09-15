@@ -1,0 +1,17 @@
+{
+  "deliveryRoot": "F:/Dev/Tuner",
+  "requiredFiles": [
+    "index.html",
+    "package.json",
+    "src/main.js",
+    "src/store.js",
+    "src/player.js",
+    "tests/smoke.mjs",
+    "src-tauri/Cargo.toml",
+    "src-tauri/src/lib.rs"
+  ],
+  "missingFiles": [],
+  "functioningAppCandidate": true,
+  "smokeTestFile": "tests/smoke.mjs",
+  "timestamp": "2026-09-15T21:06:25.427Z"
+}

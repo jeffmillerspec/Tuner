@@ -1,11 +1,14 @@
 {
   "deliveryRoot": "F:/Dev/Tuner",
-  "app": "tuner",
-  "version": "0.2.0",
-  "features": [
-    "library",
-    "playlists",
-    "queue",
-    "playback"
-  ]
+  "projectName": "Tuner",
+  "projectType": "tauri-vite",
+  "entryPoints": [
+    "index.html",
+    "src/main.js",
+    "src-tauri/src/main.rs"
+  ],
+  "smokeTestPath": "tests/smoke.mjs",
+  "testCommand": "npm test",
+  "gitRoot": "F:/Dev/Tuner",
+  "version": 2
 }
