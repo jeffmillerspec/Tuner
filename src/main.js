@@ -1,1 +1,1 @@
-document.querySelector('#app').dataset.ready = 'true';
+document.querySelector('#app').dataset.ready='true';

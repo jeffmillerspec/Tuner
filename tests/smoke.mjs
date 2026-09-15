@@ -1,26 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-let failures = 0;
-const check = (name, fn) => {
-  try { fn(); console.log('PASS:' + name); }
-  catch (e) { failures++; console.log('FAIL:' + name + ':' + e.message); }
-};
-check('package', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-  if (!pkg.scripts?.test) throw new Error('missing test script');
-});
-check('cargo', () => {
-  if (!fs.existsSync(path.join(root, 'src-tauri/Cargo.toml'))) throw new Error('missing Cargo.toml');
-});
-check('window', () => {
-  const conf = JSON.parse(fs.readFileSync(path.join(root, 'src-tauri/tauri.conf.json'), 'utf8'));
-  const win = conf.app.windows[0];
-  if (win.maxWidth > 960 || win.maxHeight > 540) throw new Error('max too large');
-});
-check('frontend', () => {
-  if (!fs.readFileSync(path.join(root, 'index.html'), 'utf8').includes('Tuner')) throw new Error('missing title');
-});
-console.log('TOTAL_FAILURES:' + failures);
-process.exit(failures ? 1 : 0);
+const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'..');
+let failures=0;
+const check=(n,fn)=>{try{fn();console.log('PASS:'+n)}catch(e){failures++;console.log('FAIL:'+n+':'+e.message)}};
+check('package',()=>{const p=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));if(!p.scripts?.test)throw new Error('missing test')});
+check('cargo',()=>{if(!fs.existsSync(path.join(root,'src-tauri/Cargo.toml')))throw new Error('missing Cargo.toml')});
+check('icon',()=>{if(!fs.existsSync(path.join(root,'src-tauri/icons/icon.ico')))throw new Error('missing icon')});
+check('delivery',()=>{const d=JSON.parse(fs.readFileSync(path.join(root,'.tracemesh-delivery.json'),'utf8'));if(!d.deliveryRoot?.includes('Tuner'))throw new Error('bad root')});
+check('window',()=>{const c=JSON.parse(fs.readFileSync(path.join(root,'src-tauri/tauri.conf.json'),'utf8'));const w=c.app.windows[0];if(w.maxWidth>960||w.maxHeight>540)throw new Error('max too large')});
+check('libclamp',()=>{const s=fs.readFileSync(path.join(root,'src-tauri/src/lib.rs'),'utf8');if(!s.includes('set_max_size'))throw new Error('no clamp')});
+check('frontend',()=>{if(!fs.readFileSync(path.join(root,'index.html'),'utf8').includes('Tuner'))throw new Error('missing title')});
+console.log('TOTAL_FAILURES:'+failures);process.exit(failures?1:0);

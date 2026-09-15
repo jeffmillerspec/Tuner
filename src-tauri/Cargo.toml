@@ -1,15 +1,15 @@
 [package]
-name = "tuner"
-version = "0.1.0"
-edition = "2021"
+name="tuner"
+version="0.1.0"
+edition="2021"
 
 [lib]
-name = "tuner_lib"
-crate-type = ["lib", "cdylib", "staticlib"]
+name="tuner_lib"
+crate-type=["lib","cdylib","staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build={version="2",features=[]}
 
 [dependencies]
-tauri = { version = "2", features = [] }
-tauri-plugin-shell = "2"
+tauri={version="2",features=[]}
+tauri-plugin-shell="2"
