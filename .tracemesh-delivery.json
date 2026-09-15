@@ -1,13 +1,9 @@
 {
   "deliveryRoot": "F:/Dev/Tuner",
-  "projectName": "Tuner",
-  "smokeTestPath": "tests/smoke.mjs",
-  "testCommand": "npm test",
-  "gitRoot": "F:/Dev/Tuner",
-  "resultFiles": [
-    "docs/smoke-test-results.json",
-    "docs/scheduler-smoke-output.txt",
-    "tests/SMOKE-RESULTS.md"
-  ],
-  "version": 3
+  "version": 4,
+  "appName": "Tuner",
+  "smokeTestScript": "tests/smoke.mjs",
+  "smokeResults": "docs/smoke-test-results.json",
+  "schedulerOutput": "docs/scheduler-smoke-output.txt",
+  "buildStatus": "docs/build-status.json"
 }

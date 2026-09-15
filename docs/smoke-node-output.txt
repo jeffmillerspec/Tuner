@@ -1,0 +1,13 @@
+PASS:package
+PASS:store
+PASS:player
+PASS:library-ui
+PASS:playback-el
+PASS:persistence
+PASS:persist-roundtrip
+PASS:playlist-crud
+PASS:missing-track-ui
+PASS:window
+PASS:dialog-plugin
+PASS:delivery
+TOTAL_FAILURES:0
