@@ -5,6 +5,7 @@ export function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
 export function uid(){return crypto.randomUUID()}
 export function addTracks(d,tracks){const lib=[...d.library];for(const t of tracks){if(!lib.some(x=>x.path===t.path))lib.push(t)}return{...d,library:lib}}
 export function createPlaylist(d,name){if(!name.trim())return d;return{...d,playlists:[...d.playlists,{id:uid(),name:name.trim(),trackIds:[]}]}}
+export function renamePlaylist(d,id,name){if(!name.trim())return d;return{...d,playlists:d.playlists.map(p=>p.id===id?{...p,name:name.trim()}:p)}}
 export function deletePlaylist(d,id){return{...d,playlists:d.playlists.filter(p=>p.id!==id)}}
 export function addToPlaylist(d,pid,tid){return{...d,playlists:d.playlists.map(p=>p.id===pid&&!p.trackIds.includes(tid)?{...p,trackIds:[...p.trackIds,tid]}:p)}}
 export function removeFromPlaylist(d,pid,tid){return{...d,playlists:d.playlists.map(p=>p.id===pid?{...p,trackIds:p.trackIds.filter(x=>x!==tid)}:p)}}

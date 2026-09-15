@@ -1,5 +1,11 @@
 {
   "deliveryRoot": "F:/Dev/Tuner",
   "app": "tuner",
-  "version": "0.1.0"
+  "version": "0.2.0",
+  "features": [
+    "library",
+    "playlists",
+    "queue",
+    "playback"
+  ]
 }

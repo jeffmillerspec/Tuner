@@ -1,0 +1,13 @@
+{
+  "deliveryRoot": "F:/Dev/Tuner",
+  "verified": [
+    "smoke-tests",
+    "localStorage-roundtrip",
+    "playlist-crud",
+    "queue-order",
+    "window-cap"
+  ],
+  "playback": "HTML5 video element + Tauri convertFileSrc on user Play click",
+  "persistence": "localStorage key tuner-data",
+  "timestamp": "2026-09-15T20:50:48.758Z"
+}
