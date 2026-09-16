@@ -1,6 +1,17 @@
 {
-  "verified": "config",
-  "maxWidth": 960,
-  "maxHeight": 540,
-  "libClamp": true
+  "timestamp": "2026-09-16T04:45:04.707Z",
+  "binaryExists": true,
+  "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
+  "binarySize": 17937920,
+  "windowConfig": {
+    "width": 800,
+    "height": 500,
+    "maxWidth": 960,
+    "maxHeight": 540
+  },
+  "windowCapPercent": 50,
+  "runtimeClamp": "lib.rs set_max_size to 50% of primary monitor",
+  "withinCap": true,
+  "launched": true,
+  "launchMethod": "spawn 3s sleep then taskkill"
 }

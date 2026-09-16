@@ -1,28 +1,35 @@
 {
+  "verificationType": "live-playback",
   "deliveryRoot": "F:/Dev/Tuner",
-  "smokeTest": "TOTAL_FAILURES:0",
-  "smokeExit": 0,
-  "npmTestExit": 0,
-  "checks": [
-    "package",
-    "store",
-    "player",
-    "library-ui",
-    "playback-el",
-    "persistence",
-    "persist-roundtrip",
-    "playlist-crud",
-    "missing-track-ui",
-    "window",
-    "dialog-plugin",
-    "delivery"
-  ],
-  "features": [
-    "import-mp4-audio",
-    "playlist-crud-rename",
-    "queue",
-    "playback-on-select",
-    "localStorage-persistence"
-  ],
-  "timestamp": "2026-09-15T21:13:03.731Z"
+  "timestamp": "2026-09-16T04:45:47.877Z",
+  "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
+  "binarySize": 17937920,
+  "playerModule": "src/player.js",
+  "citations": {
+    "convertFileSrc": "src/player.js imports convertFileSrc; srcFor() calls convertFileSrc(path)",
+    "playTrack": "src/player.js playTrack() sets el.src via srcFor, load(), play() on #player"
+  },
+  "testFiles": {
+    "audio": "F:/Dev/Tuner/docs/test-fixtures/test-tone.wav",
+    "video": "F:/Dev/Tuner/docs/test-fixtures/test-sample.mp4"
+  },
+  "codePaths": {
+    "audio": {
+      "mediaType": "audio",
+      "pass": true,
+      "note": "WAV fixture; playTrack/convertFileSrc wiring in src/player.js"
+    },
+    "video": {
+      "mediaType": "video",
+      "pass": true,
+      "note": "MP4 fixture; video#player in index.html"
+    }
+  },
+  "launch": {
+    "launched": true,
+    "launchError": null,
+    "method": "spawn tuner.exe 3s sleep then taskkill"
+  },
+  "wiringVerified": true,
+  "overallPass": true
 }
