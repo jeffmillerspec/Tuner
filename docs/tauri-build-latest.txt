@@ -289,6 +289,11 @@ computing gzip size...
         F:\Dev\Tuner\src-tauri\target\release\bundle\nsis\Tuner_0.2.0_x64-setup.exe
 
 TAURI_BUILD_EXIT:0
+INSTALLER_PATH: src-tauri/target/release/bundle/nsis/Tuner_0.2.0_x64-setup.exe
+INSTALLER_SIZE: 2499157
+MSI_PATH: src-tauri/target/release/bundle/msi/Tuner_0.2.0_x64_en-US.msi
+MSI_SIZE: 3747840
+
 === TAURI_BUILD_STARTED Wed 09/16/2026  7:34:59.54 ===
 
 > tuner@0.2.0 tauri:build
@@ -314,3 +319,9 @@ computing gzip size...
    Compiling tauri v2.11.5
    Compiling http-range v0.1.5
    Compiling tauri-plugin-fs v2.5.2
+   Compiling tauri-plugin-dialog v2.7.3
+   Compiling tauri-plugin-shell v2.3.6
+   Compiling tuner v0.2.0 (F:\Dev\Tuner\src-tauri)
+failed to build app: failed to build app
+       Error failed to build app: failed to build app
+TAURI_BUILD_EXIT:0
