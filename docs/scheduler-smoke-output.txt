@@ -1,17 +1,4 @@
-=== node tests/smoke.mjs ===
-PASS:package
-PASS:store
-PASS:player
-PASS:library-ui
-PASS:playback-el
-PASS:persistence
-PASS:persist-roundtrip
-PASS:playlist-crud
-PASS:missing-track-ui
-PASS:window
-PASS:dialog-plugin
-PASS:delivery
-TOTAL_FAILURES:0
+=== Post-packaging smoke run 2026-09-16T04:37:00Z (after packaging commit d30ab34) ===
 
 === npm test ===
 
@@ -31,4 +18,3 @@ PASS:window
 PASS:dialog-plugin
 PASS:delivery
 TOTAL_FAILURES:0
-
