@@ -1,2 +1,13 @@
-import { defineConfig } from "vite";
-export default defineConfig({ server:{port:1420,strictPort:true}, build:{outDir:"dist"} });
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  root: '.',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
+  server: {
+    port: 1420,
+    strictPort: true,
+  },
+});
