@@ -1,17 +1,1 @@
-{
-  "deliveryRoot": "F:/Dev/Tuner",
-  "requiredFiles": [
-    "index.html",
-    "package.json",
-    "src/main.js",
-    "src/store.js",
-    "src/player.js",
-    "tests/smoke.mjs",
-    "src-tauri/Cargo.toml",
-    "src-tauri/src/lib.rs"
-  ],
-  "missingFiles": [],
-  "functioningAppCandidate": true,
-  "smokeTestFile": "tests/smoke.mjs",
-  "timestamp": "2026-09-15T21:06:25.427Z"
-}
+{"deliveryRoot":"F:/Dev/Tuner","appRoot":"F:/Dev/Tuner","smokeTestScript":"tests/smoke.mjs","smokeTestScriptAbs":"F:/Dev/Tuner/tests/smoke.mjs","packageJson":"F:/Dev/Tuner/package.json","indexHtml":"F:/Dev/Tuner/index.html","functioningAppMarker":"F:/Dev/Tuner/.functioning-app","binaryPath":"F:/Dev/Tuner/src-tauri/target/debug/tuner.exe","schedulerOutput":"F:/Dev/Tuner/docs/scheduler-smoke-output.txt","smokeResults":"F:/Dev/Tuner/docs/smoke-test-results.json","buildStatus":"F:/Dev/Tuner/docs/build-status.json"}

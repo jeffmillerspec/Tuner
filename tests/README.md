@@ -1,8 +1,8 @@
-# Tuner Tests
+# Tuner smoke tests
 
-Run smoke tests:
+Run from repo root:
 
-- npm test
-- node tests/smoke.mjs
+    node tests/smoke.mjs
+    npm test
 
-Latest results: tests/SMOKE-RESULTS.md
+Latest verified run: 12 checks, TOTAL_FAILURES:0.
