@@ -1,6 +1,6 @@
 {
   "deliveryRoot": "F:/Dev/Tuner",
-  "version": 7,
+  "version": 8,
   "appName": "Tuner",
   "smokeTestScript": "tests/smoke.mjs",
   "smokeResults": "docs/smoke-test-results.json",

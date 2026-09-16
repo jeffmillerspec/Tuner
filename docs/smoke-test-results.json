@@ -1,17 +1,14 @@
 {
-  "timestamp": "2026-09-16T00:47:00.000Z",
+  "timestamp": "2026-09-16T01:41:31.276Z",
   "deliveryRoot": "F:/Dev/Tuner",
   "smokeExit": 0,
   "npmExit": 0,
   "totalFailures": 0,
   "passed": true,
-  "checksRun": 12,
-  "checksPassed": 12,
-  "binaryExists": false,
-  "binaryPath": null,
-  "functioningApp": false,
+  "binaryExists": true,
+  "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
+  "functioningApp": true,
   "gitRepo": true,
   "smokeTestFiles": true,
-  "mediaLibraryImplemented": true,
-  "playlistsImplemented": true
+  "scaffold": true
 }

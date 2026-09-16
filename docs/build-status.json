@@ -1,13 +1,6 @@
 {
-  "timestamp": "2026-09-16T00:47:00.000Z",
-  "deliveryRoot": "F:/Dev/Tuner",
-  "binaryPath": "src-tauri/target/debug/tuner.exe",
-  "binaryExists": false,
-  "smokeExit": 0,
-  "npmExit": 0,
-  "totalFailures": 0,
-  "cargoRunning": true,
-  "mediaLibrary": true,
-  "playlists": true,
-  "persistence": true
+  "timestamp": "2026-09-16T01:41:31.276Z",
+  "binaryExists": true,
+  "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
+  "cargoBuilt": true
 }
