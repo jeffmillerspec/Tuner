@@ -1,6 +1,12 @@
 {
-  "timestamp": "2026-09-16T02:03:39.984Z",
+  "timestamp": "2026-09-16T12:38:00.000Z",
   "binaryExists": true,
   "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
-  "cargoBuilt": true
+  "cargoBuilt": true,
+  "installerBuilt": true,
+  "installerPath": "src-tauri/target/release/bundle/nsis/Tuner_0.2.0_x64-setup.exe",
+  "installerSize": 2499157,
+  "msiPath": "src-tauri/target/release/bundle/msi/Tuner_0.2.0_x64_en-US.msi",
+  "msiSize": 3747840,
+  "tauriBuildExit": 0
 }
