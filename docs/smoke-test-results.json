@@ -1,14 +1,18 @@
 {
-  "timestamp": "2026-09-16T02:03:39.984Z",
+  "timestamp": "2026-09-16T04:38:00.000Z",
   "deliveryRoot": "F:/Dev/Tuner",
+  "postPackaging": true,
+  "packagingCommit": "d30ab34",
   "smokeExit": 0,
   "npmExit": 0,
   "totalFailures": 0,
   "passed": true,
   "binaryExists": true,
   "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
+  "binarySize": 17937920,
   "functioningApp": true,
   "gitRepo": true,
   "smokeTestFiles": true,
-  "scaffold": true
+  "checksRun": 12,
+  "checks": ["package","store","player","library-ui","playback-el","persistence","persist-roundtrip","playlist-crud","missing-track-ui","window","dialog-plugin","delivery"]
 }
