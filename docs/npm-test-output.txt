@@ -1,5 +1,5 @@
 > tuner@0.2.0 test
-> node tests/smoke.mjs
+> node scripts/npm-test-wrapper.mjs
 
 PASS:package
 PASS:store
