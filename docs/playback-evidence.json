@@ -1,34 +1,220 @@
 {
   "verificationType": "live-playback",
   "deliveryRoot": "F:/Dev/Tuner",
-  "timestamp": "2026-09-16T04:45:47.877Z",
+  "timestamp": "2026-09-17T11:44:04.034Z",
   "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
-  "binarySize": 17937920,
+  "binarySize": 18100736,
+  "binaryFresh": true,
+  "buildLogOk": true,
   "playerModule": "src/player.js",
+  "elementId": "player",
   "citations": {
-    "convertFileSrc": "src/player.js imports convertFileSrc; srcFor() calls convertFileSrc(path)",
-    "playTrack": "src/player.js playTrack() sets el.src via srcFor, load(), play() on #player"
+    "convertFileSrc": "src/player.js srcFor() calls convertFileSrc(path)",
+    "playTrack": "src/player.js playTrack(el,track) sets el.src via srcFor, load(), play() on #player"
   },
   "testFiles": {
     "audio": "F:/Dev/Tuner/docs/test-fixtures/test-tone.wav",
     "video": "F:/Dev/Tuner/docs/test-fixtures/test-sample.mp4"
   },
+  "runtimePlayback": {
+    "timestamp": "2026-09-17T11:43:22.174Z",
+    "elementId": "player",
+    "results": {
+      "audio": {
+        "pass": true,
+        "elementId": "player",
+        "filePath": "F:/Dev/Tuner/docs/test-fixtures/test-tone.wav",
+        "convertFileSrc": "http://asset.localhost/F%3A%2FDev%2FTuner%2Fdocs%2Ftest-fixtures%2Ftest-tone.wav",
+        "playTrackInvoked": true,
+        "played": true,
+        "events": [
+          {
+            "event": "loadedmetadata",
+            "currentTime": 0
+          },
+          {
+            "event": "canplay",
+            "currentTime": 0.114765
+          },
+          {
+            "event": "playing",
+            "currentTime": 0.114795
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.206458
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.470233
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.743317
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0
+          },
+          {
+            "event": "loadedmetadata",
+            "currentTime": 0
+          },
+          {
+            "event": "canplay",
+            "currentTime": 0.000177
+          },
+          {
+            "event": "playing",
+            "currentTime": 0.000245
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.258527
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.539689
+          }
+        ],
+        "currentTime": 0.914372
+      },
+      "video": {
+        "pass": true,
+        "elementId": "player",
+        "filePath": "F:/Dev/Tuner/docs/test-fixtures/test-sample.mp4",
+        "convertFileSrc": "http://asset.localhost/F%3A%2FDev%2FTuner%2Fdocs%2Ftest-fixtures%2Ftest-sample.mp4",
+        "playTrackInvoked": true,
+        "played": true,
+        "events": [
+          {
+            "event": "timeupdate",
+            "currentTime": 0
+          },
+          {
+            "event": "loadedmetadata",
+            "currentTime": 0
+          },
+          {
+            "event": "canplay",
+            "currentTime": 0.000185
+          },
+          {
+            "event": "playing",
+            "currentTime": 0.000248
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.258621
+          },
+          {
+            "event": "timeupdate",
+            "currentTime": 0.539739
+          }
+        ],
+        "currentTime": 0.806961
+      }
+    }
+  },
   "codePaths": {
     "audio": {
       "mediaType": "audio",
       "pass": true,
-      "note": "WAV fixture; playTrack/convertFileSrc wiring in src/player.js"
+      "convertFileSrc": "http://asset.localhost/F%3A%2FDev%2FTuner%2Fdocs%2Ftest-fixtures%2Ftest-tone.wav",
+      "playTrackInvoked": true,
+      "events": [
+        {
+          "event": "loadedmetadata",
+          "currentTime": 0
+        },
+        {
+          "event": "canplay",
+          "currentTime": 0.114765
+        },
+        {
+          "event": "playing",
+          "currentTime": 0.114795
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.206458
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.470233
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.743317
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0
+        },
+        {
+          "event": "loadedmetadata",
+          "currentTime": 0
+        },
+        {
+          "event": "canplay",
+          "currentTime": 0.000177
+        },
+        {
+          "event": "playing",
+          "currentTime": 0.000245
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.258527
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.539689
+        }
+      ],
+      "currentTime": 0.914372,
+      "note": "Live playback confirmed via playTrack and convertFileSrc"
     },
     "video": {
       "mediaType": "video",
       "pass": true,
-      "note": "MP4 fixture; video#player in index.html"
+      "convertFileSrc": "http://asset.localhost/F%3A%2FDev%2FTuner%2Fdocs%2Ftest-fixtures%2Ftest-sample.mp4",
+      "playTrackInvoked": true,
+      "events": [
+        {
+          "event": "timeupdate",
+          "currentTime": 0
+        },
+        {
+          "event": "loadedmetadata",
+          "currentTime": 0
+        },
+        {
+          "event": "canplay",
+          "currentTime": 0.000185
+        },
+        {
+          "event": "playing",
+          "currentTime": 0.000248
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.258621
+        },
+        {
+          "event": "timeupdate",
+          "currentTime": 0.539739
+        }
+      ],
+      "currentTime": 0.806961,
+      "note": "Live playback confirmed via playTrack and convertFileSrc"
     }
   },
   "launch": {
     "launched": true,
+    "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
     "launchError": null,
-    "method": "spawn tuner.exe 3s sleep then taskkill"
+    "method": "spawn-playback-test.mjs + launch-playback-test.ps1 + poll-playback-runtime-evidence.mjs"
   },
   "wiringVerified": true,
   "overallPass": true

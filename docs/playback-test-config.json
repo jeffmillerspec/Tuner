@@ -1,0 +1,9 @@
+{
+  "active": true,
+  "elementId": "player",
+  "outputPath": "F:/Dev/Tuner/docs/playback-runtime-evidence.json",
+  "files": {
+    "audio": "F:/Dev/Tuner/docs/test-fixtures/test-tone.wav",
+    "video": "F:/Dev/Tuner/docs/test-fixtures/test-sample.mp4"
+  }
+}
