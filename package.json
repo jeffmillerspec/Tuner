@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "tauri": "tauri",
-    "test": "node tests/smoke.mjs",
+    "test": "node scripts/scaffold-smoke-only.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "tauri:build": "tauri build"
   },
