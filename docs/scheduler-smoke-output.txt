@@ -1,4 +1,4 @@
-=== Post-packaging smoke run 2026-09-16T04:37:00Z (after packaging commit d30ab34) ===
+=== npm test smoke run 2026-09-17T12:43:00.440Z ===
 
 === npm test ===
 
