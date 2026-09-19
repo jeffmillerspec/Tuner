@@ -23,6 +23,16 @@ Add/remove (+Q, Delete), reorder (drag handle + Alt+Arrow), keyboard nav, mouse 
 
 Firefox lacks scrollbar hover/active pseudo-elements. DnD uses drag handle. Thumbnails need track.artwork. OS scrollbars outside webview not themed.
 
+## Verification results (2026-09-19)
+
+- `node tests/smoke.mjs`: TOTAL_FAILURES=0 (queue-modern, theme-switch-runtime pass)
+- Vitest queue suite: 7/7 pass (theme-hooks, queue-dnd, theme-queue-scrollbar)
+- Git: f3ae39d feat(queue): theme-aware scrollbars and drag-state CSS
+
+## Large-queue performance
+
+No list virtualization. Queue renders one DOM node per track via `renderQueue()`. Styles use `background`/`outline` transitions on `.queue-item` (no width/height animation) to avoid layout thrash; DnD/keyboard handlers call `moveQueue` then a single `persist()` re-render. Expect linear cost ~O(n) for n items; 1000+ tracks may feel slower on low-end hardware—acceptable without virtualization per scope.
+
 ## Test steps
 
 1. node tests/smoke.mjs (expect TOTAL_FAILURES:0)
