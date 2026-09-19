@@ -5,9 +5,9 @@
 | Location | Role |
 |----------|------|
 | `src/main.js` | `boot()` calls `initTheme()` before first `render()`; `#theme-select` calls `applyTheme()`; `subscribe()` refreshes theme dropdown |
-| `src/store.js` | Persists `settings.themeId` in `localStorage` key `tuner-data` |
+| `src/store.js` | Persists `settings.themeId` in `tuner-data`; `getState()` / `updateSettings()` |
 | `src/styles.css` | Static fallbacks on `:root`; runtime tokens set on `document.documentElement` by ThemeManager |
-| `index.html` | Header `#theme-select` control; version `0.3.0` |
+| `index.html` | `#theme-select` (`aria-label=Theme`); inline `<style>` anti-flicker defaults |
 | `src/theme/themeManager.js` | Public API: `initTheme`, `applyTheme`, `getToken`, `subscribe`, `listThemes`, `reloadThemes` |
 
 ## Modified style files
@@ -32,7 +32,7 @@
 1. `node tests/smoke.mjs` — static checks for theme-manager, theme-ui, theme-persist, theme-ready-marker.
 2. `npm run dev` — open app, confirm default theme colors on body/buttons/lists.
 3. Switch theme in header dropdown; verify immediate color change and persistence after reload.
-4. Tab through controls; confirm `:focus` outline remains visible (`--tuner-focus`).
+4. Tab through controls; confirm `:focus-visible` outline remains visible (`--tuner-focus`).
 5. Enable OS high-contrast mode; confirm thicker focus outlines and stronger borders.
 
 ## Limitations / follow-ups

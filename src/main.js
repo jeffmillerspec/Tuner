@@ -1,4 +1,4 @@
-import {load, save, uid, addTracks, createPlaylist, deletePlaylist, renamePlaylist, addToPlaylist, removeFromPlaylist, reorderPlaylist, loadPlaylistQueue, setCurrent, trackById, , getState, updateSettings} from './store.js';
+import {load, save, uid, addTracks, createPlaylist, deletePlaylist, renamePlaylist, addToPlaylist, removeFromPlaylist, reorderPlaylist, loadPlaylistQueue, setCurrent, trackById, getState, updateSettings} from './store.js';
 
 import { mediaType, playTrack } from './player.js';
 import './playback-test.js';

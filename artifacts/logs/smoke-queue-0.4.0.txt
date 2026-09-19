@@ -1,0 +1,8 @@
+PASS:smoke-script
+PASS:theme-unit-files
+PASS:vitest-runtime-files
+PASS:queue-modern
+PASS:reports-wrapper
+PASS:theme-switch-runtime
+TOTAL_FAILURES:0
+SMOKE_EXIT:0

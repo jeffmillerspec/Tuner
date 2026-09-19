@@ -30,13 +30,13 @@
 
 *{box-sizing:border-box}
 
-body{
+html,body{
   margin:0;
   font-family:system-ui,sans-serif;
   font-size:var(--tuner-font-base);
   line-height:var(--tuner-line-base);
-  background:var(--tuner-bg-app);
-  color:var(--tuner-text);
+  background:var(--tuner-bg,var(--tuner-bg-app));
+  color:var(--tuner-fg,var(--tuner-text));
 }
 
 header{
@@ -98,18 +98,26 @@ button{
   padding:var(--tuner-space-xs,4px) var(--tuner-space-md,8px);
   border:1px solid var(--tuner-border);
   border-radius:var(--tuner-radius-sm,4px);
-  background:var(--tuner-bg-surface-alt,var(--tuner-bg-surface));
-  color:var(--tuner-text);
+  background:var(--tuner-accent-500,var(--tuner-accent));
+  color:var(--tuner-on-accent,var(--tuner-accent-contrast));
   cursor:pointer;
 }
 
 button:hover{
-  background:var(--tuner-accent-hover,var(--tuner-accent));
-  color:var(--tuner-accent-contrast);
-  border-color:var(--tuner-accent);
+  background:var(--tuner-accent-600,var(--tuner-accent-hover,var(--tuner-accent)));
+  color:var(--tuner-on-accent,var(--tuner-accent-contrast));
+  border-color:var(--tuner-accent-600,var(--tuner-accent));
 }
 
-button:active{background:var(--tuner-accent-active,var(--tuner-accent))}
+button:active{background:var(--tuner-accent-700,var(--tuner-accent-active,var(--tuner-accent)))}
+
+button:disabled{
+  background:var(--tuner-disabled-bg);
+  color:var(--tuner-disabled-fg);
+  border-color:var(--tuner-border);
+  cursor:not-allowed;
+  opacity:0.85;
+}
 
 ul{
   list-style:none;

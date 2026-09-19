@@ -1,5 +1,6 @@
 /** Canonical theme constants and CSS token map. */
 export const DEFAULT_THEME_ID = 'abyssal-console';
+export const THEME_PERSISTENCE_KEY = 'theme.selected';
 export const BUNDLED_THEME_GLOB = '../../Bundled themes json/*.json';
 
 export const REQUIRED_COLOR_KEYS = [
