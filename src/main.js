@@ -1,18 +1,5 @@
-import {
-  load,
-  save,
-  uid,
-  addTracks,
-  createPlaylist,
-  deletePlaylist,
-  renamePlaylist,
-  addToPlaylist,
-  removeFromPlaylist,
-  reorderPlaylist,
-  loadPlaylistQueue,
-  setCurrent,
-  trackById,
-} from './store.js';
+import {load, save, uid, addTracks, createPlaylist, deletePlaylist, renamePlaylist, addToPlaylist, removeFromPlaylist, reorderPlaylist, loadPlaylistQueue, setCurrent, trackById, , getState, updateSettings} from './store.js';
+
 import { mediaType, playTrack } from './player.js';
 import './playback-test.js';
 import { initTheme, applyTheme, listThemes, subscribe } from './theme/themeManager.js';
@@ -88,86 +75,92 @@ function render() {
   $('playlist-empty').style.display = state.playlists.length ? 'none' : 'block';
 
   const q = $('queue-list');
+  q.setAttribute('role', 'listbox');
+  q.setAttribute('aria-label', 'Playback queue');
   q.innerHTML = '';
   state.queue.forEach((tid, i) => {
     const tr = trackById(state, tid);
     if (!tr) return;
     const li = document.createElement('li');
     li.className = 'queue-item' + (state.currentId === tid ? ' active' : '');
-    li.innerHTML = '<span class="queue-index">' + (i + 1) + '</span><span class="queue-title">' + tr.name + '</span><span class="actions"><button type="button" data-a="play" data-id="' + tid + '">Play</button><button type="button" data-a="rmq" data-i="' + i + '">X</button></span>';
+    li.setAttribute('role', 'option');
+    li.tabIndex = -1;
+    if (state.currentId === tid) li.setAttribute('aria-selected', 'true');
+    li.innerHTML = '<span class="queue-index">' + (i + 1) + '</span><span class="queue-title">' + tr.name + '</span><span class="actions"><button type="button" data-a="play" data-id="' + tid + '">Play</button><button type="button" data-a="rmq" data-id="' + tid + '">X</button></span>';
     q.appendChild(li);
   });
   $('queue-empty').style.display = state.queue.length ? 'none' : 'block';
 
   const cur = trackById(state, state.currentId);
-  $('now-playing').textContent = cur ? cur.name : 'Select a track';
-}
-
-async function play(id) {
-  const tr = trackById(state, id);
-  if (!tr) return;
-  state = setCurrent(state, id);
-  await playTrack(player, tr);
-  persist();
-}
-
-function queueAdd(id) {
-  if (!trackById(state, id)) return;
-  if (!state.queue.includes(id)) state = { ...state, queue: [...state.queue, id] };
-  if (!state.currentId) state = setCurrent(state, id);
-  persist();
-}
-
-function queueRemove(i) {
-  const q = [...state.queue];
-  q.splice(i, 1);
-  state = { ...state, queue: q };
-  if (state.currentId && !q.includes(state.currentId)) {
-    state = setCurrent(state, q[0] || null);
-  }
-  persist();
-}
-
-function nextTrack() {
-  if (!state.queue.length) return;
-  const idx = state.queue.indexOf(state.currentId);
-  const next = state.queue[(idx + 1) % state.queue.length];
-  play(next);
-}
-
-function prevTrack() {
-  if (!state.queue.length) return;
-  const idx = state.queue.indexOf(state.currentId);
-  const prev = state.queue[(idx - 1 + state.queue.length) % state.queue.length];
-  play(prev);
+  $('now-playing').textContent = cur ? 'Playing: ' + cur.name : 'Select a track to play';
 }
 
 async function importPaths(paths) {
   if (!paths?.length) return;
-  const tracks = paths.map((p) => ({
-    id: uid(),
-    name: p.split(/[\/]/).pop(),
-    path: p,
-    type: mediaType(p.split(/[\/]/).pop()),
-  }));
-  state = addTracks(state, tracks);
+  state = addTracks(state, paths.map((p) => ({ id: uid(), name: p.split(/[\/]/).pop(), path: p, type: mediaType(p) })));
   persist();
 }
 
 async function pickImport() {
   try {
     const { open } = await import('@tauri-apps/plugin-dialog');
-    const sel = await open({
-      multiple: true,
-      filters: [{ name: 'Media', extensions: ['mp4', 'mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'webm'] }],
-    });
+    const sel = await open({ multiple: true, filters: [{ name: 'Media', extensions: ['mp4', 'mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'webm'] }] });
     if (sel) await importPaths(Array.isArray(sel) ? sel : [sel]);
   } catch {
     $('file-input').click();
   }
 }
 
-document.getElementById('app').addEventListener('click', (e) => {
+async function play(id) {
+  state = setCurrent(state, id);
+  const track = trackById(state, id);
+  await playTrack(player, track);
+  persist();
+}
+
+function queueAdd(id) {
+  if (!state.queue.includes(id)) {
+    state = { ...state, queue: [...state.queue, id] };
+    persist();
+  }
+}
+
+function queueRemove(id) {
+  state = { ...state, queue: state.queue.filter((x) => x !== id) };
+  if (state.currentId === id) state = setCurrent(state, state.queue[0] || null);
+  persist();
+}
+
+function nextTrack() {
+  const idx = state.queue.indexOf(state.currentId);
+  const next = state.queue[idx + 1];
+  if (next) play(next);
+}
+
+function prevTrack() {
+  const idx = state.queue.indexOf(state.currentId);
+  const prev = state.queue[idx - 1];
+  if (prev) play(prev);
+}
+
+function setupQueueKeyboard() {
+  const q = $('queue-list');
+  if (!q) return;
+  q.addEventListener('keydown', (e) => {
+    const items = [...q.querySelectorAll('.queue-item')];
+    const idx = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); items[Math.min(idx + 1, items.length - 1)]?.focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); items[Math.max(idx - 1, 0)]?.focus(); }
+    else if (e.key === 'Home') { e.preventDefault(); items[0]?.focus(); }
+    else if (e.key === 'End') { e.preventDefault(); items[items.length - 1]?.focus(); }
+    else if (e.key === 'Enter' || e.key === ' ') {
+      const el = document.activeElement;
+      if (el?.classList.contains('queue-item')) { e.preventDefault(); play(el.querySelector('[data-a=play]')?.dataset.id); }
+    }
+  });
+}
+
+document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-a]');
   if (!btn) return;
   const a = btn.dataset.a;
@@ -175,92 +168,38 @@ document.getElementById('app').addEventListener('click', (e) => {
   const pid = btn.dataset.pid;
   const i = Number(btn.dataset.i);
   switch (a) {
-    case 'play':
-      play(id);
-      break;
-    case 'q':
-      queueAdd(id);
-      break;
-    case 'rmq':
-      queueRemove(i);
-      break;
-    case 'addpl': {
-      const plId = $('playlist-select').value;
-      if (plId) {
-        state = addToPlaylist(state, plId, id);
-        persist();
-      }
-      break;
-    }
-    case 'loadpl':
-      state = loadPlaylistQueue(state, id);
-      persist();
-      break;
-    case 'delpl':
-      state = deletePlaylist(state, id);
-      persist();
-      break;
-    case 'up':
-      if (i > 0) {
-        state = reorderPlaylist(state, pid, i, i - 1);
-        persist();
-      }
-      break;
-    case 'down': {
-      const pl = state.playlists.find((p) => p.id === pid);
-      if (pl && i < pl.trackIds.length - 1) {
-        state = reorderPlaylist(state, pid, i, i + 1);
-        persist();
-      }
-      break;
-    }
-    case 'rmpl':
-      state = removeFromPlaylist(state, pid, id);
-      persist();
-      break;
-    default:
-      break;
+    case 'play': play(id); break;
+    case 'q': queueAdd(id); break;
+    case 'rmq': queueRemove(id); break;
+    case 'addpl': { const plId = $('playlist-select').value; if (plId) { state = addToPlaylist(state, plId, id); persist(); } break; }
+    case 'loadpl': state = loadPlaylistQueue(state, id); persist(); break;
+    case 'delpl': state = deletePlaylist(state, id); persist(); break;
+    case 'up': if (i > 0) { state = reorderPlaylist(state, pid, i, i - 1); persist(); } break;
+    case 'down': { const p = state.playlists.find((x) => x.id === pid); if (p && i < p.trackIds.length - 1) { state = reorderPlaylist(state, pid, i, i + 1); persist(); } break; }
+    case 'rmpl': state = removeFromPlaylist(state, pid, id); persist(); break;
   }
 });
-
-$('btn-import').addEventListener('click', () => pickImport());
-$('file-input').addEventListener('change', (e) => {
-  const files = [...e.target.files];
-  if (!files.length) return;
-  importPaths(files.map((f) => f.path || f.name));
-  e.target.value = '';
-});
-$('btn-create-playlist').addEventListener('click', () => {
-  state = createPlaylist(state, $('playlist-name').value);
-  persist();
-});
-$('btn-rename-playlist').addEventListener('click', () => {
-  const plId = $('playlist-select').value;
-  if (plId) {
-    state = renamePlaylist(state, plId, $('playlist-name').value);
-    persist();
-  }
-});
-$('btn-prev').addEventListener('click', () => prevTrack());
-$('btn-next').addEventListener('click', () => nextTrack());
-player.addEventListener('ended', () => nextTrack());
 
 async function boot() {
-  await initTheme({
-    getThemeId: () => state.settings?.themeId ?? null,
-    setThemeId: (themeId) => {
-      state.settings = { ...(state.settings || {}), themeId };
-      save(state);
-    },
-  });
+  state = load();
+  if (!state.settings) state = { ...state, settings: { themeId: null } };
+  const getThemeId = () => getState().settings?.themeId ?? null;
+  const setThemeId = (id) => { state = updateSettings({ themeId: id }); save(state); };
+  await initTheme({ getThemeId, setThemeId });
   document.documentElement.dataset.themeReady = 'true';
   subscribe(() => renderThemeSelect());
-  $('theme-select')?.addEventListener('change', (ev) => {
-    const themeId = ev.target.value;
-    applyTheme(themeId);
-    state.settings = { ...(state.settings || {}), themeId };
+  $('theme-select')?.addEventListener('change', (e) => {
+    const id = applyTheme(e.target.value);
+    state = updateSettings({ themeId: id });
     save(state);
   });
+  $('btn-import')?.addEventListener('click', pickImport);
+  $('file-input')?.addEventListener('change', (e) => importPaths([...e.target.files].map((f) => f.path || f.name)));
+  $('btn-create-playlist')?.addEventListener('click', () => { state = createPlaylist(state, $('playlist-name').value); persist(); });
+  $('btn-rename-playlist')?.addEventListener('click', () => { const pid = $('playlist-select').value; if (pid) { state = renamePlaylist(state, pid, $('playlist-name').value); persist(); } });
+  $('btn-prev')?.addEventListener('click', prevTrack);
+  $('btn-next')?.addEventListener('click', nextTrack);
+  setupQueueKeyboard();
   render();
 }
 

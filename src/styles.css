@@ -20,6 +20,12 @@
   --tuner-font-base: 13px;
   --tuner-font-sm: 12px;
   --tuner-line-base: 1.45;
+  --tuner-bg: var(--tuner-bg-app);
+  --tuner-fg: var(--tuner-text);
+  --tuner-scrollbar-size: 10px;
+  --tuner-scrollbar-radius: 4px;
+  --tuner-disabled-bg: #2a2f3a;
+  --tuner-disabled-fg: #888888;
 }
 
 *{box-sizing:border-box}
@@ -83,7 +89,7 @@ input,select{
   color:var(--tuner-text);
 }
 
-input:focus,select:focus,button:focus{
+input:focus-visible,select:focus-visible,button:focus-visible{
   outline:2px solid var(--tuner-focus);
   outline-offset:1px;
 }
@@ -126,7 +132,6 @@ ul{
   scrollbar-width: thin;
   scrollbar-color: var(--tuner-scrollbar-thumb) var(--tuner-scrollbar-track);
 }
-
 #queue-list .queue-item {
   display: flex;
   align-items: center;
@@ -137,26 +142,24 @@ ul{
   color: var(--tuner-text);
   background: transparent;
   cursor: default;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: background 0.12s ease;
 }
-
-#queue-list .queue-item:last-child {
-  border-bottom: none;
-}
-
+#queue-list .queue-item:last-child { border-bottom: none; }
 #queue-list .queue-item:hover {
   background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface));
 }
-
 #queue-list .queue-item.active {
   background: var(--tuner-accent);
   color: var(--tuner-accent-contrast);
 }
-
 #queue-list .queue-item.active:hover {
   background: var(--tuner-accent-hover, var(--tuner-accent));
 }
-
+#queue-list .queue-item:focus-visible {
+  outline: 2px solid var(--tuner-focus);
+  outline-offset: -2px;
+  z-index: 1;
+}
 #queue-list .queue-index {
   flex: 0 0 var(--q-index-w);
   font-size: var(--tuner-font-sm);
@@ -164,12 +167,10 @@ ul{
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-
 #queue-list .queue-item.active .queue-index {
   color: var(--tuner-accent-contrast);
   opacity: 0.85;
 }
-
 #queue-list .queue-title {
   flex: 1;
   min-width: 0;
@@ -177,7 +178,6 @@ ul{
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 li {
   padding: var(--tuner-space-xs, 4px) var(--tuner-space-sm, 6px);
   border-radius: var(--tuner-radius-sm, 4px);
@@ -187,89 +187,90 @@ li {
   gap: var(--tuner-space-sm, 6px);
   align-items: center;
 }
-
-li:hover,
-li.active {
+li:hover, li.active {
   background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface));
 }
-
 li.active {
   border-left: 3px solid var(--tuner-accent);
   padding-left: calc(var(--tuner-space-sm, 6px) - 3px);
 }
-
+li:focus-visible {
+  outline: 2px solid var(--tuner-focus);
+  outline-offset: 1px;
+}
 .empty {
   color: var(--tuner-text-muted);
   font-size: var(--tuner-font-sm, 12px);
   margin: var(--tuner-space-sm, 6px) 0;
 }
-
 .error {
   color: var(--tuner-danger);
   font-size: var(--tuner-font-sm, 12px);
 }
-
 .actions {
   display: flex;
   gap: var(--tuner-space-xs, 4px);
   flex-shrink: 0;
   margin-left: auto;
 }
-
-.layout,
-ul {
+.layout, ul {
   scrollbar-width: thin;
   scrollbar-color: var(--tuner-scrollbar-thumb) var(--tuner-scrollbar-track);
 }
-
-.layout::-webkit-scrollbar,
-ul::-webkit-scrollbar,
-#queue-list::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+.layout::-webkit-scrollbar, ul::-webkit-scrollbar, #queue-list::-webkit-scrollbar {
+  width: var(--tuner-scrollbar-size, 10px);
+  height: var(--tuner-scrollbar-size, 10px);
 }
-
-.layout::-webkit-scrollbar-track,
-ul::-webkit-scrollbar-track,
-#queue-list::-webkit-scrollbar-track {
+.layout::-webkit-scrollbar-track, ul::-webkit-scrollbar-track, #queue-list::-webkit-scrollbar-track {
   background: var(--tuner-scrollbar-track);
-  border-radius: var(--tuner-radius-sm, 4px);
+  border-radius: var(--tuner-scrollbar-radius, var(--tuner-radius-sm, 4px));
 }
-
-.layout::-webkit-scrollbar-thumb,
-ul::-webkit-scrollbar-thumb,
-#queue-list::-webkit-scrollbar-thumb {
+.layout::-webkit-scrollbar-thumb, ul::-webkit-scrollbar-thumb, #queue-list::-webkit-scrollbar-thumb {
   background: var(--tuner-scrollbar-thumb);
-  border-radius: var(--tuner-radius-sm, 4px);
+  border-radius: var(--tuner-scrollbar-radius, var(--tuner-radius-sm, 4px));
   border: 2px solid var(--tuner-scrollbar-track);
 }
-
-.layout::-webkit-scrollbar-thumb:hover,
-ul::-webkit-scrollbar-thumb:hover,
-#queue-list::-webkit-scrollbar-thumb:hover {
+.layout::-webkit-scrollbar-thumb:hover, ul::-webkit-scrollbar-thumb:hover, #queue-list::-webkit-scrollbar-thumb:hover {
   background: var(--tuner-scrollbar-thumb-hover);
 }
-
-.layout::-webkit-scrollbar-thumb:active,
-ul::-webkit-scrollbar-thumb:active,
-#queue-list::-webkit-scrollbar-thumb:active {
-  background: var(--tuner-accent-active, var(--tuner-scrollbar-thumb-hover));
+.layout::-webkit-scrollbar-thumb:active, ul::-webkit-scrollbar-thumb:active, #queue-list::-webkit-scrollbar-thumb:active {
+  background: var(--tuner-scrollbar-thumb-active, var(--tuner-accent-active, var(--tuner-accent)));
 }
-
-#theme-select {
-  flex: 0 1 auto;
-  min-width: 140px;
-  max-width: 220px;
+html, body {
+  background: var(--tuner-bg, var(--tuner-bg-app));
+  color: var(--tuner-fg, var(--tuner-text));
 }
-
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--tuner-focus);
+  outline-offset: 1px;
+}
+button:disabled {
+  background: var(--tuner-disabled-bg, var(--tuner-bg-surface-alt));
+  color: var(--tuner-disabled-fg, var(--tuner-text-muted));
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+button.primary {
+  background: var(--tuner-accent-500, var(--tuner-accent));
+  color: var(--tuner-on-accent, var(--tuner-accent-contrast));
+  border-color: var(--tuner-accent);
+}
+button.primary:hover {
+  background: var(--tuner-accent-600, var(--tuner-accent-hover, var(--tuner-accent)));
+}
+button.primary:active {
+  background: var(--tuner-accent-700, var(--tuner-accent-active, var(--tuner-accent)));
+}
+#player { background: var(--tuner-bg-app); }
 @media (prefers-contrast: more) {
   :root {
-    --tuner-border: var(--tuner-text);
+    --tuner-border: #c8d0dc;
+    --tuner-text-muted: #b0b8c4;
   }
-  button:focus,
-  input:focus,
-  select:focus {
+  button, input, select, .panel, ul {
+    border-width: 2px;
+  }
+  :focus-visible {
     outline-width: 3px;
   }
 }
-
