@@ -1,50 +1,48 @@
 # Queue UI Modernization Summary
 
+## Overview
+
+The playback queue was restyled to use theme tokens, clear hover/selected/active states, optional album-art thumbnails, drag-to-reorder handles, and theme-aware scrollbars.
+
 ## Files changed
 
-- src/main.js: queue-item template with queue-index, queue-title, optional queue-thumb (has-thumb, lazy load), ARIA listbox, setupQueueKeyboard, setupQueueDragDrop with queue-drag-handle and data-index
-- src/styles.css: tokenized queue states, scrollbars on .layout, ul, #queue-list, opt-in tuner-scrollbars class
-- tests/smoke.mjs, tests/queue/theme-hooks.vitest.mjs, tests/queue/queue-dnd.vitest.mjs, tests/theme-queue-scrollbar.vitest.mjs
-- scripts/repair-queue-ui.mjs
+| Path | Role |
+|------|------|
+| `src/main.js` | `renderQueue()`, keyboard nav, drag-drop, `tuner-scrollbars` class |
+| `src/styles.css` | Queue item layout, states, scrollbar tokens (`--tuner-scrollbar-*`) |
+| `src/theme/themeInternal.js` | Scrollbar thumb/track derived from theme shades |
+| `src/theme/themeManager.js` | Applies CSS vars on theme switch |
 
-## Theme tokens
+## Queue interaction states
 
-Runtime on :root via ThemeManager (src/theme/themeManager.js): tuner-bg-app, tuner-bg-surface, tuner-bg-surface-alt, tuner-text, tuner-text-muted, tuner-border, tuner-accent, tuner-accent-contrast, tuner-accent-600/700, tuner-focus, q-item-h, queue-thumb-size, tuner-scrollbar-track/thumb/thumb-hover/thumb-active/size/radius. Aliases: scrollbar-track, scrollbar-thumb, scrollbar-thumb-hover, scrollbar-thumb-active, scrollbar-thickness, scrollbar-radius.
+- **Default**: `--tuner-bg-surface`, `--tuner-text`
+- **Hover**: `--tuner-bg-hover`
+- **Selected** (keyboard focus): `.selected` + focus ring via `--tuner-focus`
+- **Active** (now playing): `--tuner-accent` tint
+- **Dragging / drag-over**: reduced opacity + accent border
 
-## Scrollbar opt-in
+## Scrollbars
 
-Default selectors: .layout, ul, #queue-list. Opt-in elsewhere: add class tuner-scrollbars. WebKit supports hover/active thumb variants; Firefox uses scrollbar-color only.
+- Class `.tuner-scrollbars` on `#queue-list` (reusable on other scroll regions)
+- Tokens: `--tuner-scrollbar-size`, `--tuner-scrollbar-radius`, track/thumb/hover/active
+- WebKit (`::-webkit-scrollbar*`) + Firefox (`scrollbar-color`) rules in `src/styles.css`
+- Theme switch updates thumb/track via `applyCssVars` — no queue re-render required
 
-## Interaction states
+## Optional thumbnails
 
-- `.queue-item:hover`, `:active`, `:focus-visible` — tokenized hover/press/focus
-- `.queue-item.selected` / `[aria-selected="true"]` — keyboard-focused row (`focusin` sync in `setupQueueKeyboard`)
-- `.queue-item.dragging`, `.drag-over` — DnD reorder feedback
-- `.queue-item.active` — currently playing track
+When `track.artwork` is present on a library item, a `.queue-thumb` image is rendered; no API changes.
 
-## Behaviors preserved
+## Manual test steps
 
-Add/remove (+Q, Delete), reorder (drag handle + Alt+Arrow), keyboard nav, mouse wheel scroll, thumbnails when track.artwork exists. store.js APIs unchanged. No virtualization.
+1. `npm run dev` — open app, add tracks to queue
+2. Verify hover/selected/active visuals and spacing
+3. Keyboard: ArrowUp/Down, Home/End, Delete, Alt+Arrow reorder
+4. Drag handle reorder; confirm order persists after refresh
+5. Switch themes — queue colors and scrollbar thumb update immediately
+6. `node tests/smoke.mjs` — static + runtime theme switch checks
 
 ## Limitations
 
-Firefox lacks scrollbar hover/active pseudo-elements. DnD uses drag handle. Thumbnails need track.artwork. OS scrollbars outside webview not themed.
-
-## Verification results (2026-09-19)
-
-- Evidence: `artifacts/logs/test-run.txt` (smoke + vitest output)
-- `node tests/smoke.mjs`: TOTAL_FAILURES=0 (queue-modern, theme-switch-runtime pass)
-- Vitest queue suite: 7/7 pass (theme-hooks, queue-dnd, theme-queue-scrollbar)
-- Git: f3ae39d feat(queue): theme-aware scrollbars; d5095e9 feat(queue): selected state styling
-- `.queue-item.selected` / `[aria-selected="true"]` synced via `setupQueueKeyboard` focusin handler
-
-## Large-queue performance
-
-No list virtualization. Queue renders one DOM node per track via `renderQueue()`. Styles use `background`/`outline` transitions on `.queue-item` (no width/height animation) to avoid layout thrash; DnD/keyboard handlers call `moveQueue` then a single `persist()` re-render. Expect linear cost ~O(n) for n items; 1000+ tracks may feel slower on low-end hardware—acceptable without virtualization per scope.
-
-## Test steps
-
-1. node tests/smoke.mjs (expect TOTAL_FAILURES:0)
-2. npm run test:node
-3. node scripts/run-vitest.mjs tests/queue/theme-hooks.vitest.mjs tests/queue/queue-dnd.vitest.mjs tests/theme-queue-scrollbar.vitest.mjs
-4. npm run dev for manual queue, keyboard, DnD, and theme switch check
+- Scrollbar styling is WebKit/Firefox only; no native styling on all platforms
+- Apply `.tuner-scrollbars` to additional lists for global modern scrollbars
+- No virtualization today; very large queues (1000+) may need a future virtual list
