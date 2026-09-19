@@ -1,15 +1,12 @@
-/** Canonical theme constants and CSS token map. */
 export const DEFAULT_THEME_ID = 'abyssal-console';
 export const THEME_PERSISTENCE_KEY = 'theme.selected';
-export const BUNDLED_THEME_GLOB = '../../Bundled themes json/*.json';
 
-export const REQUIRED_COLOR_KEYS = [
+export const THEME_KEYS = [
   'appBackground', 'surface', 'surfaceAlt', 'border', 'text', 'textMuted',
   'accent', 'accentContrast', 'focus', 'danger', 'warning', 'success',
   'scrollbarTrack', 'scrollbarThumb', 'scrollbarThumbHover',
 ];
 
-/** JSON field -> CSS custom property */
 export const COLOR_TO_CSS_VAR = {
   appBackground: '--tuner-bg-app',
   surface: '--tuner-bg-surface',
@@ -28,7 +25,6 @@ export const COLOR_TO_CSS_VAR = {
   scrollbarThumbHover: '--tuner-scrollbar-thumb-hover',
 };
 
-/** Non-color design tokens applied with every theme. */
 export const DESIGN_DEFAULTS = {
   '--tuner-radius-sm': '4px',
   '--tuner-radius-md': '8px',
@@ -44,7 +40,6 @@ export const DESIGN_DEFAULTS = {
   '--tuner-line-tight': '1.25',
 };
 
-/** Deterministic fallback when bundled JSON is missing or invalid. */
 export const FALLBACK_COLORS = {
   appBackground: '#02090e',
   surface: '#05131b',

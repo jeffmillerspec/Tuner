@@ -1,4 +1,4 @@
-/** Shade generation with WCAG contrast clamping. */
+/** WCAG contrast clamping. */
 
 export function clamp01(n) {
   return Math.max(0, Math.min(1, n));
@@ -78,7 +78,6 @@ export function ensureContrast(fg, bg, minRatio = 4.5) {
   return bestRatio >= contrastRatio(extreme, bg) ? best : extreme;
 }
 
-const SHADE_TARGETS = ['accent', 'surface', 'border', 'text'];
 const shadeCache = new Map();
 
 export function deriveShades(baseColor, bg, minRatio = 3.0) {
@@ -93,19 +92,20 @@ export function deriveShades(baseColor, bg, minRatio = 3.0) {
   return result;
 }
 
-export function computeColorShades(colors) {
-  const bg = colors.appBackground || colors.surface || '#000000';
-  const out = {};
-  for (const key of SHADE_TARGETS) {
-    if (colors[key]) out[key] = deriveShades(colors[key], bg);
-  }
-  return out;
+export function getShadesForTheme(theme) {
+  const bg = theme.appBackground ?? theme.surface ?? '#000000';
+  const accent = theme.accent ?? '#27d8c7';
+  const accentShades = deriveShades(accent, bg);
+  const thumb = theme.scrollbarThumb ?? accent;
+  return {
+    accentHover: accentShades.hover,
+    accentActive: accentShades.active,
+    disabledBg: mixHex(theme.surface ?? bg, bg, 0.5),
+    disabledFg: mixHex(theme.textMuted ?? theme.text ?? '#888888', bg, 0.4),
+    scrollbarThumbActive: darken(theme.scrollbarThumbHover ?? thumb, 0.12),
+  };
 }
 
 export function clearShadeCache() {
   shadeCache.clear();
-}
-
-export function getShadeCacheSize() {
-  return shadeCache.size;
 }

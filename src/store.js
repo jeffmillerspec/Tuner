@@ -15,3 +15,5 @@ export function setCurrent(d,id){return{...d,currentId:id}}
 export function trackById(d,id){return d.library.find(t=>t.id===id)||null}
 export function getState(){return load()}
 export function updateSettings(partial){const s=load();const next={...s,settings:{...(s.settings||{}),...partial}};save(next);return next}
+export function getThemeId(){return load().settings?.themeId??null}
+export function setThemeId(id){return updateSettings({themeId:id})}

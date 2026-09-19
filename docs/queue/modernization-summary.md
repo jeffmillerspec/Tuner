@@ -2,41 +2,30 @@
 
 ## Files changed
 
-| File | Changes |
-|------|---------|
-| `src/main.js` | Modern `#queue-list` items use `.queue-item`, `.queue-index`, `.queue-title`; ARIA `role=listbox` / `option`; `setupQueueKeyboard()` for arrow/Home/End/Delete; queue reorder via `rmq`; `boot()` unchanged for ThemeManager |
-| `src/styles.css` | Tokenized queue layout vars; hover/active/focus-visible states; reusable scrollbar rules on `.layout`, `ul`, `#queue-list` with hover/pressed thumb variants |
-| `scripts/repair-queue-ui.mjs` | Idempotent repair for truncated CSS/JS during development |
-| `tests/smoke.mjs` | `queue-modern` static check for queue JS/CSS markers |
-| `tests/theme-queue-scrollbar.vitest.mjs` | Runtime theme switch updates `--tuner-scrollbar-thumb` |
-| `tests/queue/theme-hooks.vitest.mjs` | CSS token references and theme hook smoke |
+- src/main.js: queue-item template with queue-index, queue-title, optional queue-thumb (has-thumb, lazy load), ARIA listbox, setupQueueKeyboard, setupQueueDragDrop with queue-drag-handle and data-index
+- src/styles.css: tokenized queue states, scrollbars on .layout, ul, #queue-list, opt-in tuner-scrollbars class
+- tests/smoke.mjs, tests/queue/theme-hooks.vitest.mjs, tests/queue/queue-dnd.vitest.mjs, tests/theme-queue-scrollbar.vitest.mjs
+- scripts/repair-queue-ui.mjs
 
-## Theme tokens used
+## Theme tokens
 
-- Surfaces/text: `--tuner-bg-surface-alt`, `--tuner-border`, `--tuner-text`, `--tuner-text-muted`, `--tuner-accent`, `--tuner-accent-contrast`, `--tuner-accent-hover`
-- Focus: `--tuner-focus`
-- Scrollbars: `--tuner-scrollbar-track`, `--tuner-scrollbar-thumb`, `--tuner-scrollbar-thumb-hover`, `--tuner-scrollbar-thumb-active`, `--tuner-scrollbar-size`, `--tuner-scrollbar-radius`
-- Spacing/type: `--tuner-space-*`, `--tuner-font-sm`, `--tuner-radius-sm`
+Runtime on :root via ThemeManager (src/theme/themeManager.js): tuner-bg-app, tuner-bg-surface, tuner-bg-surface-alt, tuner-text, tuner-text-muted, tuner-border, tuner-accent, tuner-accent-contrast, tuner-accent-600/700, tuner-focus, q-item-h, queue-thumb-size, tuner-scrollbar-track/thumb/thumb-hover/thumb-active/size/radius. Aliases: scrollbar-track, scrollbar-thumb, scrollbar-thumb-hover, scrollbar-thumb-active, scrollbar-thickness, scrollbar-radius.
 
-## Scrollbar styling scope
+## Scrollbar opt-in
 
-Modern scrollbars apply to **`.layout`**, all **`ul`**, and **`#queue-list`** so library/playlist/queue lists share the same token-driven chrome. Firefox uses `scrollbar-width` + `scrollbar-color`; WebKit uses `::-webkit-scrollbar*` with `:hover` and `:active` thumb states.
-
-**App-wide flag:** add class `tuner-scrollbars` to any scroll container and copy the shared block from `src/styles.css` (or extend the existing `.layout, ul` selector).
-
-**Limitations:** native OS overlay scrollbars may ignore custom styling; Tauri/WebView2 requires WebKit pseudo-elements; no drag-to-reorder (keyboard/mouse only); album thumbnails omitted (no artwork field on tracks).
-
-## Performance
-
-No list virtualization; full DOM render. Documented ~190ms for 5000-item stress in `docs/queue/smoke-report.md`. Re-render on queue mutation only; theme switches update CSS variables without rebuilding queue nodes.
-
-## Test steps
-
-1. `node tests/smoke.mjs` — expect `PASS:queue-modern`, `PASS:theme-switch-runtime`, `TOTAL_FAILURES:0`
-2. `npx vitest run tests/theme-queue-scrollbar.vitest.mjs tests/queue/theme-hooks.vitest.mjs` — 4 tests pass
-3. Manual: `npm run dev` → add tracks to queue → verify spacing, active row, focus ring (Tab/arrow keys), scrollbar colors
-4. Switch theme in header `#theme-select` → queue row and scrollbar colors update immediately without reload
+Default selectors: .layout, ul, #queue-list. Opt-in elsewhere: add class tuner-scrollbars. WebKit supports hover/active thumb variants; Firefox uses scrollbar-color only.
 
 ## Behaviors preserved
 
-Add (`+Q`), remove (`rmq`/Delete key), reorder (keyboard), play from queue, playlist load — no changes to `store.js` data model or public APIs.
+Add/remove (+Q, Delete), reorder (drag handle + Alt+Arrow), keyboard nav, mouse wheel scroll, thumbnails when track.artwork exists. store.js APIs unchanged. No virtualization.
+
+## Limitations
+
+Firefox lacks scrollbar hover/active pseudo-elements. DnD uses drag handle. Thumbnails need track.artwork. OS scrollbars outside webview not themed.
+
+## Test steps
+
+1. node tests/smoke.mjs (expect TOTAL_FAILURES:0)
+2. npm run test:node
+3. node scripts/run-vitest.mjs tests/queue/theme-hooks.vitest.mjs tests/queue/queue-dnd.vitest.mjs tests/theme-queue-scrollbar.vitest.mjs
+4. npm run dev for manual queue, keyboard, DnD, and theme switch check
