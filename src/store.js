@@ -1,5 +1,5 @@
 const KEY='tuner-data';
-const empty=()=>({library:[],playlists:[],queue:[],currentId:null,currentPlaylistId:null});
+const empty=()=>({library:[],playlists:[],queue:[],currentId:null,currentPlaylistId:null,settings:{themeId:null}});
 export function load(){try{return{...empty(),...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return empty()}}
 export function save(d){localStorage.setItem(KEY,JSON.stringify(d))}
 export function uid(){return crypto.randomUUID()}

@@ -1,90 +1,165 @@
-import {
-  load,
-  save,
-  uid,
-  addTracks,
-  createPlaylist,
-  deletePlaylist,
-  renamePlaylist,
-  addToPlaylist,
-  removeFromPlaylist,
-  reorderPlaylist,
-  loadPlaylistQueue,
-  setCurrent,
-  trackById,
-} from './store.js';
-import { mediaType, playTrack } from './player.js';
-import './playback-test.js';
-import { initTheme, applyTheme, listThemes, subscribe } from './theme/themeManager.js';
+import fs from 'fs';
 
-let state = load();
-if (!state.settings) state = { ...state, settings: { themeId: null } };
-const $ = (id) => document.getElementById(id);
-const player = $('player');
-
-function persist() {
-  save(state);
-  render();
+const CSS_TAIL = `
+#queue-list {
+  --q-item-h: 44px;
+  --q-gap: 8px;
+  --q-pad-x: 10px;
+  --q-radius: var(--tuner-radius-sm, 4px);
+  --q-index-w: 2.25rem;
+  max-height: 160px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--tuner-scrollbar-thumb) var(--tuner-scrollbar-track);
 }
 
-function renderThemeSelect() {
-  const ts = $('theme-select');
-  if (!ts) return;
-  const current = state.settings?.themeId;
-  ts.innerHTML = listThemes()
-    .map((t) => `<option value="${t.id}"${t.id === current ? ' selected' : ''}>${t.name}</option>`)
-    .join('');
+#queue-list .queue-item {
+  display: flex;
+  align-items: center;
+  gap: var(--q-gap);
+  min-height: var(--q-item-h);
+  padding: 0 var(--q-pad-x);
+  border-bottom: 1px solid var(--tuner-border);
+  color: var(--tuner-text);
+  background: transparent;
+  cursor: default;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 
-function render() {
-  document.querySelector('#app').dataset.ready = 'true';
-  renderThemeSelect();
+#queue-list .queue-item:last-child {
+  border-bottom: none;
+}
 
-  const sel = $('playlist-select');
-  sel.innerHTML =
-    '<option value="">Add to...</option>' +
-    state.playlists.map((p) => `<option value="${p.id}">${p.name}</option>`).join('');
+#queue-list .queue-item:hover {
+  background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface));
+}
 
-  const lib = $('library-list');
-  lib.innerHTML = '';
-  state.library.forEach((t) => {
-    const li = document.createElement('li');
-    li.className = state.currentId === t.id ? 'active' : '';
-    li.innerHTML = `<span>${t.name}</span><span class="actions"><button data-a="play" data-id="${t.id}">Play</button><button data-a="q" data-id="${t.id}">+Q</button><button data-a="addpl" data-id="${t.id}">+PL</button></span>`;
-    lib.appendChild(li);
-  });
-  $('library-empty').style.display = state.library.length ? 'none' : 'block';
+#queue-list .queue-item.active {
+  background: var(--tuner-accent);
+  color: var(--tuner-accent-contrast);
+}
 
-  const pl = $('playlist-list');
-  pl.innerHTML = '';
-  let missingTotal = 0;
-  state.playlists.forEach((p) => {
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${p.name} (${p.trackIds.length})</span><span class="actions"><button data-a="loadpl" data-id="${p.id}">Load</button><button data-a="delpl" data-id="${p.id}">Del</button></span>`;
-    pl.appendChild(li);
+#queue-list .queue-item.active:hover {
+  background: var(--tuner-accent-hover, var(--tuner-accent));
+}
 
-    const sub = document.createElement('ul');
-    p.trackIds.forEach((tid, i) => {
-      const tr = trackById(state, tid);
-      if (!tr) {
-        missingTotal += 1;
-        return;
-      }
-      const s = document.createElement('li');
-      s.innerHTML = `<span>${i + 1}. ${tr.name}</span><span class="actions"><button data-a="play" data-id="${tid}">Play</button><button data-a="up" data-pid="${p.id}" data-i="${i}">Up</button><button data-a="down" data-pid="${p.id}" data-i="${i}">Dn</button><button data-a="rmpl" data-pid="${p.id}" data-id="${tid}">X</button></span>`;
-      sub.appendChild(s);
-    });
-    pl.appendChild(sub);
-  });
+#queue-list .queue-index {
+  flex: 0 0 var(--q-index-w);
+  font-size: var(--tuner-font-sm);
+  color: var(--tuner-text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 
-  if (missingTotal) {
-    $('playlist-error').hidden = false;
-    $('playlist-error').textContent = `${missingTotal} missing track(s) in library`;
-  } else {
-    $('playlist-error').hidden = true;
-    $('playlist-error').textContent = '';
+#queue-list .queue-item.active .queue-index {
+  color: var(--tuner-accent-contrast);
+  opacity: 0.85;
+}
+
+#queue-list .queue-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+li {
+  padding: var(--tuner-space-xs, 4px) var(--tuner-space-sm, 6px);
+  border-radius: var(--tuner-radius-sm, 4px);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--tuner-space-sm, 6px);
+  align-items: center;
+}
+
+li:hover,
+li.active {
+  background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface));
+}
+
+li.active {
+  border-left: 3px solid var(--tuner-accent);
+  padding-left: calc(var(--tuner-space-sm, 6px) - 3px);
+}
+
+.empty {
+  color: var(--tuner-text-muted);
+  font-size: var(--tuner-font-sm, 12px);
+  margin: var(--tuner-space-sm, 6px) 0;
+}
+
+.error {
+  color: var(--tuner-danger);
+  font-size: var(--tuner-font-sm, 12px);
+}
+
+.actions {
+  display: flex;
+  gap: var(--tuner-space-xs, 4px);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.layout,
+ul {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tuner-scrollbar-thumb) var(--tuner-scrollbar-track);
+}
+
+.layout::-webkit-scrollbar,
+ul::-webkit-scrollbar,
+#queue-list::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.layout::-webkit-scrollbar-track,
+ul::-webkit-scrollbar-track,
+#queue-list::-webkit-scrollbar-track {
+  background: var(--tuner-scrollbar-track);
+  border-radius: var(--tuner-radius-sm, 4px);
+}
+
+.layout::-webkit-scrollbar-thumb,
+ul::-webkit-scrollbar-thumb,
+#queue-list::-webkit-scrollbar-thumb {
+  background: var(--tuner-scrollbar-thumb);
+  border-radius: var(--tuner-radius-sm, 4px);
+  border: 2px solid var(--tuner-scrollbar-track);
+}
+
+.layout::-webkit-scrollbar-thumb:hover,
+ul::-webkit-scrollbar-thumb:hover,
+#queue-list::-webkit-scrollbar-thumb:hover {
+  background: var(--tuner-scrollbar-thumb-hover);
+}
+
+.layout::-webkit-scrollbar-thumb:active,
+ul::-webkit-scrollbar-thumb:active,
+#queue-list::-webkit-scrollbar-thumb:active {
+  background: var(--tuner-accent-active, var(--tuner-scrollbar-thumb-hover));
+}
+
+#theme-select {
+  flex: 0 1 auto;
+  min-width: 140px;
+  max-width: 220px;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --tuner-border: var(--tuner-text);
   }
-  
+  button:focus,
+  input:focus,
+  select:focus {
+    outline-width: 3px;
+  }
+}
+`;
+
+const MAIN_TAIL = `
   $('playlist-empty').style.display = state.playlists.length ? 'none' : 'block';
 
   const q = $('queue-list');
@@ -146,9 +221,9 @@ async function importPaths(paths) {
   if (!paths?.length) return;
   const tracks = paths.map((p) => ({
     id: uid(),
-    name: p.split(/[\/]/).pop(),
+    name: p.split(/[\\/]/).pop(),
     path: p,
-    type: mediaType(p.split(/[\/]/).pop()),
+    type: mediaType(p.split(/[\\/]/).pop()),
   }));
   state = addTracks(state, tracks);
   persist();
@@ -265,3 +340,30 @@ async function boot() {
 }
 
 boot();
+`;
+
+function repairCss() {
+  const cssPath = 'src/styles.css';
+  const css = fs.readFileSync(cssPath, 'utf8');
+  const marker = '#queue-list{';
+  const idx = css.indexOf(marker);
+  if (idx < 0) throw new Error('queue-list marker missing in styles.css');
+  fs.writeFileSync(cssPath, css.slice(0, idx) + CSS_TAIL.trimStart() + '\n');
+}
+
+function repairMain() {
+  const mainPath = 'src/main.js';
+  let main = fs.readFileSync(mainPath, 'utf8');
+  const cut = main.search(/\$\('playlist-empty'\)\.s/);
+  if (cut < 0) {
+    const dup = main.indexOf('function queueAdd(id)', main.indexOf('function queueAdd(id)') + 1);
+    if (dup > 0) main = main.slice(0, dup);
+  } else {
+    main = main.slice(0, cut);
+  }
+  fs.writeFileSync(mainPath, main + MAIN_TAIL);
+}
+
+repairCss();
+repairMain();
+console.log('repair-queue-ui: ok');
