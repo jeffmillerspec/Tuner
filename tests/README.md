@@ -1,8 +1,9 @@
-# Tuner smoke tests
+# Tuner tests and smoke
 
-Run from repo root:
+Primary: npm run test:all (after npm ci)
 
-    node tests/smoke.mjs
-    npm test
+Full report: npm test writes tests/reports/test-results.txt
 
-Latest verified run: 12 checks, TOTAL_FAILURES:0.
+See docs/TESTING.md for commands and artifacts.
+
+Requires Node 18+, vitest, happy-dom. No secrets required.

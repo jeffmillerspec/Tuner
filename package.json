@@ -7,10 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "tauri": "tauri",
-    "smoke": "node tests/smoke.mjs",
-    "smoke": "node tests/smoke.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:static": "node tests/smoke.mjs",
+    "smoke:full": "powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1",
     "test": "node scripts/npm-test-wrapper.mjs",
-    "test:smoke": "node tests/smoke.mjs",
+    "test:node": "node --test tests/theme-validate.test.mjs tests/theme-shades.test.mjs tests/theme-persist.test.mjs",
+    "test:vitest": "node scripts/run-vitest.mjs",
+    "test:unit": "npm run test:node && npm run test:vitest",
+    "test:all": "npm run test:unit && npm run smoke",
+    "test:smoke": "node scripts/smoke.mjs",
     "tauri:build": "tauri build",
     "release:stage": "node scripts/stage-release-installer.mjs",
     "release:build": "npm test && npm run tauri:build && npm run release:stage"
@@ -21,6 +26,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",
+    "happy-dom": "^15.11.7",
     "vite": "^6.0.0",
     "vitest": "^3.0.0"
   }

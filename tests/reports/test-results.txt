@@ -1,0 +1,57 @@
+timestamp=2026-09-19T12:08:03.990Z
+exit_code=0
+node_test=0
+vitest=0
+smoke=0
+
+[node:test]
+✔ initTheme applies default when persistence absent (4.9339ms)
+✔ initTheme falls back when persisted id invalid (0.4238ms)
+✔ persistence round-trip via applyTheme (0.6675ms)
+✔ parseHex validates input (7.6641ms)
+✔ lighten and darken (0.3184ms)
+✔ near-white and near-black edge cases (1.7375ms)
+✔ invalid input returns safe values (0.2496ms)
+✔ contrastRatio black on white (0.2533ms)
+✔ ensureContrast improves low contrast (0.4705ms)
+✔ computeColorShades deterministic (0.7131ms)
+✔ shade cache avoids recompute (0.1986ms)
+✔ validateTheme accepts complete theme (4.8567ms)
+✔ validateTheme fills missing colors deterministically (0.5667ms)
+✔ parseThemeJson rejects malformed JSON (0.2546ms)
+✔ fallbackTheme is deterministic default (1.016ms)
+✔ theme schema file exists (0.6623ms)
+✔ no absolute path literals in theme modules (0.6074ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1346.468
+
+[vitest]
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mF:/Dev/Tuner[39m
+
+ [32m✓[39m tests/smoke.vitest.mjs[2m > [22msmoke theme runtime[2m > [22minitTheme sets CSS variables[32m 222[2mms[22m[39m
+ [32m✓[39m tests/smoke.vitest.mjs[2m > [22msmoke theme runtime[2m > [22mapplyTheme switches theme id[32m 275[2mms[22m[39m
+ [32m✓[39m tests/smoke.vitest.mjs[2m > [22msmoke static[2m > [22msmoke.mjs exits 0 and reports zero failures[33m 12410[2mms[22m[39m
+ [32m✓[39m tests/theme-queue-scrollbar.vitest.mjs[2m > [22mqueue scrollbar tokens[2m > [22mCSS uses theme scrollbar variables on queue[32m 35[2mms[22m[39m
+ [32m✓[39m tests/theme-queue-scrollbar.vitest.mjs[2m > [22mqueue scrollbar tokens[2m > [22mtheme switch updates scrollbar thumb token[32m 292[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 07:06:53
+[2m   Duration [22m 51.90s[2m (transform 3.80s, setup 0ms, collect 9.94s, tests 13.41s, environment 17.81s, prepare 4.19s)[22m
+
+
+[smoke]
+PASS:smoke-script
+PASS:theme-unit-files
+PASS:vitest-runtime-files
+PASS:queue-modern
+PASS:reports-wrapper
+PASS:theme-switch-runtime
+TOTAL_FAILURES:0
