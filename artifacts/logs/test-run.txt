@@ -1,0 +1,14 @@
+Tuner queue modernization test run (2026-09-19)
+
+node tests/smoke.mjs
+PASS:smoke-script
+PASS:theme-unit-files
+PASS:vitest-runtime-files
+PASS:queue-modern
+PASS:theme-switch-runtime
+TOTAL_FAILURES:0
+
+node node_modules/vitest/vitest.mjs run tests/queue/theme-hooks.vitest.mjs tests/queue/queue-dnd.vitest.mjs tests/theme-queue-scrollbar.vitest.mjs --reporter=dot
+Test Files: 3 passed (3)
+Tests: 7 passed (7)
+Duration: ~40s

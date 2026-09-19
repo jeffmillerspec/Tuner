@@ -15,6 +15,13 @@ Runtime on :root via ThemeManager (src/theme/themeManager.js): tuner-bg-app, tun
 
 Default selectors: .layout, ul, #queue-list. Opt-in elsewhere: add class tuner-scrollbars. WebKit supports hover/active thumb variants; Firefox uses scrollbar-color only.
 
+## Interaction states
+
+- `.queue-item:hover`, `:active`, `:focus-visible` — tokenized hover/press/focus
+- `.queue-item.selected` / `[aria-selected="true"]` — keyboard-focused row (`focusin` sync in `setupQueueKeyboard`)
+- `.queue-item.dragging`, `.drag-over` — DnD reorder feedback
+- `.queue-item.active` — currently playing track
+
 ## Behaviors preserved
 
 Add/remove (+Q, Delete), reorder (drag handle + Alt+Arrow), keyboard nav, mouse wheel scroll, thumbnails when track.artwork exists. store.js APIs unchanged. No virtualization.
@@ -25,9 +32,11 @@ Firefox lacks scrollbar hover/active pseudo-elements. DnD uses drag handle. Thum
 
 ## Verification results (2026-09-19)
 
+- Evidence: `artifacts/logs/test-run.txt` (smoke + vitest output)
 - `node tests/smoke.mjs`: TOTAL_FAILURES=0 (queue-modern, theme-switch-runtime pass)
 - Vitest queue suite: 7/7 pass (theme-hooks, queue-dnd, theme-queue-scrollbar)
-- Git: f3ae39d feat(queue): theme-aware scrollbars and drag-state CSS
+- Git: f3ae39d feat(queue): theme-aware scrollbars; d5095e9 feat(queue): selected state styling
+- `.queue-item.selected` / `[aria-selected="true"]` synced via `setupQueueKeyboard` focusin handler
 
 ## Large-queue performance
 

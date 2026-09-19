@@ -1,1 +1,87 @@
-import{DEFAULT_THEME_ID,THEME_PERSISTENCE_KEY,COLOR_TO_CSS_VAR}from'./constants.js';import{loadBundledThemes,getThemesMap,resolveDefaultThemeId,resolveThemeId,getShadesForTheme,buildTokens,applyCssVars,resetThemeCaches,bundledThemeModules}from'./themeInternal.js';const themes=getThemesMap();const listeners=new Set();const state={currentTheme:null,currentTokens:{},persistence:{getThemeId:()=>null,setThemeId:()=>{}}};function notify(){const p={theme:state.currentTheme,tokens:{...state.currentTokens}};for(const fn of listeners){try{fn(p);}catch(e){console.warn(e);}}}function pick(v){return v==null||v===''?null:String(v);}export function subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}export function unsubscribe(fn){listeners.delete(fn);}export function getToken(n,f=null){if(!n)return f;if(n in state.currentTokens)return pick(state.currentTokens[n]);const cv=COLOR_TO_CSS_VAR[n];if(cv&&state.currentTokens[cv])return pick(state.currentTokens[cv]);return f;}export function getTheme(){return state.currentTheme;}export function listThemes(){return[...themes.values()].map(t=>({id:t.id,name:t.name})).sort((a,b)=>a.name.localeCompare(b.name));}export function applyTheme(x){const id=resolveThemeId(x);const t=themes.get(id)||themes.get(DEFAULT_THEME_ID);if(!t)return applyTheme(DEFAULT_THEME_ID);const s=getShadesForTheme(t);state.currentTheme=t;state.currentTokens=buildTokens(t,s);applyCssVars(state.currentTokens);notify();try{state.persistence.setThemeId?.(id);}catch(_){}try{if(typeof localStorage!=='undefined')localStorage.setItem(THEME_PERSISTENCE_KEY,id);}catch(_){}return id;}export async function reloadThemes(){resetThemeCaches();loadBundledThemes();return applyTheme(state.currentTheme?.id||state.persistence.getThemeId?.()||resolveDefaultThemeId());}export async function initTheme({getThemeId,setThemeId}={}){state.persistence={getThemeId:getThemeId||(()=>null),setThemeId:setThemeId||(()=>{})};loadBundledThemes();let p=null;try{p=state.persistence.getThemeId?.();}catch(_){}if(!p&&typeof localStorage!=='undefined'){try{p=localStorage.getItem(THEME_PERSISTENCE_KEY);}catch(_){}}const id=applyTheme(p||resolveDefaultThemeId());if(typeof document!=='undefined')document.documentElement.dataset.themeReady='true';return id;}export default{getToken,subscribe,applyTheme};
+import { DEFAULT_THEME_ID, COLOR_TO_CSS_VAR } from './constants.js';
+import { loadBundledThemes, buildTokens, applyCssVars, resetThemeCaches } from './themeInternal.js';
+
+const state = { themes: [], currentId: DEFAULT_THEME_ID, tokens: {}, persistence: { getThemeId: () => null, setThemeId: () => {} } };
+const listeners = new Set();
+
+function resolveDefaultThemeId() {
+  return state.themes.some((t) => t.id === DEFAULT_THEME_ID) ? DEFAULT_THEME_ID : (state.themes[0]?.id ?? DEFAULT_THEME_ID);
+}
+
+function resolveThemeRef(idOrSpec) {
+  if (idOrSpec == null) return null;
+  if (typeof idOrSpec === 'object') {
+    if (idOrSpec.id && state.themes.some((t) => t.id === idOrSpec.id)) return idOrSpec.id;
+    if (idOrSpec.name) {
+      const hit = state.themes.find((t) => t.name === idOrSpec.name);
+      if (hit) return hit.id;
+    }
+    return null;
+  }
+  if (typeof idOrSpec === 'string') {
+    if (state.themes.some((t) => t.id === idOrSpec)) return idOrSpec;
+    const hit = state.themes.find((t) => t.name === idOrSpec);
+    if (hit) return hit.id;
+  }
+  return null;
+}
+
+export function listThemes() { return state.themes.map(({ id, name }) => ({ id, name: name || id })); }
+
+export function reloadThemes() {
+  resetThemeCaches();
+  state.themes = loadBundledThemes();
+  applyTheme(state.currentId, { persist: false });
+  return listThemes();
+}
+
+export function getTheme() {
+  return state.themes.find((t) => t.id === state.currentId) || state.themes[0] || null;
+}
+
+export function getToken(name, fallback) {
+  if (name == null) return fallback;
+  const key = name.startsWith('--') ? name : COLOR_TO_CSS_VAR[name];
+  if (key) {
+    const val = state.tokens[key];
+    if (val != null && val !== '') return val;
+  }
+  const direct = state.tokens[name];
+  if (direct != null && direct !== '') return direct;
+  return fallback;
+}
+
+export function subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); }
+
+function notify() {
+  const theme = getTheme();
+  for (const fn of listeners) { try { fn({ theme, tokens: { ...state.tokens } }); } catch (_) {} }
+}
+
+export function applyTheme(idOrSpec, opts = {}) {
+  const persist = opts.persist !== false;
+  const resolved = resolveThemeRef(idOrSpec);
+  const theme = state.themes.find((t) => t.id === resolved)
+    || state.themes.find((t) => t.id === DEFAULT_THEME_ID)
+    || state.themes[0];
+  if (!theme) return state.currentId;
+  state.currentId = theme.id;
+  state.tokens = buildTokens(theme);
+  applyCssVars(state.tokens);
+  if (persist) { try { state.persistence.setThemeId(state.currentId); } catch (_) {} }
+  notify();
+  return state.currentId;
+}
+
+export async function initTheme({ getThemeId, setThemeId } = {}) {
+  resetThemeCaches();
+  state.persistence = { getThemeId: getThemeId ?? (() => null), setThemeId: setThemeId ?? (() => {}) };
+  state.themes = loadBundledThemes();
+  const persisted = state.persistence.getThemeId?.();
+  const initial = state.themes.some((t) => t.id === persisted) ? persisted : resolveDefaultThemeId();
+  applyTheme(initial, { persist: false });
+  if (typeof document !== 'undefined' && document.documentElement) {
+    document.documentElement.dataset.themeReady = 'true';
+  }
+  return state.currentId;
+}

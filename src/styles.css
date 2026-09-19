@@ -211,15 +211,70 @@ button.primary:active {
   background: var(--tuner-accent-700, var(--tuner-accent-active, var(--tuner-accent)));
 }
 #player { background: var(--tuner-bg-app); }
+
+ul li,
+ol li {
+  color: var(--tuner-text, var(--tuner-fg));
+}
+ul li:hover,
+ol li:hover {
+  background: var(--tuner-bg-surface-alt, var(--tuner-surface));
+}
+ul li:active,
+ol li:active {
+  background: var(--tuner-bg-surface-alt, var(--tuner-surface));
+}
+ul li:focus-visible,
+ol li:focus-visible {
+  outline: 2px solid var(--tuner-focus-ring, var(--tuner-focus));
+  outline-offset: 1px;
+}
+
+.dialog,
+[role='dialog'],
+.tooltip,
+[role='tooltip'],
+menu,
+[role='menu'] {
+  background: var(--tuner-surface, var(--tuner-bg-surface));
+  color: var(--tuner-fg, var(--tuner-text));
+  border: 1px solid var(--tuner-border-strong, var(--tuner-border));
+}
+
 @media (prefers-contrast: more) {
   :root {
-    --tuner-border: #c8d0dc;
-    --tuner-text-muted: #b0b8c4;
+    --tuner-border: color-mix(in oklab, var(--tuner-border) 60%, var(--tuner-fg));
+    --tuner-focus-ring: color-mix(in oklab, var(--tuner-focus-ring, var(--tuner-focus)) 70%, var(--tuner-fg));
+    --tuner-text-muted: color-mix(in oklab, var(--tuner-text-muted) 50%, var(--tuner-fg));
   }
-  button, input, select, .panel, ul {
+  :where(button, input, select, textarea):focus-visible {
+    outline-width: 3px;
+  }
+  .panel,
+  input,
+  select,
+  textarea,
+  ul,
+  li {
+    border-color: var(--tuner-border-strong, var(--tuner-border));
     border-width: 2px;
   }
-  :focus-visible {
-    outline-width: 3px;
+}
+
+@media (forced-colors: active) {
+  :root {
+    forced-color-adjust: none;
+  }
+  body {
+    background: Canvas;
+    color: CanvasText;
+  }
+  :focus-visible,
+  :where(button, input, select, textarea):focus-visible,
+  li:focus-visible {
+    outline-color: CanvasText !important;
+  }
+  :where(button, input, select, textarea, .panel) {
+    border-width: 1px;
   }
 }

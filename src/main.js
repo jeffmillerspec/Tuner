@@ -21,6 +21,14 @@ function ensureQueueLiveRegion() { if ($('queue-live')) return; const live = doc
 
 function setupQueueKeyboard() {
   const q = $('queue-list'); if (!q || q.dataset.kbBound) return; q.dataset.kbBound = '1';
+  const syncQueueSelection = () => {
+    q.querySelectorAll('.queue-item').forEach((el) => {
+      const sel = el === document.activeElement;
+      el.classList.toggle('selected', sel);
+      el.setAttribute('aria-selected', sel ? 'true' : 'false');
+    });
+  };
+  q.addEventListener('focusin', syncQueueSelection);
   q.addEventListener('keydown', (e) => {
     const items = [...q.querySelectorAll('.queue-item')];
     const active = document.activeElement.closest?.('.queue-item') || document.activeElement;

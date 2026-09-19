@@ -1,14 +1,5 @@
-Queue modernization test evidence (2026-09-19)
-
-node tests/smoke.mjs
-PASS:smoke-script
-PASS:theme-unit-files
-PASS:vitest-runtime-files
-PASS:queue-modern
-PASS:theme-switch-runtime
-TOTAL_FAILURES:0
-
-node node_modules/vitest/vitest.mjs run tests/queue/theme-hooks.vitest.mjs tests/queue/queue-dnd.vitest.mjs tests/theme-queue-scrollbar.vitest.mjs --reporter=dot
-Test Files: 3 passed (3)
-Tests: 7 passed (7)
-Duration: ~12s
+Queue vitest suite (theme-hooks, queue-dnd, theme-queue-scrollbar)
+Run: node node_modules/vitest/vitest.mjs run tests/queue/theme-hooks.vitest.mjs tests/queue/queue-dnd.vitest.mjs tests/theme-queue-scrollbar.vitest.mjs --reporter=dot
+Expected: 3 files, 7 tests passed
+Smoke: node tests/smoke.mjs TOTAL_FAILURES=0
+Commit: d5095e9 selected state styling
