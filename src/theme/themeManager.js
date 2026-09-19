@@ -85,3 +85,10 @@ export async function initTheme({ getThemeId, setThemeId } = {}) {
   }
   return state.currentId;
 }
+
+export { parseThemeJson, validateTheme } from './validate.js';
+export {
+  computeColorShades as generateShades,
+  ensureContrast as clampContrast,
+  contrastRatio,
+} from './shades.js';

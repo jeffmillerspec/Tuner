@@ -52,6 +52,48 @@ button:hover { background: var(--tuner-accent-hover, var(--tuner-accent-600, var
 button:active { background: var(--tuner-accent-pressed, var(--tuner-accent-700, var(--tuner-accent))); }
 button:disabled { background: var(--tuner-disabled-bg); color: var(--tuner-disabled-fg); opacity: 0.75; cursor: not-allowed; }
 button:focus-visible { outline: 2px solid var(--tuner-focus-ring, var(--tuner-focus)); outline-offset: 1px; }
+
+li { padding: 4px 8px; border-radius: 4px; }
+li.active { background: var(--tuner-accent-500, var(--accent)); color: var(--tuner-on-accent, var(--tuner-accent-contrast)); }
+.empty, .error { color: var(--muted-fg, var(--tuner-text-muted)); }
+.actions { display: flex; gap: 4px; flex-shrink: 0; }
+.actions button { font-size: 12px; padding: 2px 6px; }
+
+#queue-list { max-height: 160px; overflow: auto; list-style: none; margin: 0; padding: 0; }
+#queue-list .queue-item { display: flex; align-items: center; gap: 8px; min-height: var(--q-item-h, 44px); padding: 0 10px; border-bottom: 1px solid var(--tuner-border); color: var(--tuner-text); transition: background 0.12s ease; }
+#queue-list .queue-item:hover:not(.active) { background: var(--tuner-bg-surface-alt); }
+#queue-list .queue-item.selected:not(.active) { background: var(--tuner-bg-surface-alt); box-shadow: inset 0 0 0 1px var(--tuner-focus); }
+#queue-list .queue-item.active { background: var(--tuner-accent-500, var(--accent)); color: var(--tuner-on-accent, var(--tuner-accent-contrast)); }
+#queue-list .queue-item:focus-visible { outline: 2px solid var(--tuner-focus-ring, var(--tuner-focus)); outline-offset: -2px; }
+#queue-list .queue-item.dragging { opacity: 0.55; }
+#queue-list .queue-item.drag-over { box-shadow: inset 0 2px 0 var(--tuner-accent); }
+#queue-list .queue-index { flex: 0 0 2.25rem; font-size: 12px; color: var(--tuner-text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+#queue-list .queue-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#queue-list .queue-thumb { width: var(--queue-thumb-size); height: var(--queue-thumb-size); border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+.queue-drag-handle { flex: 0 0 auto; cursor: grab; padding: 0 4px; color: var(--tuner-text-muted); background: transparent; border: none; user-select: none; }
+.queue-drag-handle:active { cursor: grabbing; }
+#queue-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.tuner-scrollbars, .layout, ul, #queue-list { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
+.tuner-scrollbars::-webkit-scrollbar, .layout::-webkit-scrollbar, ul::-webkit-scrollbar, #queue-list::-webkit-scrollbar { width: var(--scrollbar-thickness); height: var(--scrollbar-thickness); }
+.tuner-scrollbars::-webkit-scrollbar-track, .layout::-webkit-scrollbar-track, ul::-webkit-scrollbar-track, #queue-list::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: var(--scrollbar-radius); }
+.tuner-scrollbars::-webkit-scrollbar-thumb, .layout::-webkit-scrollbar-thumb, ul::-webkit-scrollbar-thumb, #queue-list::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: var(--scrollbar-radius); }
+.tuner-scrollbars::-webkit-scrollbar-thumb:hover, .layout::-webkit-scrollbar-thumb:hover, ul::-webkit-scrollbar-thumb:hover, #queue-list::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+.tuner-scrollbars::-webkit-scrollbar-thumb:active, .layout::-webkit-scrollbar-thumb:active, ul::-webkit-scrollbar-thumb:active, #queue-list::-webkit-scrollbar-thumb:active { background: var(--scrollbar-thumb-active); }
+
+.dialog, .tooltip, .menu { background: var(--surface, var(--tuner-bg-surface)); color: var(--fg, var(--tuner-text)); border: 1px solid var(--tuner-border); box-shadow: 0 4px 16px rgba(0,0,0,0.35); }
+.menu { list-style: none; margin: 0; padding: 4px; }
+.menu li:hover, .menu li:focus-visible { background: var(--tuner-bg-surface-alt); outline: 2px solid var(--tuner-focus); outline-offset: -2px; }
+
+@media (prefers-contrast: more) {
+  input, select, button, .panel { border-width: 2px; }
+  button:focus-visible, input:focus-visible, select:focus-visible, .queue-item:focus-visible { outline-width: 3px; }
+}
+
+@media (forced-colors: active) {
+  button, input, select, .panel, header { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid Highlight; }
+}isible { outline: 2px solid var(--tuner-focus-ring, var(--tuner-focus)); outline-offset: 1px; }
 #queue-list {
   --q-item-h: 44px;
   --q-gap: 8px;
