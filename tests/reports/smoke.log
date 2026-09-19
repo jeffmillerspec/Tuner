@@ -1,0 +1,8 @@
+PASS:smoke-script
+PASS:theme-ui
+PASS:theme-ready-boot
+PASS:theme-manager-api
+PASS:store-theme-persist
+PASS:theme-tokens-css
+PASS:theme-switch-runtime
+TOTAL_FAILURES:0
