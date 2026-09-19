@@ -1,11 +1,18 @@
 import { DEFAULT_THEME_ID, COLOR_TO_CSS_VAR } from './constants.js';
 import { loadBundledThemes, buildTokens, applyCssVars, resetThemeCaches } from './themeInternal.js';
 
-const state = { themes: [], currentId: DEFAULT_THEME_ID, tokens: {}, persistence: { getThemeId: () => null, setThemeId: () => {} } };
+const state = {
+  themes: [],
+  currentId: DEFAULT_THEME_ID,
+  tokens: {},
+  persistence: { getThemeId: () => null, setThemeId: () => {} },
+};
 const listeners = new Set();
 
 function resolveDefaultThemeId() {
-  return state.themes.some((t) => t.id === DEFAULT_THEME_ID) ? DEFAULT_THEME_ID : (state.themes[0]?.id ?? DEFAULT_THEME_ID);
+  return state.themes.some((t) => t.id === DEFAULT_THEME_ID)
+    ? DEFAULT_THEME_ID
+    : (state.themes[0]?.id ?? DEFAULT_THEME_ID);
 }
 
 function resolveThemeRef(idOrSpec) {
@@ -26,7 +33,9 @@ function resolveThemeRef(idOrSpec) {
   return null;
 }
 
-export function listThemes() { return state.themes.map(({ id, name }) => ({ id, name: name || id })); }
+export function listThemes() {
+  return state.themes.map(({ id, name }) => ({ id, name: name || id }));
+}
 
 export function reloadThemes() {
   resetThemeCaches();
@@ -51,15 +60,20 @@ export function getToken(name, fallback) {
   return fallback;
 }
 
-export function subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); }
+export function subscribe(fn) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
 
 function notify() {
   const theme = getTheme();
-  for (const fn of listeners) { try { fn({ theme, tokens: { ...state.tokens } }); } catch (_) {} }
+  for (const fn of listeners) {
+    try { fn({ theme, tokens: { ...state.tokens } }); } catch (_) {}
+  }
 }
 
 export function applyTheme(idOrSpec, opts = {}) {
-  const persist = opts.persist !== false;
+  const persist = opts.persist === true;
   const resolved = resolveThemeRef(idOrSpec);
   const theme = state.themes.find((t) => t.id === resolved)
     || state.themes.find((t) => t.id === DEFAULT_THEME_ID)
@@ -68,27 +82,22 @@ export function applyTheme(idOrSpec, opts = {}) {
   state.currentId = theme.id;
   state.tokens = buildTokens(theme);
   applyCssVars(state.tokens);
-  if (persist) { try { state.persistence.setThemeId(state.currentId); } catch (_) {} }
+  if (persist) {
+    try { state.persistence.setThemeId(state.currentId); } catch (_) {}
+  }
   notify();
   return state.currentId;
 }
 
 export async function initTheme({ getThemeId, setThemeId } = {}) {
   resetThemeCaches();
-  state.persistence = { getThemeId: getThemeId ?? (() => null), setThemeId: setThemeId ?? (() => {}) };
+  state.persistence = {
+    getThemeId: getThemeId ?? (() => null),
+    setThemeId: setThemeId ?? (() => {}),
+  };
   state.themes = loadBundledThemes();
   const persisted = state.persistence.getThemeId?.();
   const initial = state.themes.some((t) => t.id === persisted) ? persisted : resolveDefaultThemeId();
   applyTheme(initial, { persist: false });
-  if (typeof document !== 'undefined' && document.documentElement) {
-    document.documentElement.dataset.themeReady = 'true';
-  }
   return state.currentId;
 }
-
-export { parseThemeJson, validateTheme } from './validate.js';
-export {
-  computeColorShades as generateShades,
-  ensureContrast as clampContrast,
-  contrastRatio,
-} from './shades.js';

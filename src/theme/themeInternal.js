@@ -1,95 +1,127 @@
-import {
-  DEFAULT_THEME_ID,
-  COLOR_TO_CSS_VAR,
-  DESIGN_DEFAULTS,
-  FALLBACK_THEME_RAW,
-  THEME_KEYS,
-} from './constants.js';
-import { getShadesForTheme, clearShadeCache } from './shades.js';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { deriveShades, mixHex, lighten, darken, ensureContrast } from './shades.js';
+import { getShadesForTheme } from './shades.js';
+import { COLOR_TO_CSS_VAR, FALLBACK_COLORS } from './constants.js';
 
-const bundledThemeModules = import.meta.glob('../../Bundled themes json/*.json', { eager: true });
-const themes = new Map();
+const __root = join(dirname(fileURLToPath(import.meta.url)), '../..');
+const BUNDLED_DIR = join(__root, 'Bundled themes json');
 
-function normalizeTheme(raw) {
-  if (!raw || typeof raw !== 'object') return null;
-  const id = raw.id || raw.name?.toLowerCase().replace(/\s+/g, '-');
-  if (!id) return null;
-  return { ...raw, id, name: raw.name ?? id };
-}
+let themeCache = null;
+let tokenCache = new Map();
 
-export function loadBundledThemes() {
-  themes.clear();
-  for (const mod of Object.values(bundledThemeModules)) {
-    const raw = mod.default ?? mod;
-    const theme = normalizeTheme(raw);
-    if (theme) themes.set(theme.id, theme);
+function readBundledThemeRecords() {
+  if (typeof import.meta.glob === 'function') {
+    const modules = import.meta.glob('../../Bundled themes json/*.json', { eager: true });
+    return Object.entries(modules).map(([path, mod]) => {
+      const data = mod.default ?? mod;
+      const id = data.id ?? path.split(/[/\\]/).pop().replace(/\.json$/i, '');
+      return { ...data, id };
+    });
   }
-  if (!themes.has(DEFAULT_THEME_ID)) {
-    themes.set(DEFAULT_THEME_ID, { ...FALLBACK_THEME_RAW });
-  }
-}
-
-export function getThemesMap() {
-  return themes;
-}
-
-export function resolveDefaultThemeId() {
-  if (themes.has(DEFAULT_THEME_ID)) return DEFAULT_THEME_ID;
-  const first = themes.keys().next();
-  return first.done ? DEFAULT_THEME_ID : first.value;
-}
-
-export function resolveThemeId(nameOrTheme) {
-  if (nameOrTheme && typeof nameOrTheme === 'object') {
-    if (nameOrTheme.id && themes.has(nameOrTheme.id)) return nameOrTheme.id;
-    if (nameOrTheme.name) {
-      const hit = [...themes.values()].find((t) => t.name === nameOrTheme.name);
-      if (hit) return hit.id;
-    }
-  }
-  if (typeof nameOrTheme === 'string' && nameOrTheme) {
-    if (themes.has(nameOrTheme)) return nameOrTheme;
-    const byName = [...themes.values()].find(
-      (t) => t.name === nameOrTheme || t.id === nameOrTheme,
-    );
-    if (byName) return byName.id;
-  }
-  return resolveDefaultThemeId();
-}
-
-export { getShadesForTheme };
-
-export function buildTokens(theme, shades) {
-  const tokens = { ...DESIGN_DEFAULTS };
-  for (const key of THEME_KEYS) {
-    const cssVar = COLOR_TO_CSS_VAR[key];
-    if (cssVar && theme[key]) tokens[cssVar] = theme[key];
-  }
-  tokens['--tuner-bg'] = tokens['--tuner-bg-app'] ?? theme.appBackground;
-  tokens['--tuner-fg'] = tokens['--tuner-text'] ?? theme.text;
-  tokens['--tuner-scrollbar-size'] = '10px';
-  tokens['--tuner-scrollbar-radius'] = tokens['--tuner-radius-sm'];
-  tokens['--tuner-scrollbar-thumb-active'] = shades.scrollbarThumbActive;
-  tokens['--tuner-accent-hover'] = shades.accentHover;
-  tokens['--tuner-accent-500'] = theme.accent;
-  tokens['--tuner-accent-600'] = shades.accentHover;
-  tokens['--tuner-accent-700'] = shades.accentActive;
-  tokens['--tuner-on-accent'] = theme.accentContrast;
-  tokens['--tuner-disabled-bg'] = shades.disabledBg;
-  tokens['--tuner-disabled-fg'] = shades.disabledFg;
-  return tokens;
-}
-
-export function applyCssVars(tokens) {
-  if (typeof document === 'undefined') return;
-  const root = document.documentElement;
-  for (const [key, value] of Object.entries(tokens)) {
-    if (value != null) root.style.setProperty(key, value);
+  try {
+    return readdirSync(BUNDLED_DIR)
+      .filter((f) => f.toLowerCase().endsWith('.json'))
+      .map((f) => {
+        const raw = readFileSync(join(BUNDLED_DIR, f), 'utf8');
+        const data = JSON.parse(raw);
+        const id = data.id ?? f.replace(/\.json$/i, '');
+        return { ...data, id };
+      });
+  } catch {
+    return [];
   }
 }
 
 export function resetThemeCaches() {
-  clearShadeCache();
+  themeCache = null;
+  tokenCache.clear();
 }
 
-export { bundledThemeModules };
+export function loadBundledThemes() {
+  if (themeCache) return themeCache;
+  themeCache = readBundledThemeRecords();
+  return themeCache;
+}
+
+/** Derive hover/pressed shades from a base hex color preserving contrast against bg. */
+export function generateShades(base, bg = '#0f1117') {
+  const shades = deriveShades(base, bg, 3.0);
+  return {
+    hover: shades.hover,
+    pressed: shades.active,
+    disabled: shades.disabled,
+  };
+}
+
+/** Derive scrollbar track/thumb/hover/active from theme palette. */
+export function deriveScrollbar(theme) {
+  const colors = theme.colors || theme;
+  const track = colors.bgSurfaceAlt ?? colors.surfaceAlt ?? colors.bgSurface ?? colors.surface ?? '#171a22';
+  const bg = colors.bgApp ?? colors.appBackground ?? track;
+  const thumbBase = colors.accent ?? colors.border ?? '#3a4254';
+  const shades = generateShades(thumbBase, track);
+  return {
+    track,
+    thumb: mixHex(thumbBase, track, 0.35),
+    thumbHover: shades.hover,
+    thumbActive: shades.pressed,
+    size: '10px',
+    radius: '4px',
+  };
+}
+
+export function buildTokens(theme) {
+  const key = theme.id;
+  if (tokenCache.has(key)) return tokenCache.get(key);
+  const colors = { ...FALLBACK_COLORS, ...(theme.colors || theme) };
+  const shades = getShadesForTheme(colors);
+  const tokens = {};
+  for (const [k, cssVar] of Object.entries(COLOR_TO_CSS_VAR)) {
+    if (colors[k]) tokens[cssVar] = colors[k];
+  }
+  for (const [k, v] of Object.entries(shades)) {
+    tokens[k.startsWith('--') ? k : `--tuner-${k}`] = v;
+  }
+  if (colors.bgSurfaceAlt) tokens['--tuner-bg-surface-alt'] = colors.bgSurfaceAlt;
+  if (colors.bgHover) tokens['--tuner-bg-hover'] = colors.bgHover;
+  else if (!tokens['--tuner-bg-hover']) {
+    tokens['--tuner-bg-hover'] = tokens['--tuner-bg-surface-alt'] || lighten(colors.surface ?? '#171a22', 0.06);
+  }
+  const sb = deriveScrollbar(theme);
+  tokens['--tuner-scrollbar-track'] = sb.track;
+  tokens['--tuner-scrollbar-thumb'] = sb.thumb;
+  tokens['--tuner-scrollbar-thumb-hover'] = sb.thumbHover;
+  tokens['--tuner-scrollbar-thumb-active'] = sb.thumbActive;
+  tokens['--tuner-scrollbar-size'] = sb.size;
+  tokens['--tuner-scrollbar-radius'] = sb.radius;
+  tokenCache.set(key, tokens);
+  return tokens;
+}
+
+export function applyCssVars(tokens) {
+  const el = document.documentElement;
+  for (const [name, value] of Object.entries(tokens)) {
+    if (value != null && value !== '') el.style.setProperty(name, value);
+  }
+}'] = colors.bgHover;
+  else tokens['--tuner-bg-hover'] = tokens['--tuner-bg-surface-alt'] || lighten(colors.bgSurface ?? '#171a22', 0.06);
+
+  const sb = deriveScrollbar(theme);
+  tokens['--tuner-scrollbar-track'] = sb.track;
+  tokens['--tuner-scrollbar-thumb'] = sb.thumb;
+  tokens['--tuner-scrollbar-thumb-hover'] = sb.thumbHover;
+  tokens['--tuner-scrollbar-thumb-active'] = sb.thumbActive;
+  tokens['--tuner-scrollbar-size'] = sb.size;
+  tokens['--tuner-scrollbar-radius'] = sb.radius;
+  tokenCache.set(key, tokens);
+  return tokens;
+}
+
+export function applyCssVars(tokens) {
+  const el = document.documentElement;
+  for (const [name, value] of Object.entries(tokens)) {
+    if (value != null && value !== '') el.style.setProperty(name, value);
+  }
+}

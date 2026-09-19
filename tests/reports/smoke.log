@@ -1,8 +1,5 @@
-PASS:smoke-script
-PASS:theme-ui
-PASS:theme-ready-boot
-PASS:theme-manager-api
-PASS:store-theme-persist
-PASS:theme-tokens-css
-PASS:theme-switch-runtime
+PASS:queue-css
+PASS:queue-main
+PASS:theme-scrollbars
+PASS:docs
 TOTAL_FAILURES:0
