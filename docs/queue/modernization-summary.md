@@ -4,16 +4,26 @@
 
 | File | Change |
 |------|--------|
-| `src/styles.css` | Queue items (`.queue-item`), hover/active states, theme-token scrollbars on `.layout` and `ul` |
-| `src/main.js` | Queue rows use `.queue-item`, `.queue-index`, `.queue-title`; boot restores theme before first render |
+| `src/styles.css` | `#queue-list` sizing vars (`--q-item-h: 44px`, `--q-gap`, `--q-pad-x`, `--q-radius`, `--q-index-w`), `.queue-item` hover/active states, reusable theme-token scrollbars on `.layout`, `ul`, `#queue-list` |
+| `src/main.js` | Queue rows use `.queue-item`, `.queue-index`, `.queue-title`; `boot()` restores theme before first `render()` |
 | `index.html` | `#queue-list` panel unchanged (no data model changes) |
+
+## Queue sizing variables
+
+Defined on `#queue-list` (colors use theme tokens; layout vars are unit-only):
+
+- `--q-item-h: 44px` — minimum row height
+- `--q-gap: 8px` — gap between index, title, and actions
+- `--q-pad-x: 10px` — horizontal padding
+- `--q-radius` — row corner radius (inherits `--tuner-radius-sm`)
+- `--q-index-w: 2.25rem` — fixed width for track index column
 
 ## Theme tokens used
 
 - Surfaces: `--tuner-bg-app`, `--tuner-bg-surface`, `--tuner-bg-surface-alt`
 - Text: `--tuner-text`, `--tuner-text-muted`, `--tuner-accent-contrast`
 - Accent states: `--tuner-accent`, `--tuner-accent-hover`, `--tuner-accent-active`
-- Scrollbars: `--tuner-scrollbar-track`, `--tuner-scrollbar-thumb`, `--tuner-scrollbar-thumb-hover`
+- Scrollbars: `--tuner-scrollbar-track`, `--tuner-scrollbar-thumb`, `--tuner-scrollbar-thumb-hover`, `--tuner-scrollbar-thumb-active` (pressed via `--tuner-accent-active` fallback)
 
 Scrollbars apply globally to scrollable lists (library, playlists, queue) and the main `.layout` grid.
 
@@ -37,4 +47,4 @@ Not added — track model has `id`, `name`, `path`, `type` only; no artwork fiel
 
 ## Automated smoke
 
-`node tests/smoke.mjs` checks `queue-item` class in `src/main.js` and scrollbar tokens in `src/styles.css`.
+`node tests/smoke.mjs` runs the `queue-modern` check for `queue-item`/`queue-index`/`queue-title` in `src/main.js` and `--q-item-h` plus `--tuner-scrollbar-*` tokens in `src/styles.css`.

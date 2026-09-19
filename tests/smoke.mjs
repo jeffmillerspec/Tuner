@@ -82,7 +82,13 @@ check('theme-persist', () => {
 });
 check('theme-ready-marker', () => {
   const m = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
-  if (!m.includes('initTheme') || !m.includes('renderThemeSelect')) throw new Error();
+  if (!m.includes('initTheme') || !m.includes('renderThemeSelect') || !m.includes('themeReady')) throw new Error();
+});
+check('queue-modern', () => {
+  const js = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
+  const css = fs.readFileSync(path.join(root, 'src/styles.css'), 'utf8');
+  if (!js.includes('queue-item') || !js.includes('queue-index') || !js.includes('queue-title')) throw new Error('main queue classes');
+  if (!css.includes('--q-item-h') || !css.includes('--tuner-scrollbar-thumb')) throw new Error('queue css tokens');
 });
 check('delivery', () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
