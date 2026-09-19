@@ -39,16 +39,19 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg, var(--tuner-bg)); color: var(--fg, var(--tuner-fg)); }
-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--tuner-border); background: var(--tuner-bg-surface); }
+html, body { margin: 0; font-family: system-ui, sans-serif; background: var(--tuner-bg, var(--bg)); color: var(--tuner-fg, var(--fg)); }
+header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--tuner-border-strong, var(--tuner-border)); background: var(--tuner-surface, var(--tuner-bg-surface)); }
 .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; max-height: calc(100vh - 48px); overflow: auto; }
-.panel { background: var(--tuner-bg-surface); border: 1px solid var(--tuner-border); border-radius: 8px; padding: 8px; }
+.panel { background: var(--tuner-surface, var(--tuner-bg-surface)); border: 1px solid var(--tuner-border-strong, var(--tuner-border)); border-radius: 8px; padding: 8px; }
 input, select, button { font: inherit; }
 input, select { border: 1px solid var(--tuner-border); background: var(--tuner-bg-app); color: var(--tuner-text); }
-button { background: var(--tuner-accent-500, var(--tuner-accent)); color: var(--tuner-accent-contrast); }
-button:hover { background: var(--tuner-accent-600, var(--tuner-accent)); }
-button:active { background: var(--tuner-accent-700, var(--tuner-accent)); }
-button:disabled { background: var(--tuner-disabled-bg); color: var(--tuner-disabled-fg); }
+input:hover, select:hover { background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface)); }
+input:focus-visible, select:focus-visible { outline: 2px solid var(--tuner-focus-ring, var(--tuner-focus)); outline-offset: 1px; }
+button { background: var(--tuner-accent); color: var(--tuner-on-accent, var(--tuner-accent-contrast)); border: 1px solid transparent; cursor: pointer; }
+button:hover { background: var(--tuner-accent-hover, var(--tuner-accent-600, var(--tuner-accent))); }
+button:active { background: var(--tuner-accent-pressed, var(--tuner-accent-700, var(--tuner-accent))); }
+button:disabled { background: var(--tuner-disabled-bg); color: var(--tuner-disabled-fg); opacity: 0.75; cursor: not-allowed; }
+button:focus-visible { outline: 2px solid var(--tuner-focus-ring, var(--tuner-focus)); outline-offset: 1px; }
 #queue-list {
   --q-item-h: 44px;
   --q-gap: 8px;
@@ -95,6 +98,16 @@ button:disabled { background: var(--tuner-disabled-bg); color: var(--tuner-disab
   outline: 2px dashed var(--tuner-accent);
   outline-offset: -2px;
   background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface));
+}
+#queue-list .queue-item.selected,
+#queue-list .queue-item[aria-selected="true"] {
+  background: var(--tuner-bg-surface-alt, var(--tuner-bg-surface));
+  border-left: 3px solid var(--tuner-accent);
+  padding-left: calc(var(--tuner-space-sm, 6px) - 3px);
+}
+#queue-list .queue-item.selected .queue-index,
+#queue-list .queue-item[aria-selected="true"] .queue-index {
+  color: var(--tuner-accent);
 }
 #queue-list .queue-index {
   flex: 0 0 var(--q-index-w);
