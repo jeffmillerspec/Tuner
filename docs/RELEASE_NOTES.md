@@ -27,4 +27,6 @@ Themes: Bundled themes json/ (31 files via Vite glob)
 API: getToken(key,fallback?), subscribe, applyTheme(name|object)
 Default: abyssal-console
 Version: 0.4.0 in package.json, tauri.conf.json, Cargo.toml, index.html
-Git baseline: fb6dbc3
+Git commit: ec901b9
+Tests: 26/26 node, 7/7 vitest, smoke 0 failures
+Installer: Releases/Tuner-Setup-0.4.0.exe (sha256 in Releases/installer-meta.json)
