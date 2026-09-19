@@ -1,0 +1,133 @@
+{
+  "dir": "Bundled themes json",
+  "total": 31,
+  "ok": 31,
+  "fail": 0,
+  "validatedAt": "2026-09-19T12:27:58.985Z",
+  "results": [
+    {
+      "file": "New Theme Bundle 1.json",
+      "status": "ok"
+    },
+    {
+      "file": "New Theme Bundle 2.json",
+      "status": "ok"
+    },
+    {
+      "file": "New Theme Bundle 3.json",
+      "status": "ok"
+    },
+    {
+      "file": "New Theme Bundle 4.json",
+      "status": "ok"
+    },
+    {
+      "file": "New Theme Bundle 5.json",
+      "status": "ok"
+    },
+    {
+      "file": "New Theme Bundle 6.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-abyssal-console.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-amaranth-drive.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-amber-crt.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-azure-rift.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-blood-moon.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-chrome-cathedral.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-cobalt-foundry.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-copper-halo.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-coral-drift.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-cryo-lab.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-helios-flare.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-ion-storm.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-iris-protocol.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-occult-archive.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-olive-circuit.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-reactor-warning.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-rose-alloy.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-synthwave-94.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-tungsten-pulse.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-ultraviolet-grid.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-vesper-circuit.json",
+      "status": "ok"
+    },
+    {
+      "file": "clitiles-theme-xeno-signal.json",
+      "status": "ok"
+    },
+    {
+      "file": "frost volt.json",
+      "status": "ok"
+    },
+    {
+      "file": "matte obsidian.json",
+      "status": "ok"
+    },
+    {
+      "file": "warm clay.json",
+      "status": "ok"
+    }
+  ]
+}
