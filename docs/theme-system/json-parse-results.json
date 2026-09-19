@@ -3,131 +3,193 @@
   "total": 31,
   "ok": 31,
   "fail": 0,
-  "validatedAt": "2026-09-19T12:27:58.985Z",
+  "validatedAt": "2026-09-19T12:45:09.124Z",
   "results": [
     {
       "file": "New Theme Bundle 1.json",
-      "status": "ok"
+      "path": "Bundled themes json/New Theme Bundle 1.json",
+      "size": 1011,
+      "valid": true
     },
     {
       "file": "New Theme Bundle 2.json",
-      "status": "ok"
+      "path": "Bundled themes json/New Theme Bundle 2.json",
+      "size": 1049,
+      "valid": true
     },
     {
       "file": "New Theme Bundle 3.json",
-      "status": "ok"
+      "path": "Bundled themes json/New Theme Bundle 3.json",
+      "size": 1049,
+      "valid": true
     },
     {
       "file": "New Theme Bundle 4.json",
-      "status": "ok"
+      "path": "Bundled themes json/New Theme Bundle 4.json",
+      "size": 1051,
+      "valid": true
     },
     {
       "file": "New Theme Bundle 5.json",
-      "status": "ok"
+      "path": "Bundled themes json/New Theme Bundle 5.json",
+      "size": 1049,
+      "valid": true
     },
     {
       "file": "New Theme Bundle 6.json",
-      "status": "ok"
+      "path": "Bundled themes json/New Theme Bundle 6.json",
+      "size": 1049,
+      "valid": true
     },
     {
       "file": "clitiles-theme-abyssal-console.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-abyssal-console.json",
+      "size": 1055,
+      "valid": true
     },
     {
       "file": "clitiles-theme-amaranth-drive.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-amaranth-drive.json",
+      "size": 1014,
+      "valid": true
     },
     {
       "file": "clitiles-theme-amber-crt.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-amber-crt.json",
+      "size": 1043,
+      "valid": true
     },
     {
       "file": "clitiles-theme-azure-rift.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-azure-rift.json",
+      "size": 1006,
+      "valid": true
     },
     {
       "file": "clitiles-theme-blood-moon.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-blood-moon.json",
+      "size": 1006,
+      "valid": true
     },
     {
       "file": "clitiles-theme-chrome-cathedral.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-chrome-cathedral.json",
+      "size": 1018,
+      "valid": true
     },
     {
       "file": "clitiles-theme-cobalt-foundry.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-cobalt-foundry.json",
+      "size": 1014,
+      "valid": true
     },
     {
       "file": "clitiles-theme-copper-halo.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-copper-halo.json",
+      "size": 1008,
+      "valid": true
     },
     {
       "file": "clitiles-theme-coral-drift.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-coral-drift.json",
+      "size": 1008,
+      "valid": true
     },
     {
       "file": "clitiles-theme-cryo-lab.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-cryo-lab.json",
+      "size": 1041,
+      "valid": true
     },
     {
       "file": "clitiles-theme-helios-flare.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-helios-flare.json",
+      "size": 1010,
+      "valid": true
     },
     {
       "file": "clitiles-theme-ion-storm.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-ion-storm.json",
+      "size": 1004,
+      "valid": true
     },
     {
       "file": "clitiles-theme-iris-protocol.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-iris-protocol.json",
+      "size": 1012,
+      "valid": true
     },
     {
       "file": "clitiles-theme-occult-archive.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-occult-archive.json",
+      "size": 1053,
+      "valid": true
     },
     {
       "file": "clitiles-theme-olive-circuit.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-olive-circuit.json",
+      "size": 1012,
+      "valid": true
     },
     {
       "file": "clitiles-theme-reactor-warning.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-reactor-warning.json",
+      "size": 1055,
+      "valid": true
     },
     {
       "file": "clitiles-theme-rose-alloy.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-rose-alloy.json",
+      "size": 1006,
+      "valid": true
     },
     {
       "file": "clitiles-theme-synthwave-94.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-synthwave-94.json",
+      "size": 1011,
+      "valid": true
     },
     {
       "file": "clitiles-theme-tungsten-pulse.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-tungsten-pulse.json",
+      "size": 1006,
+      "valid": true
     },
     {
       "file": "clitiles-theme-ultraviolet-grid.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-ultraviolet-grid.json",
+      "size": 1018,
+      "valid": true
     },
     {
       "file": "clitiles-theme-vesper-circuit.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-vesper-circuit.json",
+      "size": 1014,
+      "valid": true
     },
     {
       "file": "clitiles-theme-xeno-signal.json",
-      "status": "ok"
+      "path": "Bundled themes json/clitiles-theme-xeno-signal.json",
+      "size": 1047,
+      "valid": true
     },
     {
       "file": "frost volt.json",
-      "status": "ok"
+      "path": "Bundled themes json/frost volt.json",
+      "size": 1005,
+      "valid": true
     },
     {
       "file": "matte obsidian.json",
-      "status": "ok"
+      "path": "Bundled themes json/matte obsidian.json",
+      "size": 1013,
+      "valid": true
     },
     {
       "file": "warm clay.json",
-      "status": "ok"
+      "path": "Bundled themes json/warm clay.json",
+      "size": 1043,
+      "valid": true
     }
   ]
 }

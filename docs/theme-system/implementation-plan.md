@@ -31,7 +31,7 @@ Loader: BUNDLED_THEME_GLOB = '../../Bundled themes json/*.json' via import.meta.
 ## 3. JSON parse validation
 
 Artifact: docs/theme-system/json-parse-results.json
-Validated: 2026-09-19T12:27:58.985Z | total=31 | ok=31 | fail=0
+Validated: 2026-09-19T12:45:00Z | total=31 | ok=31 | fail=0 (see docs/theme-system/json-parse-results.json for per-file path, size, valid)
 
 All files parse OK. No invalid files.
 
@@ -64,7 +64,80 @@ Queue: index.html #queue-list; src/main.js .queue-item/.queue-index/.queue-title
 
 Scrollbars on .layout, ul, #queue-list:
 - Firefox: scrollbar-color with --tuner-scrollbar-thumb/track
-- WebKit: ::webkit-scrollbar, track, thumb (:hover, :active)
+- WebKit: ::webkit-scrollbar, ::webkit-scrollbar-track, ::webkit-scrollbar-thumb (:hover, :active)
+- Tokens: --tuner-scrollbar-size, --tuner-scrollbar-radius, --tuner-scrollbar-track, --tuner-scrollbar-thumb, --tuner-scrollbar-thumb-hover
+
+Tests: tests/theme-queue-scrollbar.vitest.mjs, tests/smoke/harness.mjs
+
+## 7. Build, run, package
+
+Verified configs: package.json, vite.config.js, src-tauri/Cargo.toml, src-tauri/tauri.conf.json (bundle.targets all). No *.sln, *.csproj, electron-builder.yml, or standalone WiX configs.
+
+Non-destructive toolchain check: npx tauri --version, npx vite --version.
+
+Exact package.json scripts block (verified 2026-09-19):
+- dev: vite
+- build: vite build
+- tauri: tauri
+- smoke: node scripts/smoke.mjs
+- smoke:static: node tests/smoke.mjs
+- smoke:full: powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1
+- test: node scripts/npm-test-wrapper.mjs
+- test:node: node --test tests/theme-validate.test.mjs tests/theme-shades.test.mjs tests/theme-persist.test.mjs
+- test:vitest: node scripts/run-vitest.mjs
+- test:unit: npm run test:node && npm run test:vitest
+- test:all: npm run test:unit && npm run smoke
+- test:smoke: node scripts/smoke.mjs
+- tauri:build: tauri build
+- release:stage: node scripts/stage-release-installer.mjs
+- release:build: npm test && npm run tauri:build && npm run release:stage
+
+## 8. Test and smoke
+
+docs/TESTING.md documents commands. Prerequisites: Node 18+, npm install; Rust for tauri:build.
+
+| Command | Script / notes |
+|---------|----------------|
+| npm test | scripts/npm-test-wrapper.mjs writes tests/reports/test-results.txt |
+| npm run test:all | test:unit then smoke |
+| node scripts/smoke.mjs --quick | Quick smoke (no npm alias) |
+| npm run smoke | Full smoke: optional ci, build, preview :4173, theme harness |
+| npm run smoke:static | tests/smoke.mjs wiring checks |
+| npm run smoke:full | scripts/smoke-test.ps1 |
+
+Existing tests (pre-implemented, verified on disk):
+- tests/theme-shades.test.mjs, tests/theme-persist.test.mjs, tests/theme-validate.test.mjs
+- tests/theme-queue-scrollbar.vitest.mjs, tests/smoke.vitest.mjs
+- scripts/smoke.mjs, tests/smoke/harness.mjs
+
+Artifacts: tests/reports/test-results.txt, tests/reports/vitest.txt, tests/reports/smoke.log, docs/theme-system/json-parse-results.json
+
+## 9. Aesthetic polish plan
+
+1. Typography: --tuner-font-base/sm/lg on headings and queue titles
+2. Spacing: --tuner-space-* on panels and queue rows
+3. Elevation: --tuner-shadow-sm/md on panels and active queue-item
+4. Contrast: prefers-contrast media query; ensureContrast for accent shades
+
+## 10. Gaps and risks
+
+- npm test may exceed 90s host timeout (~93s vitest nested smoke)
+- Full npm run smoke not re-run every session; --quick path verified SMOKE_OK
+- src/main.js boot/render tail may be truncated on some reads; verify syntax before release
+
+## 11. Verification log (2026-09-19)
+
+Repo root contains package.json, vite.config.js, index.html, src/, src-tauri/, Bundled themes json/ (31 JSON files).
+
+JSON parse: docs/theme-system/json-parse-results.json total=31 ok=31 fail=0 with per-file size and valid flag.
+
+ThemeManager insertion: src/main.js initTheme/applyTheme; src/store.js settings.themeId; index.html #theme-select; src/theme/* modules.
+
+Queue hooks: index.html #queue-list; src/main.js .queue-item/.queue-index/.queue-title; src/styles.css scrollbar rules on .layout, ul, #queue-list.
+
+Smoke: node scripts/smoke.mjs --quick exit 0 SMOKE_OK TOTAL_FAILURES:0.
+
+Application: Tuner desktop app already present (not greenfield). Analyst scope: docs only, no source changes., track, thumb (:hover, :active)
 - Tokens: --tuner-scrollbar-size, --tuner-scrollbar-radius, --tuner-scrollbar-track, --tuner-scrollbar-thumb, --tuner-scrollbar-thumb-hover
 
 Tests: tests/theme-queue-scrollbar.vitest.mjs, tests/smoke/harness.mjs
@@ -95,7 +168,7 @@ docs/TESTING.md documents commands.
 | npm run test:node | theme-validate, theme-shades, theme-persist |
 | npm run test:vitest | run-vitest.mjs |
 | npm run smoke | scripts/smoke.mjs |
-| npm run smoke:quick | scripts/smoke.mjs --quick |
+| node scripts/smoke.mjs --quick | Quick smoke via --quick flag (no separate npm script) |
 | npm run smoke:static | tests/smoke.mjs |
 | npm run smoke:full | scripts/smoke-test.ps1 |
 
@@ -131,7 +204,7 @@ stat_path exists=true for: src-tauri/Cargo.toml (435B), src-tauri/src/main.rs (1
 
 JSON parse: docs/theme-system/json-parse-results.json total=31 ok=31 fail=0.
 
-npm run listing verified scripts: dev, build, tauri, smoke, smoke:static, smoke:full, test, test:node, test:vitest, test:unit, test:all, test:smoke, tauri:build, release:stage, release:build.
+npm run listing verified scripts: dev, build, tauri, smoke, smoke:static, smoke:full, test, test:node, test:vitest, test:unit, test:all, test:smoke, tauri:build, release:stage, release:build. Note: smoke:quick is NOT an npm script; use node scripts/smoke.mjs --quick or npm run smoke -- --quick.
 
 Schema cross-check: validate.js REQUIRED_COLOR_KEYS matches flat hex keys in clitiles-theme-synthwave-94.json; terminal optional.
 
