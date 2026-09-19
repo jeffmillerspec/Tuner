@@ -1,57 +1,52 @@
-timestamp=2026-09-19T12:08:03.990Z
+timestamp=2026-09-19T23:01:02.673Z
 exit_code=0
 node_test=0
 vitest=0
 smoke=0
 
 [node:test]
-✔ initTheme applies default when persistence absent (4.9339ms)
-✔ initTheme falls back when persisted id invalid (0.4238ms)
-✔ persistence round-trip via applyTheme (0.6675ms)
-✔ parseHex validates input (7.6641ms)
-✔ lighten and darken (0.3184ms)
-✔ near-white and near-black edge cases (1.7375ms)
-✔ invalid input returns safe values (0.2496ms)
-✔ contrastRatio black on white (0.2533ms)
-✔ ensureContrast improves low contrast (0.4705ms)
-✔ computeColorShades deterministic (0.7131ms)
-✔ shade cache avoids recompute (0.1986ms)
-✔ validateTheme accepts complete theme (4.8567ms)
-✔ validateTheme fills missing colors deterministically (0.5667ms)
-✔ parseThemeJson rejects malformed JSON (0.2546ms)
-✔ fallbackTheme is deterministic default (1.016ms)
-✔ theme schema file exists (0.6623ms)
-✔ no absolute path literals in theme modules (0.6074ms)
-ℹ tests 17
+✔ getToken returns token and respects fallback (10.244ms)
+✔ subscribe receives applyTheme notifications (4.2224ms)
+✔ applyTheme accepts id string and name object (750.7087ms)
+✔ initTheme applies default when persistence absent (123.6336ms)
+✔ initTheme falls back when persisted id invalid (5.362ms)
+✔ persistence round-trip via applyTheme (5.4959ms)
+✔ parseHex validates input (110.9788ms)
+✔ lighten and darken (0.3562ms)
+✔ near-white and near-black edge cases (113.8559ms)
+✔ invalid input returns safe values (5.8978ms)
+✔ contrastRatio black on white (0.3059ms)
+✔ ensureContrast improves low contrast (54.1632ms)
+✔ computeColorShades deterministic (154.8352ms)
+✔ shade cache avoids recompute (11.8599ms)
+✔ validateTheme accepts complete theme (3.6408ms)
+✔ validateTheme fills missing colors deterministically (0.2925ms)
+✔ parseThemeJson rejects malformed JSON (0.3567ms)
+✔ fallbackTheme is deterministic default (1.426ms)
+✔ theme schema file exists (0.643ms)
+✔ no absolute path literals in theme modules (0.7049ms)
+✔ persistence: initTheme reads saved themeId from getter (970.346ms)
+✔ persistence: applyTheme writes themeId via setter (778.6932ms)
+✔ persistence: invalid saved id falls back to default (293.6861ms)
+✔ shades: lighten/darken deterministic (1.264ms)
+✔ shades: computeColorShades stable (1.6777ms)
+✔ shades: deriveShades cache (0.3353ms)
+ℹ tests 26
 ℹ suites 0
-ℹ pass 17
+ℹ pass 26
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 1346.468
+ℹ duration_ms 34934.934
 
 [vitest]
-
-[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mF:/Dev/Tuner[39m
-
- [32m✓[39m tests/smoke.vitest.mjs[2m > [22msmoke theme runtime[2m > [22minitTheme sets CSS variables[32m 222[2mms[22m[39m
- [32m✓[39m tests/smoke.vitest.mjs[2m > [22msmoke theme runtime[2m > [22mapplyTheme switches theme id[32m 275[2mms[22m[39m
- [32m✓[39m tests/smoke.vitest.mjs[2m > [22msmoke static[2m > [22msmoke.mjs exits 0 and reports zero failures[33m 12410[2mms[22m[39m
- [32m✓[39m tests/theme-queue-scrollbar.vitest.mjs[2m > [22mqueue scrollbar tokens[2m > [22mCSS uses theme scrollbar variables on queue[32m 35[2mms[22m[39m
- [32m✓[39m tests/theme-queue-scrollbar.vitest.mjs[2m > [22mqueue scrollbar tokens[2m > [22mtheme switch updates scrollbar thumb token[32m 292[2mms[22m[39m
-
-[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
-[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
-[2m   Start at [22m 07:06:53
-[2m   Duration [22m 51.90s[2m (transform 3.80s, setup 0ms, collect 9.94s, tests 13.41s, environment 17.81s, prepare 4.19s)[22m
-
+PASS:smoke.vitest:initTheme-applies-css-vars
+PASS:smoke.vitest:applyTheme-switches-tokens
+PASS:theme-queue-scrollbar.vitest:css-tokens
+PASS:theme-queue-scrollbar.vitest:runtime-var
+PASS:themeParser.vitest:bundled-json
+PASS:shades.vitest:computeColorShades
+run-vitest TOTAL_FAILURES:0
 
 [smoke]
-PASS:smoke-script
-PASS:theme-unit-files
-PASS:vitest-runtime-files
-PASS:queue-modern
-PASS:reports-wrapper
-PASS:theme-switch-runtime
-TOTAL_FAILURES:0

@@ -1,0 +1,329 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mF:/Dev/Tuner[39m
+
+[33m[39m[31mx[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[31mx[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m[33m[39m[32m·[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m16 passed[39m[22m[90m (18)[39m
+[2m   Start at [22m 17:36:03
+[2m   Duration [22m 67.16s[2m (transform 8.93s, setup 0ms, collect 18.93s, tests 4.82s, environment 57.88s, prepare 18.91s)[22m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/queue/theme-hooks.vitest.mjs[2m > [22mqueue theme hooks[2m > [22mstyles.css references queue and scrollbar tokens
+[31m[1mAssertionError[22m: expected '/* Reusable theme-aware scrollbars: a…' to contain '--scrollbar-thumb-active'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- --scrollbar-thumb-active[39m
+[31m+ /* Reusable theme-aware scrollbars: add class "tuner-scrollbars" to any scroll container. */[39m
+[31m+ :root {[39m
+[31m+   --tuner-queue-item-gap: 8px;[39m
+[31m+   --tuner-queue-item-padding-y: 8px;[39m
+[31m+   --tuner-queue-item-padding-x: 12px;[39m
+[31m+   --tuner-queue-item-radius: 8px;[39m
+[31m+   --tuner-queue-font-size: 14px;[39m
+[31m+   --tuner-queue-subtext-size: 12px;[39m
+[31m+   --tuner-bg-app: #0f1117;[39m
+[31m+   --tuner-bg-surface: #171a22;[39m
+[31m+   --tuner-bg-surface-alt: #1e2330;[39m
+[31m+   --tuner-bg-hover: #1e2330;[39m
+[31m+   --tuner-border: #2a2f3a;[39m
+[31m+   --tuner-text: #eeeeee;[39m
+[31m+   --tuner-text-muted: #888888;[39m
+[31m+   --tuner-accent: #27d8c7;[39m
+[31m+   --tuner-accent-contrast: #03110f;[39m
+[31m+   --tuner-focus: #4eeaff;[39m
+[31m+   --tuner-scrollbar-track: #141820;[39m
+[31m+   --tuner-scrollbar-thumb: #3a4254;[39m
+[31m+   --tuner-scrollbar-thumb-hover: #4d5870;[39m
+[31m+   --tuner-scrollbar-thumb-active: #5a6680;[39m
+[31m+   --tuner-scrollbar-size: 10px;[39m
+[31m+   --tuner-scrollbar-radius: 4px;[39m
+[31m+   --tuner-disabled-bg: #2a2f3a;[39m
+[31m+   --tuner-disabled-fg: #888888;[39m
+[31m+   --tuner-queue-item-gap: 8px;[39m
+[31m+   --tuner-queue-item-padding-y: 8px;[39m
+[31m+   --tuner-queue-item-padding-x: 12px;[39m
+[31m+   --tuner-queue-item-radius: 8px;[39m
+[31m+   --tuner-queue-font-size: 14px;[39m
+[31m+   --tuner-queue-subtext-size: 12px;[39m
+[31m+   --q-item-h: 44px;[39m
+[31m+   --queue-thumb-size: 32px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ * { box-sizing: border-box; }[39m
+[31m+[39m
+[31m+ html, body {[39m
+[31m+   margin: 0;[39m
+[31m+   font-family: system-ui, sans-serif;[39m
+[31m+   background: var(--tuner-bg-app);[39m
+[31m+   color: var(--tuner-text);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ header {[39m
+[31m+   display: flex;[39m
+[31m+   align-items: center;[39m
+[31m+   gap: 8px;[39m
+[31m+   padding: 8px 12px;[39m
+[31m+   border-bottom: 1px solid var(--tuner-border);[39m
+[31m+   background: var(--tuner-bg-surface);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .layout {[39m
+[31m+   display: grid;[39m
+[31m+   grid-template-columns: 1fr 1fr;[39m
+[31m+   gap: 8px;[39m
+[31m+   padding: 8px;[39m
+[31m+   max-height: calc(100vh - 48px);[39m
+[31m+   overflow: auto;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .panel {[39m
+[31m+   background: var(--tuner-bg-surface);[39m
+[31m+   border: 1px solid var(--tuner-border);[39m
+[31m+   border-radius: 8px;[39m
+[31m+   padding: 8px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ input, select, button { font: inherit; }[39m
+[31m+[39m
+[31m+ input, select {[39m
+[31m+   border: 1px solid var(--tuner-border);[39m
+[31m+   background: var(--tuner-bg-app);[39m
+[31m+   color: var(--tuner-text);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ button {[39m
+[31m+   background: var(--tuner-accent-500, var(--tuner-accent));[39m
+[31m+   color: var(--tuner-accent-contrast);[39m
+[31m+   border: none;[39m
+[31m+   border-radius: 4px;[39m
+[31m+   cursor: pointer;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ button:hover { background: var(--tuner-accent-600, var(--tuner-accent)); }[39m
+[31m+ button:active { background: var(--tuner-accent-700, var(--tuner-accent)); }[39m
+[31m+ button:disabled { background: var(--tuner-disabled-bg); color: var(--tuner-disabled-fg); cursor: not-allowed; }[39m
+[31m+[39m
+[31m+ button:focus-visible, input:focus-visible, select:focus-visible {[39m
+[31m+   outline: 2px solid var(--tuner-focus);[39m
+[31m+   outline-offset: 1px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ /* Queue item layout and states */[39m
+[31m+ #queue-list {[39m
+[31m+   --q-padding: var(--tuner-queue-item-padding-y) var(--tuner-queue-item-padding-x);[39m
+[31m+   --q-gap: var(--tuner-queue-item-gap);[39m
+[31m+   max-height: 160px;[39m
+[31m+   overflow: auto;[39m
+[31m+   list-style: none;[39m
+[31m+   margin: 0;[39m
+[31m+   padding: 4px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item {[39m
+[31m+   font-size: var(--tuner-queue-font-size, 14px);[39m
+[31m+   border-radius: var(--tuner-queue-item-radius, 8px);[39m
+[31m+   display: grid;[39m
+[31m+   grid-template-columns: 28px auto 1fr auto;[39m
+[31m+   align-items: center;[39m
+[31m+   gap: var(--q-gap);[39m
+[31m+   padding: var(--q-padding);[39m
+[31m+   min-height: var(--q-item-h);[39m
+[31m+   border-radius: var(--tuner-queue-item-radius, 8px);[39m
+[31m+   background: var(--tuner-bg-surface);[39m
+[31m+   color: var(--tuner-text);[39m
+[31m+   font: 500 var(--tuner-queue-font-size, 14px)/1.4 system-ui, sans-serif;[39m
+[31m+   border: 1px solid transparent;[39m
+[31m+   margin-bottom: 4px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item.has-thumb {[39m
+[31m+   grid-template-columns: 28px auto auto 1fr auto;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item:hover:not(.active) {[39m
+[31m+   background: var(--tuner-bg-hover, var(--tuner-bg-surface-alt));[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item.selected:not(.active) {[39m
+[31m+   background: var(--tuner-bg-surface-alt);[39m
+[31m+   box-shadow: inset 0 0 0 2px var(--tuner-focus);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item.selected:not(.active) {[39m
+[31m+   background: var(--tuner-bg-surface-alt);[39m
+[31m+   box-shadow: inset 0 0 0 2px var(--tuner-focus-ring, var(--tuner-focus));[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item.active {[39m
+[31m+   background: var(--tuner-accent-500, var(--tuner-accent));[39m
+[31m+   color: var(--tuner-accent-contrast);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item:focus-visible {[39m
+[31m+   outline: 2px solid var(--tuner-focus);[39m
+[31m+   outline-offset: -2px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item.dragging { opacity: 0.55; }[39m
+[31m+ #queue-list .queue-item.drag-over {[39m
+[31m+   border-color: var(--tuner-accent);[39m
+[31m+   box-shadow: inset 0 0 0 1px var(--tuner-accent);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-index {[39m
+[31m+   font-size: var(--tuner-queue-subtext-size, 12px);[39m
+[31m+   color: var(--tuner-text-muted);[39m
+[31m+   text-align: right;[39m
+[31m+   font-variant-numeric: tabular-nums;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-item.active .queue-index { color: inherit; opacity: 0.85; }[39m
+[31m+[39m
+[31m+ #queue-list .queue-title {[39m
+[31m+   overflow: hidden;[39m
+[31m+   text-overflow: ellipsis;[39m
+[31m+   white-space: nowrap;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ #queue-list .queue-thumb {[39m
+[31m+   width: var(--queue-thumb-size);[39m
+[31m+   height: var(--queue-thumb-size);[39m
+[31m+   border-radius: 4px;[39m
+[31m+   object-fit: cover;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .queue-drag-handle {[39m
+[31m+   cursor: grab;[39m
+[31m+   padding: 0 4px;[39m
+[31m+   color: var(--tuner-text-muted);[39m
+[31m+   user-select: none;[39m
+[31m+   border: none;[39m
+[31m+   background: transparent;[39m
+[31m+   font-size: 14px;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .queue-drag-handle:active { cursor: grabbing; }[39m
+[31m+[39m
+[31m+ #queue-live {[39m
+[31m+   position: absolute;[39m
+[31m+   width: 1px;[39m
+[31m+   height: 1px;[39m
+[31m+   overflow: hidden;[39m
+[31m+   clip: rect(0 0 0 0);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .actions { display: flex; gap: 4px; flex-shrink: 0; }[39m
+[31m+ .actions button { font-size: 12px; padding: 2px 6px; }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars { scrollbar-gutter: stable both-edges; scrollbar-width: thin; scrollbar-color: var(--tuner-scrollbar-thumb) var(--tuner-scrollbar-track); }[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar { width: var(--tuner-scrollbar-size); height: var(--tuner-scrollbar-size); }[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-track { background: var(--tuner-scrollbar-track); border-radius: var(--tuner-scrollbar-radius); }[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-thumb { background: var(--tuner-scrollbar-thumb); border-radius: var(--tuner-scrollbar-radius); }[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-thumb:hover { background: var(--tuner-scrollbar-thumb-hover); }[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-thumb:active { background: var(--tuner-scrollbar-thumb-active); }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars {[39m
+[31m+   scrollbar-gutter: stable both-edges;[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars,[39m
+[31m+ .layout,[39m
+[31m+ ul,[39m
+[31m+ #queue-list {[39m
+[31m+   scrollbar-width: thin;[39m
+[31m+   scrollbar-color: var(--tuner-scrollbar-thumb) var(--tuner-scrollbar-track);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar,[39m
+[31m+ .layout::-webkit-scrollbar,[39m
+[31m+ ul::-webkit-scrollbar,[39m
+[31m+ #queue-list::-webkit-scrollbar {[39m
+[31m+   width: var(--tuner-scrollbar-size);[39m
+[31m+   height: var(--tuner-scrollbar-size);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-track,[39m
+[31m+ .layout::-webkit-scrollbar-track,[39m
+[31m+ ul::-webkit-scrollbar-track,[39m
+[31m+ #queue-list::-webkit-scrollbar-track {[39m
+[31m+   background: var(--tuner-scrollbar-track);[39m
+[31m+   border-radius: var(--tuner-scrollbar-radius);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-thumb,[39m
+[31m+ .layout::-webkit-scrollbar-thumb,[39m
+[31m+ ul::-webkit-scrollbar-thumb,[39m
+[31m+ #queue-list::-webkit-scrollbar-thumb {[39m
+[31m+   background: var(--tuner-scrollbar-thumb);[39m
+[31m+   border-radius: var(--tuner-scrollbar-radius);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-thumb:hover,[39m
+[31m+ .layout::-webkit-scrollbar-thumb:hover,[39m
+[31m+ ul::-webkit-scrollbar-thumb:hover,[39m
+[31m+ #queue-list::-webkit-scrollbar-thumb:hover {[39m
+[31m+   background: var(--tuner-scrollbar-thumb-hover);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .tuner-scrollbars::-webkit-scrollbar-thumb:active,[39m
+[31m+ .layout::-webkit-scrollbar-thumb:active,[39m
+[31m+ ul::-webkit-scrollbar-thumb:active,[39m
+[31m+ #queue-list::-webkit-scrollbar-thumb:active {[39m
+[31m+   background: var(--tuner-scrollbar-thumb-active);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ .dialog, .tooltip, .menu {[39m
+[31m+   background: var(--tuner-bg-surface);[39m
+[31m+   color: var(--tuner-text);[39m
+[31m+   border: 1px solid var(--tuner-border);[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ @media (prefers-contrast: more) {[39m
+[31m+   button:focus-visible, input:focus-visible, select:focus-visible, .queue-item:focus-visible {[39m
+[31m+     outline-width: 3px;[39m
+[31m+   }[39m
+[31m+ }[39m
+[31m+[39m
+[31m+ @media (forced-colors: active) {[39m
+[31m+   button, input, select, .panel, header, .queue-item {[39m
+[31m+     background: Canvas;[39m
+[31m+     color: CanvasText;[39m
+[31m+     border-color: CanvasText;[39m
+[31m+   }[39m
+[31m+ }[39m
+[31m+[39m
+
+[36m [2m❯[22m tests/queue/theme-hooks.vitest.mjs:[2m10:17[22m[39m
+    [90m  8| [39m    [35mconst[39m css [33m=[39m [34mreadFileSync[39m([32m'src/styles.css'[39m[33m,[39m [32m'utf8'[39m)[33m;[39m
+    [90m  9| [39m    [34mexpect[39m(css)[33m.[39m[34mtoContain[39m([32m'#queue-list'[39m)[33m;[39m
+    [90m 10| [39m    [34mexpect[39m(css)[33m.[39m[34mtoContain[39m([32m'--scrollbar-thumb-active'[39m)[33m;[39m
+    [90m   | [39m                [31m^[39m
+    [90m 11| [39m    [34mexpect[39m(css)[33m.[39m[34mtoMatch[39m([36m/::-webkit-scrollbar-thumb:active/[39m)[33m;[39m
+    [90m 12| [39m    [34mexpect[39m(css)[33m.[39m[34mtoMatch[39m([36m/scrollbar-color:/[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/theme/themeParser.vitest.mjs[2m > [22mthemeParser[2m > [22mbuildTokens applies generic alias tokens for UI surfaces
+[31m[1mAssertionError[22m: expected undefined to be '#02090e' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"#02090e"
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m tests/unit/theme/themeParser.vitest.mjs:[2m66:28[22m[39m
+    [90m 64| [39m    [35mconst[39m parsed [33m=[39m [34mparseThemeJson[39m([33mVALID_JSON[39m)[33m;[39m
+    [90m 65| [39m    [35mconst[39m tokens [33m=[39m [34mbuildTokens[39m([34mflatTheme[39m(parsed))[33m;[39m
+    [90m 66| [39m    [34mexpect[39m(tokens[[32m'--bg'[39m])[33m.[39m[34mtoBe[39m(tokens[[32m'--tuner-bg-app'[39m])[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m 67| [39m    [34mexpect[39m(tokens[[32m'--fg'[39m])[33m.[39m[34mtoBe[39m(tokens[[32m'--tuner-text'[39m])[33m;[39m
+    [90m 68| [39m    [34mexpect[39m(tokens[[32m'--surface'[39m])[33m.[39m[34mtoBe[39m(tokens[[32m'--tuner-bg-surface'[39m])[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+

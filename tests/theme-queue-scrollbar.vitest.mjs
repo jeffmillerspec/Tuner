@@ -12,9 +12,18 @@ describe('queue scrollbar tokens', () => {
   it('theme switch updates scrollbar thumb token', async () => {
     let saved = null;
     await initTheme({ getThemeId: () => saved, setThemeId: (id) => { saved = id; } });
-    expect(document.documentElement.style.getPropertyValue('--tuner-scrollbar-thumb')).toBeTruthy();
+    const thumbBefore = document.documentElement.style.getPropertyValue('--tuner-scrollbar-thumb');
+    const trackBefore = document.documentElement.style.getPropertyValue('--tuner-scrollbar-track');
+    expect(thumbBefore).toBeTruthy();
+    expect(trackBefore).toBeTruthy();
     const alt = listThemes().find((t) => t.id !== saved) || listThemes()[0];
     applyTheme(alt.id);
-    expect(document.documentElement.style.getPropertyValue('--tuner-scrollbar-thumb')).toBeTruthy();
+    const thumbAfter = document.documentElement.style.getPropertyValue('--tuner-scrollbar-thumb');
+    const trackAfter = document.documentElement.style.getPropertyValue('--tuner-scrollbar-track');
+    expect(thumbAfter).toBeTruthy();
+    expect(trackAfter).toBeTruthy();
+    if (alt.id !== saved) {
+      expect(thumbBefore !== thumbAfter || trackBefore !== trackAfter).toBe(true);
+    }
   });
 });

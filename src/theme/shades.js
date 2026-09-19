@@ -80,6 +80,14 @@ export function ensureContrast(fg, bg, minRatio = 4.5) {
 
 const shadeCache = new Map();
 
+export function clearShadeCache() {
+  shadeCache.clear();
+}
+
+export function getShadeCacheSize() {
+  return shadeCache.size;
+}
+
 export function deriveShades(baseColor, bg, minRatio = 3.0) {
   const cacheKey = `${baseColor}|${bg}|${minRatio}`;
   if (shadeCache.has(cacheKey)) return shadeCache.get(cacheKey);
@@ -92,20 +100,33 @@ export function deriveShades(baseColor, bg, minRatio = 3.0) {
   return result;
 }
 
-export function getShadesForTheme(theme) {
-  const bg = theme.appBackground ?? theme.surface ?? '#000000';
-  const accent = theme.accent ?? '#27d8c7';
-  const accentShades = deriveShades(accent, bg);
-  const thumb = theme.scrollbarThumb ?? accent;
-  return {
-    accentHover: accentShades.hover,
-    accentActive: accentShades.active,
-    disabledBg: mixHex(theme.surface ?? bg, bg, 0.5),
-    disabledFg: mixHex(theme.textMuted ?? theme.text ?? '#888888', bg, 0.4),
-    scrollbarThumbActive: darken(theme.scrollbarThumbHover ?? thumb, 0.12),
-  };
+export function computeColorShades(palette) {
+  const bg = palette.appBackground ?? palette.surface ?? '#0f1117';
+  const accent = palette.accent ?? '#27d8c7';
+  const derived = deriveShades(accent, bg);
+  const out = {};
+  for (const step of [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]) {
+    if (step === 600) out[`--tuner-accent-${step}`] = derived.hover;
+    else if (step === 700) out[`--tuner-accent-${step}`] = derived.active;
+    else if (step < 600) out[`--tuner-accent-${step}`] = lighten(accent, ((600 - step) / 600) * 0.35);
+    else out[`--tuner-accent-${step}`] = darken(accent, ((step - 600) / 400) * 0.35);
+  }
+  if (palette.appBackground) out['--tuner-bg-app'] = palette.appBackground;
+  if (palette.surface) out['--tuner-bg-surface'] = palette.surface;
+  if (palette.border) out['--tuner-border'] = palette.border;
+  if (palette.text) out['--tuner-text'] = palette.text;
+  if (palette.textMuted) out['--tuner-text-muted'] = palette.textMuted;
+  if (palette.accent) out['--tuner-accent'] = palette.accent;
+  return out;
 }
 
-export function clearShadeCache() {
-  shadeCache.clear();
+export function getShadesForTheme(theme) {
+  return computeColorShades({
+    accent: theme.accent,
+    surface: theme.surface,
+    border: theme.border,
+    text: theme.text,
+    textMuted: theme.textMuted,
+    appBackground: theme.appBackground,
+  });
 }

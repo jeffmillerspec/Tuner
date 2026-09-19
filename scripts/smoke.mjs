@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from 'node:child_process';
 import http from 'node:http';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,7 +8,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const reportsDir = join(root, 'tests', 'reports');
 const PORT = 4173;
 const READY_TIMEOUT = 60000;
-const quick = process.env.SMOKE_QUICK === '1';
+const quick = process.env.SMOKE_QUICK === '1' || process.argv.includes('--quick');
 const skipCi = process.env.SKIP_SMOKE_CI === '1' || quick;
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const log = [];
@@ -52,11 +52,14 @@ async function main() {
   let code = 0;
   let preview = null;
   try {
-    if (!skipCi) {
+    const depsReady = existsSync(join(root, 'node_modules', 'vite', 'package.json'));
+    if (!skipCi && !depsReady) {
       note('[step] npm ci');
       const ci = runSync(npmCmd, ['ci', '--no-fund', '--no-audit']);
       if (ci.status !== 0) throw new Error('npm ci failed');
       note('PASS:npm-ci');
+    } else if (depsReady) {
+      note('SKIP:npm-ci (node_modules present)');
     }
     if (!quick) {
       note('[step] build');
@@ -80,17 +83,14 @@ async function main() {
     if (stat.stdout) process.stdout.write(stat.stdout);
     if (stat.status !== 0) throw new Error('static smoke failed');
     note('PASS:static-smoke');
-    note('SMOKE_OK');
-  } catch (e) {
+    note('PASS:smoke-complete');
+  } catch (err) {
     code = 1;
-    note('FAIL:' + e.message);
+    note('FAIL:' + (err?.message || String(err)));
   } finally {
-    if (preview) {
-      preview.kill('SIGTERM');
-      try { preview.kill('SIGKILL'); } catch {}
-    }
+    preview?.kill('SIGTERM');
     writeReports(code);
-    process.exitCode = code;
+    process.exit(code);
   }
 }
 

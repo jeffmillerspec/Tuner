@@ -7,6 +7,8 @@ export const THEME_KEYS = [
   'scrollbarTrack', 'scrollbarThumb', 'scrollbarThumbHover',
 ];
 
+export const REQUIRED_COLOR_KEYS = THEME_KEYS;
+
 export const COLOR_TO_CSS_VAR = {
   appBackground: '--tuner-bg-app',
   surface: '--tuner-bg-surface',

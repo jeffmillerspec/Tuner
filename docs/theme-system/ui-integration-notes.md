@@ -5,7 +5,8 @@
 | Location | Role |
 |----------|------|
 | `src/main.js` | `boot()` loads store, awaits `initTheme({ getThemeId, setThemeId })`, binds `#theme-select`, sets `dataset.themeReady`, then first `render()` |
-| `src/store.js` | Persists `settings.themeId` in `tuner-data` via `getState()` / `updateSettings()` |
+| `src/ui/themeSelect.js` | `bindThemeSelectOnce({ listThemes, applyTheme, subscribe, getThemeId })` wires `#theme-select` |
+| `src/store.js` | Persists `settings.themeId` via `getThemeId()` / `setThemeId()` |
 | `src/theme/themeManager.js` | `initTheme`, `applyTheme`, `getToken`, `subscribe`, `listThemes`, `reloadThemes` |
 | `src/theme/themeInternal.js` | Loads `Bundled themes json/`; built-in light/dark fallbacks; applies CSS vars on `:root` |
 | `src/styles.css` | Token-bound body, header, panel, input, button, list items; dialog/tooltip/menu hooks |
@@ -55,8 +56,11 @@ Shade variants `--tuner-accent-50`…`900` derived by `shades.js`.
 6. Light/Dark bundled themes — readable text on surfaces and accents.
 7. OS high contrast — thicker borders (`prefers-contrast: more`); forced-colors uses CanvasText outlines.
 
-## Limitations
+## Limitations and follow-ups
 
 - Tauri native dialogs not CSS-themed.
+- Secondary controls (video chrome) use platform defaults.
+- Planned: transition polish on theme switch; error/toast token coverage.
+- Perf: theme switch is synchronous CSS-var update only — no full re-render.
 - Tooltips/menus unused; CSS hooks present.
 - Dropdown populates after async `initTheme`.

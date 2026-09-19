@@ -30,11 +30,10 @@ describe('smoke theme runtime', () => {
 
 describe('smoke delivery', () => {
   it('scripts/smoke.mjs exits 0 (quick mode)', async () => {
-    const { stdout } = await execFileAsync(process.execPath, ['scripts/smoke.mjs'], {
+    const { stdout } = await execFileAsync(process.execPath, ['scripts/smoke.mjs', '--quick'], {
       cwd: root,
       timeout: 60000,
       maxBuffer: 1024 * 1024,
-      env: { ...process.env, SMOKE_QUICK: '1' },
     });
     expect(stdout).toContain('SMOKE_OK');
   }, 65000);

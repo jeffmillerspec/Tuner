@@ -39,6 +39,25 @@ check('theme-scrollbars', () => {
   assert.match(ti, /--tuner-scrollbar-track/, 'scrollbar tokens missing');
 });
 
+check('theme-bundled-json', () => {
+  const dir = path.join(root, 'Bundled themes json');
+  assert.ok(fs.existsSync(dir), 'Bundled themes json directory missing');
+  const jsons = fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith('.json'));
+  assert.ok(jsons.length >= 1, 'no bundled theme JSON files');
+});
+
+check('theme-engine-exports', () => {
+  const mgr = fs.readFileSync(path.join(root, 'src/theme/themeManager.js'), 'utf8');
+  const internal = fs.readFileSync(path.join(root, 'src/theme/themeInternal.js'), 'utf8');
+  for (const sym of ['initTheme', 'applyTheme', 'listThemes', 'getToken', 'subscribe', 'reloadThemes']) {
+    assert.match(mgr, new RegExp('export (async )?function ' + sym + '\\b'), sym + ' missing in themeManager');
+  }
+  for (const sym of ['loadBundledThemes', 'buildTokens', 'applyCssVars', 'deriveScrollbar']) {
+    assert.match(internal, new RegExp('export (async )?function ' + sym + '\\b|' + sym + '\\s*='), sym + ' missing in themeInternal');
+  }
+  assert.match(internal, /Bundled themes json/, 'themeInternal must reference bundled JSON dir');
+});
+
 check('docs', () => {
   const doc = fs.readFileSync(path.join(root, 'docs/queue/modernization-summary.md'), 'utf8');
   assert.match(doc, /Verification|Manual test steps/, 'verification missing');

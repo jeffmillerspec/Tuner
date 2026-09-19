@@ -1,0 +1,638 @@
+{
+  "scannedAt": "2026-09-19T12:55:10.575Z",
+  "repoRoot": ".",
+  "rootFiles": [
+    {
+      "path": ".functioning-app",
+      "size": 4,
+      "mtime": "2026-09-16T12:48:34.544Z"
+    },
+    {
+      "path": ".gitignore",
+      "size": 38,
+      "mtime": "2026-09-15T19:34:00.729Z"
+    },
+    {
+      "path": ".npmrc",
+      "size": 111,
+      "mtime": "2026-09-17T15:01:23.417Z"
+    },
+    {
+      "path": ".tracemesh-delivery-root",
+      "size": 13,
+      "mtime": "2026-09-16T01:59:25.753Z"
+    },
+    {
+      "path": ".tracemesh-delivery.json",
+      "size": 236,
+      "mtime": "2026-09-16T02:03:03.693Z"
+    },
+    {
+      "path": ".tuner-binary-path",
+      "size": 46,
+      "mtime": "2026-09-16T12:48:34.554Z"
+    },
+    {
+      "path": "app-icon.png",
+      "size": 70,
+      "mtime": "2026-09-16T00:06:37.571Z"
+    },
+    {
+      "path": "cargo-check.log",
+      "size": 54,
+      "mtime": "2026-09-15T20:02:29.683Z"
+    },
+    {
+      "path": "cargo-metadata.log",
+      "size": 2035,
+      "mtime": "2026-09-15T19:58:48.739Z"
+    },
+    {
+      "path": "Cargo.lock",
+      "size": 118160,
+      "mtime": "2026-09-17T13:25:37.387Z"
+    },
+    {
+      "path": "Cargo.toml",
+      "size": 102,
+      "mtime": "2026-09-17T13:38:01.327Z"
+    },
+    {
+      "path": "index.html",
+      "size": 1829,
+      "mtime": "2026-09-19T11:29:26.657Z"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 62113,
+      "mtime": "2026-09-19T11:52:28.557Z"
+    },
+    {
+      "path": "package.json",
+      "size": 1130,
+      "mtime": "2026-09-19T12:11:23.989Z"
+    },
+    {
+      "path": "README.md",
+      "size": 495,
+      "mtime": "2026-09-16T04:34:03.396Z"
+    },
+    {
+      "path": "vite.config.js",
+      "size": 362,
+      "mtime": "2026-09-16T11:50:50.471Z"
+    },
+    {
+      "path": "vitest.config.mjs",
+      "size": 247,
+      "mtime": "2026-09-19T12:00:37.077Z"
+    }
+  ],
+  "src": [
+    {
+      "path": "src/main.js",
+      "size": 8470,
+      "mtime": "2026-09-19T11:34:00.452Z"
+    },
+    {
+      "path": "src/playback-test.js",
+      "size": 5477,
+      "mtime": "2026-09-17T11:29:47.528Z"
+    },
+    {
+      "path": "src/player.js",
+      "size": 469,
+      "mtime": "2026-09-15T20:36:12.758Z"
+    },
+    {
+      "path": "src/store.js",
+      "size": 2198,
+      "mtime": "2026-09-19T11:34:02.617Z"
+    },
+    {
+      "path": "src/styles.css",
+      "size": 8058,
+      "mtime": "2026-09-19T11:34:08.514Z"
+    },
+    {
+      "path": "src/theme/constants.js",
+      "size": 2069,
+      "mtime": "2026-09-19T09:38:57.115Z"
+    },
+    {
+      "path": "src/theme/shades.js",
+      "size": 3278,
+      "mtime": "2026-09-19T11:03:09.749Z"
+    },
+    {
+      "path": "src/theme/theme.schema.json",
+      "size": 1452,
+      "mtime": "2026-09-19T10:57:31.951Z"
+    },
+    {
+      "path": "src/theme/themeInternal.js",
+      "size": 3663,
+      "mtime": "2026-09-19T11:29:22.760Z"
+    },
+    {
+      "path": "src/theme/themeManager.js",
+      "size": 2709,
+      "mtime": "2026-09-19T11:01:17.966Z"
+    },
+    {
+      "path": "src/theme/validate.js",
+      "size": 1889,
+      "mtime": "2026-09-19T09:38:59.834Z"
+    }
+  ],
+  "srcTauri": [
+    {
+      "path": "src-tauri/build.rs",
+      "size": 32,
+      "mtime": "2026-09-15T19:34:00.838Z"
+    },
+    {
+      "path": "src-tauri/capabilities/default.json",
+      "size": 225,
+      "mtime": "2026-09-16T04:52:55.472Z"
+    },
+    {
+      "path": "src-tauri/Cargo.lock",
+      "size": 118376,
+      "mtime": "2026-09-16T05:22:16.973Z"
+    },
+    {
+      "path": "src-tauri/Cargo.toml",
+      "size": 435,
+      "mtime": "2026-09-16T05:20:27.387Z"
+    },
+    {
+      "path": "src-tauri/gen/schemas/acl-manifests.json",
+      "size": 74223,
+      "mtime": "2026-09-16T04:53:26.957Z"
+    },
+    {
+      "path": "src-tauri/gen/schemas/capabilities.json",
+      "size": 217,
+      "mtime": "2026-09-16T04:53:27.034Z"
+    },
+    {
+      "path": "src-tauri/gen/schemas/desktop-schema.json",
+      "size": 138018,
+      "mtime": "2026-09-16T04:53:27.016Z"
+    },
+    {
+      "path": "src-tauri/gen/schemas/windows-schema.json",
+      "size": 138018,
+      "mtime": "2026-09-16T04:53:27.016Z"
+    },
+    {
+      "path": "src-tauri/icons/128x128.png",
+      "size": 295,
+      "mtime": "2026-09-15T23:59:55.938Z"
+    },
+    {
+      "path": "src-tauri/icons/128x128@2x.png",
+      "size": 661,
+      "mtime": "2026-09-15T23:59:56.012Z"
+    },
+    {
+      "path": "src-tauri/icons/32x32.png",
+      "size": 102,
+      "mtime": "2026-09-15T23:59:55.923Z"
+    },
+    {
+      "path": "src-tauri/icons/64x64.png",
+      "size": 156,
+      "mtime": "2026-09-15T23:59:55.934Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-anydpi-v26/ic_launcher.xml",
+      "size": 261,
+      "mtime": "2026-09-16T00:00:05.946Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-hdpi/ic_launcher.png",
+      "size": 168,
+      "mtime": "2026-09-16T00:00:04.501Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-hdpi/ic_launcher_foreground.png",
+      "size": 371,
+      "mtime": "2026-09-16T00:00:03.203Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-hdpi/ic_launcher_round.png",
+      "size": 273,
+      "mtime": "2026-09-16T00:00:04.379Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-mdpi/ic_launcher.png",
+      "size": 167,
+      "mtime": "2026-09-16T00:00:05.151Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-mdpi/ic_launcher_foreground.png",
+      "size": 236,
+      "mtime": "2026-09-16T00:00:03.245Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-mdpi/ic_launcher_round.png",
+      "size": 270,
+      "mtime": "2026-09-16T00:00:04.841Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xhdpi/ic_launcher.png",
+      "size": 276,
+      "mtime": "2026-09-16T00:00:05.249Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xhdpi/ic_launcher_foreground.png",
+      "size": 512,
+      "mtime": "2026-09-16T00:00:03.323Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xhdpi/ic_launcher_round.png",
+      "size": 480,
+      "mtime": "2026-09-16T00:00:05.238Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xxhdpi/ic_launcher.png",
+      "size": 420,
+      "mtime": "2026-09-16T00:00:05.491Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xxhdpi/ic_launcher_foreground.png",
+      "size": 899,
+      "mtime": "2026-09-16T00:00:03.702Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xxhdpi/ic_launcher_round.png",
+      "size": 708,
+      "mtime": "2026-09-16T00:00:05.422Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher.png",
+      "size": 557,
+      "mtime": "2026-09-16T00:00:05.944Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "size": 1353,
+      "mtime": "2026-09-16T00:00:03.851Z"
+    },
+    {
+      "path": "src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher_round.png",
+      "size": 897,
+      "mtime": "2026-09-16T00:00:05.611Z"
+    },
+    {
+      "path": "src-tauri/icons/android/values/ic_launcher_background.xml",
+      "size": 115,
+      "mtime": "2026-09-16T00:00:05.946Z"
+    },
+    {
+      "path": "src-tauri/icons/icon.icns",
+      "size": 12634,
+      "mtime": "2026-09-15T23:59:55.847Z"
+    },
+    {
+      "path": "src-tauri/icons/icon.ico",
+      "size": 1968,
+      "mtime": "2026-09-15T23:59:55.906Z"
+    },
+    {
+      "path": "src-tauri/icons/icon.png",
+      "size": 1812,
+      "mtime": "2026-09-15T23:59:56.314Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-20x20@1x.png",
+      "size": 91,
+      "mtime": "2026-09-15T23:59:56.562Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-20x20@2x-1.png",
+      "size": 113,
+      "mtime": "2026-09-15T23:59:56.452Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-20x20@2x.png",
+      "size": 113,
+      "mtime": "2026-09-15T23:59:56.615Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-20x20@3x.png",
+      "size": 143,
+      "mtime": "2026-09-15T23:59:56.766Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-29x29@1x.png",
+      "size": 100,
+      "mtime": "2026-09-15T23:59:57.352Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-29x29@2x-1.png",
+      "size": 139,
+      "mtime": "2026-09-15T23:59:56.837Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-29x29@2x.png",
+      "size": 139,
+      "mtime": "2026-09-15T23:59:57.447Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-29x29@3x.png",
+      "size": 191,
+      "mtime": "2026-09-15T23:59:57.743Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-40x40@1x.png",
+      "size": 113,
+      "mtime": "2026-09-15T23:59:58.432Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-40x40@2x-1.png",
+      "size": 181,
+      "mtime": "2026-09-15T23:59:57.910Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-40x40@2x.png",
+      "size": 181,
+      "mtime": "2026-09-15T23:59:58.751Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-40x40@3x.png",
+      "size": 260,
+      "mtime": "2026-09-15T23:59:58.997Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-512@2x.png",
+      "size": 5691,
+      "mtime": "2026-09-16T00:00:02.950Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-60x60@2x.png",
+      "size": 260,
+      "mtime": "2026-09-15T23:59:59.447Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-60x60@3x.png",
+      "size": 416,
+      "mtime": "2026-09-16T00:00:00.041Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-76x76@1x.png",
+      "size": 176,
+      "mtime": "2026-09-16T00:00:00.445Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-76x76@2x.png",
+      "size": 349,
+      "mtime": "2026-09-16T00:00:00.545Z"
+    },
+    {
+      "path": "src-tauri/icons/ios/AppIcon-83.5x83.5@2x.png",
+      "size": 385,
+      "mtime": "2026-09-16T00:00:00.573Z"
+    },
+    {
+      "path": "src-tauri/icons/Square107x107Logo.png",
+      "size": 236,
+      "mtime": "2026-09-15T23:59:51.241Z"
+    },
+    {
+      "path": "src-tauri/icons/Square142x142Logo.png",
+      "size": 325,
+      "mtime": "2026-09-15T23:59:51.289Z"
+    },
+    {
+      "path": "src-tauri/icons/Square150x150Logo.png",
+      "size": 343,
+      "mtime": "2026-09-15T23:59:51.468Z"
+    },
+    {
+      "path": "src-tauri/icons/Square284x284Logo.png",
+      "size": 758,
+      "mtime": "2026-09-15T23:59:51.920Z"
+    },
+    {
+      "path": "src-tauri/icons/Square30x30Logo.png",
+      "size": 100,
+      "mtime": "2026-09-15T23:59:50.468Z"
+    },
+    {
+      "path": "src-tauri/icons/Square310x310Logo.png",
+      "size": 849,
+      "mtime": "2026-09-15T23:59:52.112Z"
+    },
+    {
+      "path": "src-tauri/icons/Square44x44Logo.png",
+      "size": 117,
+      "mtime": "2026-09-15T23:59:50.830Z"
+    },
+    {
+      "path": "src-tauri/icons/Square71x71Logo.png",
+      "size": 168,
+      "mtime": "2026-09-15T23:59:50.967Z"
+    },
+    {
+      "path": "src-tauri/icons/Square89x89Logo.png",
+      "size": 196,
+      "mtime": "2026-09-15T23:59:51.227Z"
+    },
+    {
+      "path": "src-tauri/icons/StoreLogo.png",
+      "size": 126,
+      "mtime": "2026-09-15T23:59:50.107Z"
+    },
+    {
+      "path": "src-tauri/permissions/allow-get-playback-test-config.toml",
+      "size": 164,
+      "mtime": "2026-09-16T04:52:52.531Z"
+    },
+    {
+      "path": "src-tauri/permissions/allow-write-playback-evidence.toml",
+      "size": 161,
+      "mtime": "2026-09-16T04:52:54.600Z"
+    },
+    {
+      "path": "src-tauri/src/lib.rs",
+      "size": 3424,
+      "mtime": "2026-09-16T12:15:02.133Z"
+    },
+    {
+      "path": "src-tauri/src/main.rs",
+      "size": 103,
+      "mtime": "2026-09-15T23:51:29.581Z"
+    },
+    {
+      "path": "src-tauri/tauri.conf.json",
+      "size": 1040,
+      "mtime": "2026-09-19T10:14:35.831Z"
+    },
+    {
+      "path": "src-tauri/tests/smoke_gate.rs",
+      "size": 54,
+      "mtime": "2026-09-17T13:38:03.210Z"
+    }
+  ],
+  "bundledThemesJson": [
+    {
+      "path": "Bundled themes json/clitiles-theme-abyssal-console.json",
+      "size": 1055,
+      "mtime": "2026-08-15T03:54:55.625Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-amaranth-drive.json",
+      "size": 1014,
+      "mtime": "2026-08-22T14:41:37.513Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-amber-crt.json",
+      "size": 1043,
+      "mtime": "2026-08-15T03:55:57.418Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-azure-rift.json",
+      "size": 1006,
+      "mtime": "2026-08-22T14:41:37.569Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-blood-moon.json",
+      "size": 1006,
+      "mtime": "2026-08-15T03:50:15.472Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-chrome-cathedral.json",
+      "size": 1018,
+      "mtime": "2026-08-22T14:41:37.969Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-cobalt-foundry.json",
+      "size": 1014,
+      "mtime": "2026-08-22T14:41:38.172Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-copper-halo.json",
+      "size": 1008,
+      "mtime": "2026-08-22T14:41:38.231Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-coral-drift.json",
+      "size": 1008,
+      "mtime": "2026-08-22T14:41:38.282Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-cryo-lab.json",
+      "size": 1041,
+      "mtime": "2026-08-15T03:54:11.021Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-helios-flare.json",
+      "size": 1010,
+      "mtime": "2026-08-22T14:41:38.339Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-ion-storm.json",
+      "size": 1004,
+      "mtime": "2026-08-22T14:41:38.385Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-iris-protocol.json",
+      "size": 1012,
+      "mtime": "2026-08-22T14:41:38.443Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-occult-archive.json",
+      "size": 1053,
+      "mtime": "2026-08-15T03:55:28.174Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-olive-circuit.json",
+      "size": 1012,
+      "mtime": "2026-08-22T14:41:38.499Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-reactor-warning.json",
+      "size": 1055,
+      "mtime": "2026-08-15T03:53:19.651Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-rose-alloy.json",
+      "size": 1006,
+      "mtime": "2026-08-22T14:41:38.550Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-synthwave-94.json",
+      "size": 1011,
+      "mtime": "2026-08-15T03:50:13.284Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-tungsten-pulse.json",
+      "size": 1006,
+      "mtime": "2026-08-22T20:48:49.362Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-ultraviolet-grid.json",
+      "size": 1018,
+      "mtime": "2026-08-22T14:41:38.677Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-vesper-circuit.json",
+      "size": 1014,
+      "mtime": "2026-08-22T14:41:38.737Z"
+    },
+    {
+      "path": "Bundled themes json/clitiles-theme-xeno-signal.json",
+      "size": 1047,
+      "mtime": "2026-08-15T03:51:34.935Z"
+    },
+    {
+      "path": "Bundled themes json/frost volt.json",
+      "size": 1005,
+      "mtime": "2026-08-22T21:25:28.284Z"
+    },
+    {
+      "path": "Bundled themes json/matte obsidian.json",
+      "size": 1013,
+      "mtime": "2026-08-22T21:24:25.806Z"
+    },
+    {
+      "path": "Bundled themes json/New Theme Bundle 1.json",
+      "size": 1011,
+      "mtime": "2026-08-23T09:17:26.390Z"
+    },
+    {
+      "path": "Bundled themes json/New Theme Bundle 2.json",
+      "size": 1049,
+      "mtime": "2026-08-23T09:27:55.487Z"
+    },
+    {
+      "path": "Bundled themes json/New Theme Bundle 3.json",
+      "size": 1049,
+      "mtime": "2026-08-23T09:27:55.418Z"
+    },
+    {
+      "path": "Bundled themes json/New Theme Bundle 4.json",
+      "size": 1051,
+      "mtime": "2026-08-23T09:27:55.462Z"
+    },
+    {
+      "path": "Bundled themes json/New Theme Bundle 5.json",
+      "size": 1049,
+      "mtime": "2026-08-23T09:27:55.442Z"
+    },
+    {
+      "path": "Bundled themes json/New Theme Bundle 6.json",
+      "size": 1049,
+      "mtime": "2026-08-23T09:27:55.416Z"
+    },
+    {
+      "path": "Bundled themes json/warm clay.json",
+      "size": 1043,
+      "mtime": "2026-08-22T21:24:49.326Z"
+    }
+  ],
+  "uiComponents": []
+}
