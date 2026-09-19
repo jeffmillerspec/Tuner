@@ -36,6 +36,17 @@ export function buildTokens(theme, shades) {
       tokens[`${colorKey}.${variant}`] = hex;
     }
   }
+  tokens['--tuner-bg']=tokens['--tuner-bg-app'];
+  tokens['--tuner-fg']=tokens['--tuner-text'];
+  tokens['--tuner-on-accent']=tokens['--tuner-accent-contrast'];
+  tokens['--tuner-accent-500']=tokens['--tuner-accent'];
+  tokens['--tuner-accent-600']=tokens['--tuner-accent-hover']??shades.accent?.hover??tokens['--tuner-accent'];
+  tokens['--tuner-accent-700']=tokens['--tuner-accent-active']??shades.accent?.active??tokens['--tuner-accent'];
+  tokens['--tuner-disabled-bg']=shades.surface?.disabled??tokens['--tuner-bg-surface-alt'];
+  tokens['--tuner-disabled-fg']=tokens['--tuner-text-muted'];
+  tokens['--tuner-scrollbar-size']='10px';
+  tokens['--tuner-scrollbar-radius']=tokens['--tuner-radius-sm'];
+  tokens['--tuner-scrollbar-thumb-active']=tokens['--tuner-scrollbar-thumb-hover'];
   return tokens;
 }
 
@@ -72,11 +83,29 @@ export function loadBundledThemes() {
   }
 }
 
-export function resolveThemeId(themeId) {
-  if (themeId && themes.has(themeId)) return themeId;
+function resolveDefaultThemeId() {
   if (themes.has(DEFAULT_THEME_ID)) return DEFAULT_THEME_ID;
   const first = themes.keys().next();
   return first.done ? fallbackTheme().id : first.value;
+}
+
+/** Resolve theme id from string id/name or {id?, name?} object. */
+export function resolveThemeId(nameOrTheme) {
+  if (nameOrTheme == null || nameOrTheme === '') return resolveDefaultThemeId();
+  if (typeof nameOrTheme === 'object') {
+    if (nameOrTheme.id && themes.has(nameOrTheme.id)) return nameOrTheme.id;
+    if (nameOrTheme.name) {
+      for (const [id, t] of themes) {
+        if (t.name === nameOrTheme.name) return id;
+      }
+    }
+    return resolveDefaultThemeId();
+  }
+  if (themes.has(nameOrTheme)) return nameOrTheme;
+  for (const [id, t] of themes) {
+    if (t.name === nameOrTheme) return id;
+  }
+  return resolveDefaultThemeId();
 }
 
 export function getShadesForTheme(theme) {

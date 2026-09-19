@@ -23,13 +23,19 @@ export function subscribe(fn) {
   return () => subscribers.delete(fn);
 }
 
-/** @param {string} name @returns {string|null} */
-export function getToken(name) {
-  if (name in state.currentTokens) return state.currentTokens[name];
-  if (name.startsWith('--')) return state.currentTokens[name] ?? null;
+/**
+ * Fetch a theme token by CSS var, color key, or alias.
+ * @param {string} name Token key (e.g. '--tuner-accent', 'accent', 'appBackground')
+ * @param {string|null} [fallback] Returned when token is missing or empty
+ * @returns {string|null}
+ */
+export function getToken(name, fallback = null) {
+  const pick = (v) => (v != null && v !== '' ? v : (fallback ?? null));
+  if (name in state.currentTokens) return pick(state.currentTokens[name]);
+  if (name.startsWith('--')) return pick(state.currentTokens[name]);
   const cssVar = COLOR_TO_CSS_VAR[name];
-  if (cssVar) return state.currentTokens[cssVar] ?? null;
-  return null;
+  if (cssVar) return pick(state.currentTokens[cssVar]);
+  return fallback ?? null;
 }
 
 export function getTheme() {
@@ -42,9 +48,13 @@ export function listThemes() {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/** @param {string} themeId @returns {string} */
-export function applyTheme(themeId) {
-  const resolved = resolveThemeId(themeId);
+/**
+ * Apply a bundled theme by id, display name, or {id?, name?} object.
+ * @param {string|{id?:string,name?:string}} nameOrTheme
+ * @returns {string} Resolved theme id
+ */
+export function applyTheme(nameOrTheme) {
+  const resolved = resolveThemeId(nameOrTheme);
   const theme = themes.get(resolved);
   if (!theme) return applyTheme(DEFAULT_THEME_ID);
   const shades = getShadesForTheme(theme);

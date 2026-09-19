@@ -1,6 +1,6 @@
 {
   "name": "tuner",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,9 @@
     "smoke:static": "node tests/smoke.mjs",
     "smoke:full": "powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1",
     "test": "node scripts/npm-test-wrapper.mjs",
-    "test:node": "node --test tests/theme-validate.test.mjs tests/theme-shades.test.mjs tests/theme-persist.test.mjs",
+    "test:node": "node --test tests/theme-validate.test.mjs tests/theme-shades.test.mjs tests/theme-persist.test.mjs tests/theme-api.test.mjs tests/theme/shades.test.mjs tests/theme/persistence.test.mjs",
+    "test:report": "node scripts/npm-test-wrapper.mjs",
+    "validate:themes": "node tools/validate-themes.mjs",
     "test:vitest": "node scripts/run-vitest.mjs",
     "test:unit": "npm run test:node && npm run test:vitest",
     "test:all": "npm run test:unit && npm run smoke",

@@ -13,3 +13,5 @@ export function reorderPlaylist(d,pid,from,to){return{...d,playlists:d.playlists
 export function loadPlaylistQueue(d,pid){const p=d.playlists.find(x=>x.id===pid);if(!p)return d;return{...d,queue:[...p.trackIds],currentPlaylistId:pid,currentId:p.trackIds[0]||null}}
 export function setCurrent(d,id){return{...d,currentId:id}}
 export function trackById(d,id){return d.library.find(t=>t.id===id)||null}
+export function getState(){return load()}
+export function updateSettings(partial){const s=load();const next={...s,settings:{...(s.settings||{}),...partial}};save(next);return next}
