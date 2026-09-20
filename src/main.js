@@ -1,11 +1,12 @@
 import {
   load, save, uid, addTracks, createPlaylist, deletePlaylist, renamePlaylist,
   addToPlaylist, removeFromPlaylist, reorderPlaylist, loadPlaylistQueue,
-  setCurrent, trackById, getThemeId, setThemeId,
+  setCurrent, trackById, getThemeId, setThemeId, updateSettings,
 } from './store.js';
-import { mediaType, playTrack } from './player.js';
+import { playTrack } from './player.js';
 import { initTheme, applyTheme, listThemes, subscribe } from './theme/themeManager.js';
 import { bindThemeSelectOnce } from './ui/themeSelect.js';
+import { applyWindowMode, getSavedWindowMode, WINDOW_MODE } from './ui/windowMode.js';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 
 const basename = (p) => String(p).replace(/\\/g, '/').split('/').pop();
@@ -54,6 +55,23 @@ function moveQueue(from, to) {
   persist();
 }
 
+function playById(id) {
+  if (!id) return;
+  state = setCurrent(state, id);
+  const tr = trackById(state, id);
+  if (tr && player) playTrack(player, tr);
+  persist();
+}
+
+function queueNeighbor(delta) {
+  if (!state.queue.length) return;
+  const idx = state.queue.indexOf(state.currentId);
+  const nextIdx = idx < 0
+    ? (delta > 0 ? 0 : state.queue.length - 1)
+    : (idx + delta + state.queue.length) % state.queue.length;
+  playById(state.queue[nextIdx]);
+}
+
 function ensureQueueLiveRegion() {
   if ($('queue-live')) return;
   const live = document.createElement('div');
@@ -97,6 +115,8 @@ function renderQueue() {
   });
   const empty = $('queue-empty');
   if (empty) empty.style.display = state.queue.length ? 'none' : 'block';
+  const qc = $('queue-count');
+  if (qc) qc.textContent = state.queue.length ? `${state.queue.length}` : '';
 }
 
 function setupQueueKeyboard() {
@@ -143,6 +163,9 @@ function setupQueueKeyboard() {
       e.preventDefault();
       moveQueue(idx, idx + 1);
       requestAnimationFrame(() => q.querySelectorAll('.queue-item')[idx + 1]?.focus());
+    } else if ((e.key === 'Enter' || e.key === ' ') && id) {
+      e.preventDefault();
+      playById(id);
     }
   });
 }
@@ -218,17 +241,18 @@ function render() {
   if (np) {
     np.textContent = state.currentId
       ? (trackById(state, state.currentId)?.name || 'Unknown')
-      : 'Nothing playing';
+      : 'Select a track';
   }
 
   const lib = $('library-list');
   if (lib) {
+    lib.classList.add('tuner-scrollbars', 'media-list');
     lib.innerHTML = '';
     state.library.forEach((t) => {
       const li = document.createElement('li');
       li.className = state.currentId === t.id ? 'active' : '';
       li.innerHTML =
-        `<span>${esc(t.name)}</span>` +
+        `<span title="${esc(t.name)}">${esc(t.name)}</span>` +
         `<span class="actions">` +
         `<button type="button" data-a="play" data-id="${esc(t.id)}">Play</button>` +
         `<button type="button" data-a="q" data-id="${esc(t.id)}">+Q</button>` +
@@ -239,15 +263,18 @@ function render() {
     const le = $('library-empty');
     if (le) le.style.display = state.library.length ? 'none' : 'block';
   }
+  const lc = $('library-count');
+  if (lc) lc.textContent = state.library.length ? `${state.library.length}` : '';
 
   const pl = $('playlist-list');
   if (pl) {
+    pl.classList.add('tuner-scrollbars', 'media-list');
     pl.innerHTML = '';
     let missingTotal = 0;
     state.playlists.forEach((p) => {
       const li = document.createElement('li');
       li.innerHTML =
-        `<span>${esc(p.name)} (${p.trackIds.length})</span>` +
+        `<span title="${esc(p.name)}">${esc(p.name)} (${p.trackIds.length})</span>` +
         `<span class="actions">` +
         `<button type="button" data-a="loadpl" data-id="${esc(p.id)}">Load</button>` +
         `<button type="button" data-a="delpl" data-id="${esc(p.id)}">Del</button>` +
@@ -259,7 +286,7 @@ function render() {
         if (!tr) { missingTotal += 1; return; }
         const s = document.createElement('li');
         s.innerHTML =
-          `<span>${i + 1}. ${esc(tr.name)}</span>` +
+          `<span title="${esc(tr.name)}">${i + 1}. ${esc(tr.name)}</span>` +
           `<span class="actions">` +
           `<button type="button" data-a="play" data-id="${esc(tid)}">Play</button>` +
           `<button type="button" data-a="up" data-pid="${esc(p.id)}" data-i="${i}">Up</button>` +
@@ -274,9 +301,11 @@ function render() {
     if (pe) {
       if (missingTotal) {
         pe.hidden = false;
+        pe.classList.remove('hidden');
         pe.textContent = `${missingTotal} missing track(s) in library`;
       } else {
         pe.hidden = true;
+        pe.classList.add('hidden');
         pe.textContent = '';
       }
     }
@@ -286,6 +315,12 @@ function render() {
 
   renderQueue();
   syncPlaylistSelect();
+
+  const prev = $('btn-prev');
+  const next = $('btn-next');
+  const canNav = state.queue.length > 0;
+  if (prev) prev.disabled = !canNav;
+  if (next) next.disabled = !canNav;
 }
 
 function bindStaticControls() {
@@ -320,6 +355,19 @@ function bindStaticControls() {
     state = renamePlaylist(state, pid, name);
     persist();
   });
+
+  $('btn-prev')?.addEventListener('click', () => queueNeighbor(-1));
+  $('btn-next')?.addEventListener('click', () => queueNeighbor(1));
+
+  $('btn-focus-mode')?.addEventListener('click', async () => {
+    const current = document.documentElement.dataset.windowMode || WINDOW_MODE.standard;
+    const next = current === WINDOW_MODE.focused ? WINDOW_MODE.standard : WINDOW_MODE.focused;
+    await applyWindowMode(next, {
+      persist: (mode) => {
+        state = updateSettings({ windowMode: mode });
+      },
+    });
+  });
 }
 
 document.addEventListener('click', (e) => {
@@ -328,10 +376,7 @@ document.addEventListener('click', (e) => {
   const a = btn.dataset.a;
   const id = btn.dataset.id;
   if (a === 'play') {
-    state = setCurrent(state, id);
-    const tr = trackById(state, id);
-    if (tr && player) playTrack(player, tr);
-    persist();
+    playById(id);
   } else if (a === 'q') {
     addToQueue(id);
   } else if (a === 'rmq') {
@@ -373,6 +418,11 @@ async function boot() {
     queueHandlersBound = true;
   }
   bindStaticControls();
+  await applyWindowMode(getSavedWindowMode(state.settings), {
+    persist: (mode) => {
+      state = updateSettings({ windowMode: mode });
+    },
+  });
   render();
 }
 

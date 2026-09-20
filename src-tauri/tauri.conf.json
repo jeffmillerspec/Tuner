@@ -14,10 +14,10 @@
       {
         "label": "main",
         "title": "Tuner 0.4.0",
-        "width": 800,
-        "height": 500,
-        "maxWidth": 960,
-        "maxHeight": 540,
+        "width": 1080,
+        "height": 680,
+        "minWidth": 420,
+        "minHeight": 300,
         "resizable": true,
         "center": true
       }

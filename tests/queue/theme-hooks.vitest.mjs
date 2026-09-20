@@ -7,7 +7,7 @@ describe('queue theme hooks', () => {
   it('styles.css references queue and scrollbar tokens', () => {
     const css = readFileSync('src/styles.css', 'utf8');
     expect(css).toContain('#queue-list');
-    expect(css).toContain('--scrollbar-thumb-active');
+    expect(css).toContain('--tuner-scrollbar-thumb-active');
     expect(css).toMatch(/::-webkit-scrollbar-thumb:active/);
     expect(css).toMatch(/scrollbar-color:/);
   });

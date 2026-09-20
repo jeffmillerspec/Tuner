@@ -1,1 +1,104 @@
-<!doctype html><html lang=en><head><meta charset=UTF-8><title>Tuner 0.4.0</title><style>:root{--tuner-bg-app:#02090e;--tuner-bg:#02090e;--tuner-fg:#dbf2f2;--tuner-surface:#05131b;--tuner-border-strong:#164254;--tuner-focus-ring:#4eeaff;--tuner-text:#dbf2f2;--tuner-bg-surface:#05131b;--tuner-border:#164254;--tuner-accent:#27d8c7;--tuner-accent-contrast:#03110f;--tuner-focus:#4eeaff;--tuner-scrollbar-track:#041017;--tuner-scrollbar-thumb:#123746;--tuner-scrollbar-size:10px;--tuner-radius-sm:4px}html,body{background:var(--tuner-bg);color:var(--tuner-fg)}</style><link rel=stylesheet href=/src/styles.css></head><body><div id=app><header><h1>Tuner <span id=app-version>0.4.0</span></h1><select id=theme-select title=Theme aria-label=Theme></select><button id=btn-import type=button>Import</button></header><main class=layout><section class=panel><h2>Library</h2><ul id=library-list></ul><p id=library-empty class=empty>No media imported.</p></section><section class=panel><h2>Playlists</h2><select id=playlist-select></select><div class=row><input id=playlist-name placeholder=New playlist><button id=btn-create-playlist type=button>Create</button><button id=btn-rename-playlist type=button>Rename</button></div><p id=playlist-error class=error hidden></p><ul id=playlist-list></ul><p id=playlist-empty class=empty>No playlists.</p></section><section class="panel player-panel"><h2>Now Playing</h2><video id=player controls playsinline muted></video><p id=now-playing>Select a track</p><div class=row><button id=btn-prev type=button>Prev</button><button id=btn-next type=button>Next</button></div></section><section class=panel><h2>Queue</h2><ul id=queue-list></ul><p id=queue-empty class=empty>Queue empty.</p></section></main></div><script type=module src=/src/main.js></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tuner 0.4.0</title>
+  <style>
+    :root {
+      --tuner-bg-app: #02090e;
+      --tuner-bg: #02090e;
+      --tuner-fg: #dbf2f2;
+      --tuner-surface: #05131b;
+      --tuner-border-strong: #164254;
+      --tuner-focus-ring: #4eeaff;
+      --tuner-text: #dbf2f2;
+      --tuner-bg-surface: #05131b;
+      --tuner-border: #164254;
+      --tuner-accent: #27d8c7;
+      --tuner-accent-contrast: #03110f;
+      --tuner-focus: #4eeaff;
+      --tuner-scrollbar-track: #041017;
+      --tuner-scrollbar-thumb: #123746;
+      --tuner-scrollbar-size: 10px;
+      --tuner-radius-sm: 4px;
+    }
+    html, body {
+      background: var(--tuner-bg);
+      color: var(--tuner-fg);
+    }
+  </style>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body class="mode-standard">
+  <div id="app">
+    <header class="app-header">
+      <div class="brand" data-tauri-drag-region>
+        <span class="brand-mark" aria-hidden="true"></span>
+        <h1>Tuner <span id="app-version" class="brand-version">0.4.0</span></h1>
+      </div>
+      <div class="header-actions">
+        <label class="field-label" for="theme-select">Theme</label>
+        <select id="theme-select" title="Theme" aria-label="Theme"></select>
+        <button id="btn-focus-mode" type="button" class="btn-ghost" aria-pressed="false" title="Compact focused window">Focus</button>
+        <button id="btn-import" type="button" class="btn-primary">Import</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="rail" aria-label="Library and playlists">
+        <section class="panel library-panel">
+          <div class="panel-head">
+            <h2>Library</h2>
+            <span id="library-count" class="panel-meta"></span>
+          </div>
+          <ul id="library-list" class="media-list tuner-scrollbars"></ul>
+          <p id="library-empty" class="empty">No media imported.</p>
+        </section>
+
+        <section class="panel playlist-panel">
+          <div class="panel-head">
+            <h2>Playlists</h2>
+          </div>
+          <div class="playlist-toolbar">
+            <select id="playlist-select" aria-label="Active playlist"></select>
+            <div class="row playlist-edit">
+              <input id="playlist-name" placeholder="New playlist" aria-label="Playlist name" />
+              <button id="btn-create-playlist" type="button" class="btn-secondary">Create</button>
+              <button id="btn-rename-playlist" type="button" class="btn-ghost">Rename</button>
+            </div>
+          </div>
+          <p id="playlist-error" class="error hidden"></p>
+          <ul id="playlist-list" class="media-list tuner-scrollbars"></ul>
+          <p id="playlist-empty" class="empty">No playlists.</p>
+        </section>
+      </aside>
+
+      <section class="panel player-panel">
+        <div class="panel-head">
+          <h2>Now Playing</h2>
+        </div>
+        <div class="stage">
+          <video id="player" controls playsinline muted></video>
+          <div class="stage-veil" aria-hidden="true"></div>
+        </div>
+        <p id="now-playing" class="now-playing">Select a track</p>
+        <div class="transport row">
+          <button id="btn-prev" type="button" class="btn-secondary" title="Previous in queue">Prev</button>
+          <button id="btn-next" type="button" class="btn-secondary" title="Next in queue">Next</button>
+        </div>
+      </section>
+
+      <section class="panel queue-panel">
+        <div class="panel-head">
+          <h2>Queue</h2>
+          <span id="queue-count" class="panel-meta"></span>
+        </div>
+        <ul id="queue-list" class="tuner-scrollbars"></ul>
+        <p id="queue-empty" class="empty">Queue empty.</p>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

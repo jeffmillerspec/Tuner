@@ -3,6 +3,6 @@
   "src": "target\\release\\bundle\\nsis\\Tuner_0.4.0_x64-setup.exe",
   "versioned": "Releases\\Tuner-Setup-0.4.0.exe",
   "latest": "Releases\\Tuner-Setup-latest.exe",
-  "sha256": "8162648e61ae8283d7945a33c6f7a4c5c4ceff4e69199b98ea3976455f2732d6",
-  "stagedAt": "2026-09-20T08:49:01.104Z"
+  "sha256": "1607c9584986d24989ddaec0c875001295721740ec40aaddcc04b64c269621a7",
+  "stagedAt": "2026-09-20T13:50:33.850Z"
 }

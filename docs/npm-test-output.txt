@@ -1,31 +1,31 @@
 [node:test]
-✔ getToken returns token and respects fallback (19.982ms)
-✔ subscribe receives applyTheme notifications (7.6407ms)
-✔ applyTheme accepts id string and name object (5.9457ms)
-✔ theme modules do not runtime-guard import.meta.glob with typeof (1.9593ms)
-✔ initTheme applies default when persistence absent (12.0133ms)
-✔ initTheme falls back when persisted id invalid (6.7861ms)
-✔ persistence round-trip via applyTheme (6.4961ms)
-✔ parseHex validates input (1.8794ms)
-✔ lighten and darken (0.3669ms)
-✔ near-white and near-black edge cases (1.5736ms)
-✔ invalid input returns safe values (0.3642ms)
-✔ contrastRatio black on white (0.2895ms)
-✔ ensureContrast improves low contrast (0.4344ms)
-✔ computeColorShades deterministic (0.5529ms)
-✔ shade cache avoids recompute (0.1918ms)
-✔ validateTheme accepts complete theme (2.0118ms)
-✔ validateTheme fills missing colors deterministically (0.2625ms)
-✔ parseThemeJson rejects malformed JSON (0.2106ms)
-✔ fallbackTheme is deterministic default (1.5053ms)
-✔ theme schema file exists (0.7266ms)
-✔ no absolute path literals in theme modules (1.11ms)
-✔ persistence: initTheme reads saved themeId from getter (17.8057ms)
-✔ persistence: applyTheme writes themeId via setter (5.6043ms)
-✔ persistence: invalid saved id falls back to default (4.7715ms)
-✔ shades: lighten/darken deterministic (1.2996ms)
-✔ shades: computeColorShades stable (2.3536ms)
-✔ shades: deriveShades cache (0.4558ms)
+✔ getToken returns token and respects fallback (16.367ms)
+✔ subscribe receives applyTheme notifications (8.9722ms)
+✔ applyTheme accepts id string and name object (5.8873ms)
+✔ theme modules do not runtime-guard import.meta.glob with typeof (41.7883ms)
+✔ initTheme applies default when persistence absent (10.9913ms)
+✔ initTheme falls back when persisted id invalid (8.5812ms)
+✔ persistence round-trip via applyTheme (5.1719ms)
+✔ parseHex validates input (1.8999ms)
+✔ lighten and darken (0.31ms)
+✔ near-white and near-black edge cases (2.2648ms)
+✔ invalid input returns safe values (0.311ms)
+✔ contrastRatio black on white (0.267ms)
+✔ ensureContrast improves low contrast (0.4416ms)
+✔ computeColorShades deterministic (0.8213ms)
+✔ shade cache avoids recompute (0.4946ms)
+✔ validateTheme accepts complete theme (1.8845ms)
+✔ validateTheme fills missing colors deterministically (0.2661ms)
+✔ parseThemeJson rejects malformed JSON (0.2235ms)
+✔ fallbackTheme is deterministic default (1.0477ms)
+✔ theme schema file exists (0.5615ms)
+✔ no absolute path literals in theme modules (0.623ms)
+✔ persistence: initTheme reads saved themeId from getter (19.56ms)
+✔ persistence: applyTheme writes themeId via setter (5.8809ms)
+✔ persistence: invalid saved id falls back to default (4.9624ms)
+✔ shades: lighten/darken deterministic (1.1964ms)
+✔ shades: computeColorShades stable (1.378ms)
+✔ shades: deriveShades cache (0.5235ms)
 ℹ tests 27
 ℹ suites 0
 ℹ pass 27
@@ -33,7 +33,7 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 1006.7767
+ℹ duration_ms 1414.7243
 
 [vitest]
 PASS:smoke.vitest:initTheme-applies-css-vars
