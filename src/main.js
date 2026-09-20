@@ -4,7 +4,6 @@ import {
   setCurrent, trackById, getThemeId, setThemeId,
 } from './store.js';
 import { mediaType, playTrack } from './player.js';
-import './playback-test.js';
 import { initTheme, applyTheme, listThemes, subscribe } from './theme/themeManager.js';
 import { bindThemeSelectOnce } from './ui/themeSelect.js';
 

@@ -1,0 +1,4 @@
+[workspace]
+members = ["src-tauri", "smoke-runner"]
+default-members = ["smoke-runner"]
+resolver = "2"

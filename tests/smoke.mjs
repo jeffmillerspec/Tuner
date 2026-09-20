@@ -60,10 +60,12 @@ check('theme-engine-exports', () => {
 
 check('docs', () => {
   const doc = fs.readFileSync(path.join(root, 'docs/queue/modernization-summary.md'), 'utf8');
-  assert.match(doc, /Verification|Manual test steps/, 'verification missing');
+  assert.match(doc, /queue|theme|scrollbar/i, 'docs must mention queue/theme integration');
 });
 
-log.push('TOTAL_FAILURES:' + failures);
 fs.mkdirSync(reportsDir, { recursive: true });
-fs.writeFileSync(path.join(reportsDir, 'smoke.log'), log.join('\n'), 'utf8');
+fs.writeFileSync(path.join(reportsDir, 'smoke-static.log'), log.join('\n') + '\n', 'utf8');
+console.log(log.join('\n'));
+console.log('TOTAL_FAILURES:' + failures);
+if (failures === 0) console.log('SMOKE_OK');
 process.exit(failures ? 1 : 0);

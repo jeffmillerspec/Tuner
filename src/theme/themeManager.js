@@ -1,4 +1,4 @@
-import { DEFAULT_THEME_ID } from './constants.js';
+import { DEFAULT_THEME_ID, COLOR_TO_CSS_VAR } from './constants.js';
 import {
   loadBundledThemes,
   buildTokens,
@@ -22,6 +22,24 @@ function resolveDefaultThemeId() {
     : (state.themes[0]?.id ?? DEFAULT_THEME_ID);
 }
 
+function resolveThemeRef(idOrSpec) {
+  if (idOrSpec == null) return null;
+  if (typeof idOrSpec === 'object') {
+    if (idOrSpec.id && state.themes.some((t) => t.id === idOrSpec.id)) return idOrSpec.id;
+    if (idOrSpec.name) {
+      const hit = state.themes.find((t) => t.name === idOrSpec.name);
+      if (hit) return hit.id;
+    }
+    return null;
+  }
+  if (typeof idOrSpec === 'string') {
+    if (state.themes.some((t) => t.id === idOrSpec)) return idOrSpec;
+    const hit = state.themes.find((t) => t.name === idOrSpec);
+    if (hit) return hit.id;
+  }
+  return null;
+}
+
 export function listThemes() {
   return state.themes.map(({ id, name }) => ({ id, name: name || id }));
 }
@@ -30,8 +48,16 @@ export function getTheme() {
   return state.themes.find((t) => t.id === state.currentId) || state.themes[0] || null;
 }
 
-export function getToken(name) {
-  return state.tokens[name];
+export function getToken(name, fallback) {
+  if (name == null) return fallback;
+  const key = name.startsWith('--') ? name : COLOR_TO_CSS_VAR[name];
+  if (key) {
+    const val = state.tokens[key];
+    if (val != null && val !== '') return val;
+  }
+  const direct = state.tokens[name];
+  if (direct != null && direct !== '') return direct;
+  return fallback;
 }
 
 export function subscribe(fn) {
@@ -47,10 +73,11 @@ function notify() {
   }
 }
 
-export function applyTheme(id, opts = {}) {
+export function applyTheme(idOrSpec, opts = {}) {
   const persist = opts.persist !== false;
+  const resolved = resolveThemeRef(idOrSpec);
   const theme =
-    state.themes.find((t) => t.id === id) ||
+    state.themes.find((t) => t.id === resolved) ||
     state.themes.find((t) => t.id === DEFAULT_THEME_ID) ||
     state.themes[0];
   if (!theme) return state.currentId;
