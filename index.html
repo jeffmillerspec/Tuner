@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tuner 0.5.1</title>
+  <title>Tuner 0.5.2</title>
   <link rel="icon" type="image/png" href="/app-icon.png" />
   <style>
     :root {
@@ -36,7 +36,7 @@
     <header class="app-header">
       <div class="brand" data-tauri-drag-region>
         <img class="brand-logo" src="/app-icon.png" width="28" height="28" alt="" />
-        <h1>Tuner <span id="app-version" class="brand-version">0.5.1</span></h1>
+        <h1>Tuner <span id="app-version" class="brand-version">0.5.2</span></h1>
       </div>
 
       <div class="source-switch" role="tablist" aria-label="Media source">
@@ -107,6 +107,10 @@
         </div>
         <div class="stage">
           <video id="player" controls playsinline></video>
+          <div id="stage-fallback" class="stage-fallback hidden" aria-hidden="true">
+            <img id="stage-fallback-icon" class="stage-fallback-icon is-style-icon" alt="" />
+            <span id="stage-fallback-label" class="stage-fallback-label"></span>
+          </div>
           <div class="stage-veil" aria-hidden="true"></div>
           <div id="spotify-embed-wrap" class="spotify-embed-wrap hidden">
             <iframe id="spotify-embed" title="Spotify embed" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
@@ -137,7 +141,7 @@
           <h2>Connections</h2>
           <button type="button" id="btn-connections-close" class="btn-ghost btn-tiny">Close</button>
         </div>
-        <p class="conn-lead">Connect catalogs like Spotify. Guest browsing works immediately; sign-in is optional for your personal playlists.</p>
+        <p class="conn-lead">Browse free catalogs (Audius, Internet Archive, Podcasts) with no setup. Spotify guest browsing works immediately; sign-in is optional for your playlists.</p>
         <div id="connections-list" class="connections-list tuner-scrollbars"></div>
       </section>
     </main>

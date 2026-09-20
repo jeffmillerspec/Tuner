@@ -1061,3 +1061,84 @@ button.linkish:hover {
   background: none;
   color: var(--tuner-focus);
 }
+
+
+/* Stage fallback + catalog accents */
+.stage-has-fallback #player { object-fit: contain; }
+.stage-fallback {
+  pointer-events: none;
+  position: absolute;
+  inset: 0 0 44px 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, var(--tuner-accent) 20%, transparent), transparent 62%),
+    linear-gradient(165deg, #05080c 0%, #000 55%, #0a0e14 100%);
+}
+.stage-fallback.hidden { display: none; }
+.stage-fallback-icon {
+  width: min(42%, 168px);
+  max-width: 168px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 28px color-mix(in srgb, var(--tuner-accent) 28%, #000));
+}
+.stage-fallback-icon.is-style-icon { animation: stage-icon-float 4.5s ease-in-out infinite; }
+.stage-fallback-icon.is-artwork {
+  width: min(48%, 200px);
+  border-radius: var(--tuner-radius-md, 8px);
+  object-fit: cover;
+  box-shadow: 0 16px 36px color-mix(in srgb, #000 55%, transparent);
+  animation: none;
+}
+.stage-fallback-label {
+  font-size: var(--tuner-font-sm, 0.75rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--tuner-text, #dbf2f2) 72%, transparent);
+}
+.stage[data-play-style="radio"] .stage-fallback {
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #f0a202 18%, transparent), transparent 62%),
+    linear-gradient(165deg, #08060a 0%, #000 55%, #100c08 100%);
+}
+.stage[data-play-style="spotify"] .stage-fallback {
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #1db954 18%, transparent), transparent 62%),
+    linear-gradient(165deg, #050a07 0%, #000 55%, #08120c 100%);
+}
+.stage[data-play-style="audius"] .stage-fallback {
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #cc0fe0 18%, transparent), transparent 62%),
+    linear-gradient(165deg, #0a0610 0%, #000 55%, #120818 100%);
+}
+.stage[data-play-style="archive"] .stage-fallback {
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #f6d978 18%, transparent), transparent 62%),
+    linear-gradient(165deg, #0c0904 0%, #000 55%, #141008 100%);
+}
+.stage[data-play-style="podcast"] .stage-fallback {
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #38bdf8 18%, transparent), transparent 62%),
+    linear-gradient(165deg, #04080e 0%, #000 55%, #071018 100%);
+}
+.stage[data-play-style="mp4"] .stage-fallback {
+  background:
+    radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #2ec4b6 18%, transparent), transparent 62%),
+    linear-gradient(165deg, #05080c 0%, #000 55%, #0a0e14 100%);
+}
+@keyframes stage-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.conn-cats { flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.conn-cats .btn-secondary.is-active,
+.conn-cats .btn-secondary.is-active {
+  border-color: var(--tuner-accent, #27d8c7);
+  color: var(--tuner-accent, #27d8c7);
+}

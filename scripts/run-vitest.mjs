@@ -111,5 +111,60 @@ try {
   fail('shades.vitest', e);
 }
 
+// tests/ui/stage-visual.vitest.mjs — play-style fallback icons
+try {
+  const { existsSync } = await import('node:fs');
+  for (const name of ['mp4', 'radio', 'spotify', 'audius']) {
+    const p = join(root, 'assets', 'play-styles', `${name}.png`);
+    if (!existsSync(p)) throw new Error('missing play-style icon: ' + name);
+  }
+  for (const name of ['archive', 'podcast']) {
+    const p = join(root, 'assets', 'play-styles', `${name}.svg`);
+    if (!existsSync(p)) throw new Error('missing play-style icon: ' + name);
+  }
+  const css = readFileSync(join(root, 'src/styles.css'), 'utf8');
+  for (const needle of ['.stage-fallback', 'stage-icon-float', 'data-play-style']) {
+    if (!css.includes(needle)) throw new Error('missing stage CSS: ' + needle);
+  }
+  const html = readFileSync(join(root, 'index.html'), 'utf8');
+  if (!html.includes('id="stage-fallback"')) throw new Error('missing stage-fallback in index.html');
+
+  const { Window } = await import('happy-dom');
+  const win = new Window({ url: 'http://localhost/' });
+  const prev = {
+    document: globalThis.document,
+    window: globalThis.window,
+    HTMLElement: globalThis.HTMLElement,
+  };
+  globalThis.window = win;
+  globalThis.document = win.document;
+  globalThis.HTMLElement = win.HTMLElement;
+  try {
+    win.document.body.innerHTML = `
+      <div class="stage">
+        <video id="player"></video>
+        <div id="stage-fallback" class="stage-fallback hidden">
+          <img id="stage-fallback-icon" class="stage-fallback-icon" alt="" />
+          <span id="stage-fallback-label" class="stage-fallback-label"></span>
+        </div>
+      </div>`;
+    const { setStageVisual, clearStageVisual, PLAY_STYLE_LABELS } = await import('../src/ui/stageVisual.js');
+    setStageVisual({ style: 'radio', hasVideo: false });
+    const fallback = win.document.getElementById('stage-fallback');
+    const label = win.document.getElementById('stage-fallback-label');
+    if (fallback.classList.contains('hidden')) throw new Error('fallback should be visible for radio');
+    if (label.textContent !== PLAY_STYLE_LABELS.radio) throw new Error('radio label mismatch');
+    clearStageVisual();
+    if (!fallback.classList.contains('hidden')) throw new Error('clearStageVisual should hide fallback');
+    pass('stage-visual.vitest:icons-and-fallback');
+  } finally {
+    globalThis.document = prev.document;
+    globalThis.window = prev.window;
+    globalThis.HTMLElement = prev.HTMLElement;
+  }
+} catch (e) {
+  fail('stage-visual.vitest', e);
+}
+
 console.log('run-vitest TOTAL_FAILURES:' + failures);
 process.exit(failures ? 1 : 0);

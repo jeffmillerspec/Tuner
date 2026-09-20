@@ -7,9 +7,12 @@ import { playTrack, playStream } from './player.js';
 import { initTheme, applyTheme, listThemes, subscribe } from './theme/themeManager.js';
 import { bindThemeSelectOnce } from './ui/themeSelect.js';
 import { applyWindowMode, getSavedWindowMode, WINDOW_MODE } from './ui/windowMode.js';
+import { clearStageVisual, syncStageVisualFromPlayer, setStageVisual } from './ui/stageVisual.js';
 import { fetchTopLocal, fetchTopNational, US_STATES } from './radio/stations.js';
 import './connections/spotify.js';
 import './connections/audius.js';
+import './connections/archive.js';
+import './connections/podcasts.js';
 import { getConnection } from './connections/registry.js';
 import {
   completeSpotifyLogin, getSpotifyClientId, setSpotifyClientId, getSpotifyRedirectUri,
@@ -17,6 +20,13 @@ import {
 } from './connections/spotify.js';
 import { playSpotifyFull, spotifyUriFromOpenUrl, disconnectSpotifyPlayer } from './connections/spotifyPlayback.js';
 import { searchAudiusTracks, getCachedAudiusTrack } from './connections/audius.js';
+import {
+  browseArchive, searchArchive, fetchArchiveMetadata, getCachedArchiveDoc, archiveDownloadUrl,
+} from './connections/archive.js';
+import {
+  searchPodcastShows, fetchPodcastEpisodes, browseFeaturedPodcasts,
+  getCachedPodcastShow, getCachedPodcastEpisode,
+} from './connections/podcasts.js';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -31,6 +41,18 @@ let queueHandlersBound = false;
 let radioCache = { local: [], national: [], loaded: false };
 let activeStationId = null;
 let connectionsOpen = false;
+/** @type {'mp4' | 'radio' | 'spotify' | 'audius' | 'archive' | 'podcast'} */
+let activePlayStyle = 'mp4';
+let activeArtworkUrl = '';
+/** @type {'music' | 'audiobooks' | 'films'} */
+let archiveCategory = 'music';
+let podcastFocusShowId = null;
+
+function applyPlayStyleVisual({ style = 'mp4', artworkUrl = '', hasVideo = false } = {}) {
+  activePlayStyle = style;
+  activeArtworkUrl = artworkUrl || '';
+  setStageVisual({ style, artworkUrl, hasVideo });
+}
 
 async function openExternal(url) {
   if (!url) return;
@@ -215,6 +237,8 @@ function playById(id) {
   const tr = trackById(state, id);
   if (tr && player) {
     player.muted = false;
+    const looksVideo = /\.(mp4|webm)$/i.test(tr.path || '');
+    applyPlayStyleVisual({ style: 'mp4', artworkUrl: tr.artwork || '', hasVideo: looksVideo });
     playTrack(player, tr);
   }
   persist();
@@ -226,6 +250,7 @@ async function listenStation(station) {
   hideSpotifyEmbed();
   setLiveBadge(true);
   state = setCurrent(state, null);
+  applyPlayStyleVisual({ style: 'radio', artworkUrl: station.favicon || station.image || '', hasVideo: false });
   const np = $('now-playing');
   if (np) np.textContent = `${station.name} · LIVE`;
   save(state);
@@ -477,14 +502,10 @@ function setConnectionsOpen(open) {
   if (panel) panel.classList.toggle('hidden', !open);
   if (open) {
     // Zero-setup catalogs load immediately.
-    const spotify = getConnection('spotify');
-    const audius = getConnection('audius');
     const jobs = [];
-    if (spotify && spotify.getStatus() === 'disconnected') {
-      jobs.push(spotify.connectGuest());
-    }
-    if (audius && audius.getStatus() === 'disconnected') {
-      jobs.push(audius.connectGuest());
+    for (const id of ['spotify', 'audius', 'archive', 'podcasts']) {
+      const conn = getConnection(id);
+      if (conn && conn.getStatus() === 'disconnected') jobs.push(conn.connectGuest());
     }
     void Promise.all(jobs).then(() => {
       state = load();
@@ -508,11 +529,72 @@ async function playAudiusTrack(track) {
   setLiveBadge(false);
   state = setCurrent(state, null);
   save(state);
+  applyPlayStyleVisual({ style: 'audius', artworkUrl: track.image || '', hasVideo: false });
   const np = $('now-playing');
   if (np) np.textContent = `${track.name}${track.artists ? ` · ${track.artists}` : ''} · Audius`;
   const ok = await playStream(player, track.streamUrl, { muted: false });
   if (!ok) setConnStatusMsg('Could not start Audius stream — try another track.', true);
-  else setConnStatusMsg('Playing full-length Audius track.');
+  else setConnStatusMsg('Playing full-length Audius track. Connections stays open for more browsing.');
+  return ok;
+}
+
+
+async function playArchiveItem(docOrId, fileName = '') {
+  const id = typeof docOrId === 'string' ? docOrId : docOrId?.id;
+  if (!id || !player) return false;
+  const doc = typeof docOrId === 'object' ? docOrId : getCachedArchiveDoc(id);
+  let item;
+  try {
+    item = await fetchArchiveMetadata(id);
+  } catch (e) {
+    setConnStatusMsg(e?.message || 'Could not load Archive item.', true);
+    return false;
+  }
+  const streamUrl = fileName ? archiveDownloadUrl(id, fileName) : item.streamUrl;
+  if (!streamUrl) {
+    setConnStatusMsg('No playable file found for this Archive item.', true);
+    return false;
+  }
+  activeStationId = null;
+  hideSpotifyEmbed();
+  $('spotify-full-wrap')?.classList.add('hidden');
+  setLiveBadge(false);
+  state = setCurrent(state, null);
+  save(state);
+  const hasVideo = Boolean(item.hasVideo) && !fileName;
+  applyPlayStyleVisual({
+    style: 'archive',
+    artworkUrl: hasVideo ? '' : (item.image || doc?.image || ''),
+    hasVideo,
+  });
+  const np = $('now-playing');
+  const label = fileName || item.streamName || '';
+  if (np) {
+    np.textContent = `${item.title}${item.creator ? ` · ${item.creator}` : ''}${label ? ` · ${label}` : ''} · Archive`;
+  }
+  if (!fileName && item.audioFiles?.length > 1) {
+    fillArchiveFileList(item);
+  }
+  const ok = await playStream(player, streamUrl, { muted: false });
+  if (!ok) setConnStatusMsg('Could not start Archive stream — try another item.', true);
+  else setConnStatusMsg('Playing from Internet Archive. Panel stays open so you can keep browsing.');
+  return ok;
+}
+
+async function playPodcastEpisode(episode) {
+  if (!episode?.streamUrl || !player) return false;
+  activeStationId = null;
+  hideSpotifyEmbed();
+  $('spotify-full-wrap')?.classList.add('hidden');
+  setLiveBadge(false);
+  state = setCurrent(state, null);
+  save(state);
+  applyPlayStyleVisual({ style: 'podcast', artworkUrl: episode.image || '', hasVideo: false });
+  const np = $('now-playing');
+  if (np) np.textContent = `${episode.name}${episode.subtitle ? ` · ${episode.subtitle}` : ''} · Podcast`;
+  const ok = await playStream(player, episode.streamUrl, { muted: false });
+  if (!ok) setConnStatusMsg('Could not start podcast episode — try another.', true);
+  else setConnStatusMsg('Playing podcast episode. Connections stays open for more browsing.');
   return ok;
 }
 
@@ -521,14 +603,19 @@ async function renderConnections() {
   if (!host) return;
   const spotify = getConnection('spotify');
   const audius = getConnection('audius');
+  const archive = getConnection('archive');
+  const podcasts = getConnection('podcasts');
   const status = spotify?.getStatus?.() || 'disconnected';
   const who = getSpotifyDisplayName();
   const audiusStatus = audius?.getStatus?.() || 'disconnected';
+  const archiveStatus = archive?.getStatus?.() || 'disconnected';
+  const podcastStatus = podcasts?.getStatus?.() || 'disconnected';
+  const cat = archiveCategory;
 
   host.innerHTML = `
     <article class="conn-card" data-provider="audius">
       <h3>Audius</h3>
-      <p><strong>Recommended for free full songs.</strong> Open catalog — no account, no API keys, no Premium.</p>
+      <p><strong>Recommended for free full songs.</strong> Open catalog — no account, no API keys, no Premium. Playing a track keeps this panel open.</p>
       <span class="conn-status">${esc(audiusStatus === 'disconnected' ? 'ready' : audiusStatus)}</span>
       <p id="audius-status-msg" class="conn-hint" aria-live="polite"></p>
       <div class="conn-field">
@@ -541,6 +628,50 @@ async function renderConnections() {
       </div>
       <h4 class="section-label">Audius tracks</h4>
       <ul class="conn-playlists tuner-scrollbars" id="audius-track-list"></ul>
+    </article>
+
+
+    <article class="conn-card" data-provider="archive">
+      <h3>Internet Archive</h3>
+      <p>Free music, LibriVox audiobooks, and public-domain films — no setup. Playing keeps this panel open.</p>
+      <span class="conn-status">${esc(archiveStatus === 'disconnected' ? 'ready' : archiveStatus)}</span>
+      <p id="archive-status-msg" class="conn-hint" aria-live="polite"></p>
+      <div class="conn-actions conn-cats">
+        <button type="button" class="btn-secondary${cat === 'music' ? ' is-active' : ''}" data-conn="archive-cat" data-cat="music">Music</button>
+        <button type="button" class="btn-secondary${cat === 'audiobooks' ? ' is-active' : ''}" data-conn="archive-cat" data-cat="audiobooks">Audiobooks</button>
+        <button type="button" class="btn-secondary${cat === 'films' ? ' is-active' : ''}" data-conn="archive-cat" data-cat="films">Films</button>
+      </div>
+      <div class="conn-field">
+        <label class="field-label" for="archive-search">Search Archive.org</label>
+        <div class="row">
+          <input id="archive-search" placeholder="Title, creator, topic…" />
+          <button type="button" class="btn-primary" data-conn="archive-search">Search</button>
+          <button type="button" class="btn-secondary" data-conn="archive-browse">Browse</button>
+        </div>
+      </div>
+      <h4 class="section-label">Archive results</h4>
+      <ul class="conn-playlists tuner-scrollbars" id="archive-item-list"></ul>
+      <h4 class="section-label">Chapters / files</h4>
+      <ul class="conn-playlists tuner-scrollbars" id="archive-file-list"></ul>
+    </article>
+
+    <article class="conn-card" data-provider="podcasts">
+      <h3>Podcasts</h3>
+      <p>Search free podcasts and play episodes — no account or API key. Playing keeps this panel open.</p>
+      <span class="conn-status">${esc(podcastStatus === 'disconnected' ? 'ready' : podcastStatus)}</span>
+      <p id="podcast-status-msg" class="conn-hint" aria-live="polite"></p>
+      <div class="conn-field">
+        <label class="field-label" for="podcast-search">Search podcasts</label>
+        <div class="row">
+          <input id="podcast-search" placeholder="Science, history, music…" />
+          <button type="button" class="btn-primary" data-conn="podcast-search">Search</button>
+          <button type="button" class="btn-secondary" data-conn="podcast-featured">Featured</button>
+        </div>
+      </div>
+      <h4 class="section-label">Shows</h4>
+      <ul class="conn-playlists tuner-scrollbars" id="podcast-show-list"></ul>
+      <h4 class="section-label">Episodes</h4>
+      <ul class="conn-playlists tuner-scrollbars" id="podcast-episode-list"></ul>
     </article>
 
     <article class="conn-card" data-provider="spotify">
@@ -592,10 +723,10 @@ async function renderConnections() {
       <h4 class="section-label">Your Spotify library</h4>
       <ul class="conn-playlists tuner-scrollbars" id="spotify-playlist-list"></ul>
     </article>
-    <p class="conn-hint">Pandora isn’t available for third-party Connect (no public free stream API). Audius + live Radio cover free full-length listening with no setup.</p>
+    <p class="conn-hint">Pandora isn’t available for third-party Connect (no public free stream API). Audius, Archive, Podcasts, and live Radio cover free listening with little or no setup.</p>
   `;
 
-  await Promise.all([fillAudiusTrackList(), fillSpotifyPlaylistList()]);
+  await Promise.all([fillAudiusTrackList(), fillArchiveItemList(), fillPodcastShowList(), fillSpotifyPlaylistList()]);
 }
 
 async function fillSpotifyPlaylistList() {
@@ -646,6 +777,108 @@ async function fillAudiusTrackList(query = '') {
     list.innerHTML = `<li class="error">${esc(e.message || 'Audius failed to load')}</li>`;
   }
 }
+
+async function fillArchiveItemList(query = '') {
+  const list = $('archive-item-list');
+  const status = $('archive-status-msg');
+  const files = $('archive-file-list');
+  if (!list) return;
+  list.innerHTML = '<li class="empty">Loading Archive.org…</li>';
+  if (files) files.innerHTML = '';
+  try {
+    const archive = getConnection('archive');
+    if (archive?.getStatus() === 'disconnected') await archive.connectGuest();
+    const items = query
+      ? await searchArchive(query, archiveCategory, 28)
+      : await browseArchive(archiveCategory, 28);
+    if (status) {
+      status.textContent = query
+        ? `Results for “${query}” · ${archiveCategory}`
+        : `Browsing ${archiveCategory} · free streams`;
+    }
+    list.innerHTML = items.map((t) => `
+      <li>
+        <span class="item-title">${esc(t.name)}</span>
+        <span class="station-meta">${esc(t.subtitle || '')}</span>
+        <span class="actions">
+          <button type="button" data-a="archive-play" data-id="${esc(t.id)}">Play</button>
+          ${t.externalUrl ? `<button type="button" data-a="archive-open" data-url="${esc(t.externalUrl)}">Open</button>` : ''}
+        </span>
+      </li>
+    `).join('') || '<li class="empty">No items found.</li>';
+  } catch (e) {
+    list.innerHTML = `<li class="error">${esc(e.message || 'Archive failed to load')}</li>`;
+  }
+}
+
+function fillArchiveFileList(item) {
+  const list = $('archive-file-list');
+  if (!list || !item) return;
+  const files = item.audioFiles || [];
+  list.innerHTML = files.map((f) => `
+    <li>
+      <span class="item-title">${esc(f.name)}</span>
+      <span class="station-meta">${esc(f.format || '')}</span>
+      <span class="actions">
+        <button type="button" data-a="archive-file" data-id="${esc(item.id)}" data-file="${esc(f.name)}">Play</button>
+      </span>
+    </li>
+  `).join('') || '<li class="empty">Single stream — use Play on the item above.</li>';
+}
+
+async function fillPodcastShowList(query = '') {
+  const list = $('podcast-show-list');
+  const status = $('podcast-status-msg');
+  const episodes = $('podcast-episode-list');
+  if (!list) return;
+  list.innerHTML = '<li class="empty">Loading podcasts…</li>';
+  if (episodes) episodes.innerHTML = '';
+  try {
+    const podcasts = getConnection('podcasts');
+    if (podcasts?.getStatus() === 'disconnected') await podcasts.connectGuest();
+    const shows = query
+      ? await searchPodcastShows(query, 20)
+      : await browseFeaturedPodcasts(18);
+    if (status) status.textContent = query ? `Shows for “${query}”` : 'Featured free podcasts';
+    list.innerHTML = shows.map((s) => `
+      <li>
+        <span class="item-title">${esc(s.name)}</span>
+        <span class="station-meta">${esc(s.subtitle || '')}</span>
+        <span class="actions">
+          <button type="button" data-a="podcast-episodes" data-id="${esc(s.id)}">Episodes</button>
+          ${s.externalUrl ? `<button type="button" data-a="podcast-open" data-url="${esc(s.externalUrl)}">Open</button>` : ''}
+        </span>
+      </li>
+    `).join('') || '<li class="empty">No shows found.</li>';
+  } catch (e) {
+    list.innerHTML = `<li class="error">${esc(e.message || 'Podcasts failed to load')}</li>`;
+  }
+}
+
+async function fillPodcastEpisodeList(showId) {
+  const list = $('podcast-episode-list');
+  const status = $('podcast-status-msg');
+  if (!list) return;
+  podcastFocusShowId = showId;
+  list.innerHTML = '<li class="empty">Loading episodes…</li>';
+  try {
+    const episodes = await fetchPodcastEpisodes(showId, 24);
+    const show = getCachedPodcastShow(showId);
+    if (status) status.textContent = show ? `Episodes · ${show.name}` : 'Episodes';
+    list.innerHTML = episodes.map((ep) => `
+      <li>
+        <span class="item-title">${esc(ep.name)}</span>
+        <span class="station-meta">${esc(ep.subtitle || '')}</span>
+        <span class="actions">
+          <button type="button" data-a="podcast-play" data-id="${esc(ep.id)}">Play</button>
+        </span>
+      </li>
+    `).join('') || '<li class="empty">No episodes with playable audio.</li>';
+  } catch (e) {
+    list.innerHTML = `<li class="error">${esc(e.message || 'Could not load episodes')}</li>`;
+  }
+}
+
 
 function render() {
   const src = currentSource();
@@ -809,6 +1042,20 @@ document.addEventListener('click', async (e) => {
       await fillAudiusTrackList('');
     } else if (action === 'audius-search') {
       await fillAudiusTrackList($('audius-search')?.value || '');
+        } else if (action === 'archive-cat') {
+      archiveCategory = connBtn.dataset.cat || 'music';
+      await fillArchiveItemList('');
+      document.querySelectorAll('[data-conn="archive-cat"]').forEach((btn) => {
+        btn.classList.toggle('is-active', btn.dataset.cat === archiveCategory);
+      });
+    } else if (action === 'archive-browse') {
+      await fillArchiveItemList('');
+    } else if (action === 'archive-search') {
+      await fillArchiveItemList($('archive-search')?.value || '');
+    } else if (action === 'podcast-featured') {
+      await fillPodcastShowList('');
+    } else if (action === 'podcast-search') {
+      await fillPodcastShowList($('podcast-search')?.value || '');
     } else if (action === 'spotify-guest') {
       await getConnection('spotify')?.connectGuest();
       state = load();
@@ -883,9 +1130,21 @@ document.addEventListener('click', async (e) => {
     const track = getCachedAudiusTrack(btn.dataset.id);
     if (track) {
       void playAudiusTrack(track);
-      setConnectionsOpen(false);
     }
   } else if (a === 'audius-open') {
+    void openExternal(btn.dataset.url);
+  } else if (a === 'archive-play') {
+    void playArchiveItem(btn.dataset.id);
+  } else if (a === 'archive-file') {
+    void playArchiveItem(btn.dataset.id, btn.dataset.file || '');
+  } else if (a === 'archive-open') {
+    void openExternal(btn.dataset.url);
+  } else if (a === 'podcast-episodes') {
+    void fillPodcastEpisodeList(btn.dataset.id);
+  } else if (a === 'podcast-play') {
+    const ep = getCachedPodcastEpisode(btn.dataset.id);
+    if (ep) void playPodcastEpisode(ep);
+  } else if (a === 'podcast-open') {
     void openExternal(btn.dataset.url);
   } else if (a === 'sp-full') {
     activeStationId = null;
@@ -960,6 +1219,17 @@ async function boot() {
       await getCurrentWindow().setMinSize(new LogicalSize(900, 560));
     }
   } catch { /* browser */ }
+  if (player && !player.dataset.stageVisualBound) {
+    player.dataset.stageVisualBound = '1';
+    player.addEventListener('loadedmetadata', () => {
+      if (Number(player.videoWidth) > 0 && Number(player.videoHeight) > 0) {
+        clearStageVisual();
+      } else if (activePlayStyle && activePlayStyle !== 'spotify') {
+        syncStageVisualFromPlayer(player, activePlayStyle, activeArtworkUrl);
+      }
+    });
+  }
+
   render();
 }
 

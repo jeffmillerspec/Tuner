@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.2 - 2026-09-20
+
+- Stage visuals: custom play-style icons when audio has no video frames (local, radio, Spotify, Audius, Archive, Podcasts).
+- Connections panel stays open while browsing/playing Audius, Internet Archive, and Podcasts.
+- Internet Archive Connect: free music, LibriVox audiobooks, and public-domain films (zero setup).
+- Podcasts Connect: search and play episodes via Apple's public iTunes Search API (zero setup).
+- Installer staged to `Releases/Tuner-Setup-0.5.2.exe` (NSIS, Windows x64, unsigned).
+
 ## 0.5.0 - 2026-09-20
 
 - Live Radio: stations from the Radio Browser directory (local and US-national selections) with curated stream fallbacks.
