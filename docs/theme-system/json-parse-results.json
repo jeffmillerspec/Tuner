@@ -1,5 +1,5 @@
 {
-  "validatedAt": "2026-09-20T06:02:57.935Z",
+  "validatedAt": "2026-09-20T07:51:50.325Z",
   "themesDir": "Bundled themes json",
   "total": 31,
   "ok": 31,
@@ -10,6 +10,7 @@
       "size": 1055,
       "mtime": "2026-08-15T03:54:55.625Z",
       "valid": true,
+      "id": "abyssal-console",
       "error": null
     },
     {
@@ -17,6 +18,7 @@
       "size": 1014,
       "mtime": "2026-08-22T14:41:37.513Z",
       "valid": true,
+      "id": "amaranth-drive",
       "error": null
     },
     {
@@ -24,6 +26,7 @@
       "size": 1043,
       "mtime": "2026-08-15T03:55:57.418Z",
       "valid": true,
+      "id": "amber-crt",
       "error": null
     },
     {
@@ -31,6 +34,7 @@
       "size": 1006,
       "mtime": "2026-08-22T14:41:37.569Z",
       "valid": true,
+      "id": "azure-rift",
       "error": null
     },
     {
@@ -38,6 +42,7 @@
       "size": 1006,
       "mtime": "2026-08-15T03:50:15.472Z",
       "valid": true,
+      "id": "blood-moon",
       "error": null
     },
     {
@@ -45,6 +50,7 @@
       "size": 1018,
       "mtime": "2026-08-22T14:41:37.969Z",
       "valid": true,
+      "id": "chrome-cathedral",
       "error": null
     },
     {
@@ -52,6 +58,7 @@
       "size": 1014,
       "mtime": "2026-08-22T14:41:38.172Z",
       "valid": true,
+      "id": "cobalt-foundry",
       "error": null
     },
     {
@@ -59,6 +66,7 @@
       "size": 1008,
       "mtime": "2026-08-22T14:41:38.231Z",
       "valid": true,
+      "id": "copper-halo",
       "error": null
     },
     {
@@ -66,6 +74,7 @@
       "size": 1008,
       "mtime": "2026-08-22T14:41:38.282Z",
       "valid": true,
+      "id": "coral-drift",
       "error": null
     },
     {
@@ -73,6 +82,7 @@
       "size": 1041,
       "mtime": "2026-08-15T03:54:11.021Z",
       "valid": true,
+      "id": "cryo-lab",
       "error": null
     },
     {
@@ -80,6 +90,7 @@
       "size": 1010,
       "mtime": "2026-08-22T14:41:38.339Z",
       "valid": true,
+      "id": "helios-flare",
       "error": null
     },
     {
@@ -87,6 +98,7 @@
       "size": 1004,
       "mtime": "2026-08-22T14:41:38.385Z",
       "valid": true,
+      "id": "ion-storm",
       "error": null
     },
     {
@@ -94,6 +106,7 @@
       "size": 1012,
       "mtime": "2026-08-22T14:41:38.443Z",
       "valid": true,
+      "id": "iris-protocol",
       "error": null
     },
     {
@@ -101,6 +114,7 @@
       "size": 1053,
       "mtime": "2026-08-15T03:55:28.174Z",
       "valid": true,
+      "id": "occult-archive",
       "error": null
     },
     {
@@ -108,6 +122,7 @@
       "size": 1012,
       "mtime": "2026-08-22T14:41:38.499Z",
       "valid": true,
+      "id": "olive-circuit",
       "error": null
     },
     {
@@ -115,6 +130,7 @@
       "size": 1055,
       "mtime": "2026-08-15T03:53:19.651Z",
       "valid": true,
+      "id": "reactor-warning",
       "error": null
     },
     {
@@ -122,6 +138,7 @@
       "size": 1006,
       "mtime": "2026-08-22T14:41:38.550Z",
       "valid": true,
+      "id": "rose-alloy",
       "error": null
     },
     {
@@ -129,13 +146,15 @@
       "size": 1011,
       "mtime": "2026-08-15T03:50:13.284Z",
       "valid": true,
+      "id": "synthwave-94",
       "error": null
     },
     {
       "path": "Bundled themes json/clitiles-theme-tungsten-pulse.json",
-      "size": 1006,
-      "mtime": "2026-08-22T20:48:49.362Z",
+      "size": 1014,
+      "mtime": "2026-09-20T07:50:21.455Z",
       "valid": true,
+      "id": "tungsten-pulse",
       "error": null
     },
     {
@@ -143,6 +162,7 @@
       "size": 1018,
       "mtime": "2026-08-22T14:41:38.677Z",
       "valid": true,
+      "id": "ultraviolet-grid",
       "error": null
     },
     {
@@ -150,6 +170,7 @@
       "size": 1014,
       "mtime": "2026-08-22T14:41:38.737Z",
       "valid": true,
+      "id": "vesper-circuit",
       "error": null
     },
     {
@@ -157,6 +178,7 @@
       "size": 1047,
       "mtime": "2026-08-15T03:51:34.935Z",
       "valid": true,
+      "id": "xeno-signal",
       "error": null
     },
     {
@@ -164,6 +186,7 @@
       "size": 1005,
       "mtime": "2026-08-22T21:25:28.284Z",
       "valid": true,
+      "id": "frost-volt",
       "error": null
     },
     {
@@ -171,6 +194,7 @@
       "size": 1013,
       "mtime": "2026-08-22T21:24:25.806Z",
       "valid": true,
+      "id": "matte-obsidian",
       "error": null
     },
     {
@@ -178,6 +202,7 @@
       "size": 1011,
       "mtime": "2026-08-23T09:17:26.390Z",
       "valid": true,
+      "id": "crimson-relay",
       "error": null
     },
     {
@@ -185,6 +210,7 @@
       "size": 1049,
       "mtime": "2026-08-23T09:27:55.487Z",
       "valid": true,
+      "id": "teal-current",
       "error": null
     },
     {
@@ -192,6 +218,7 @@
       "size": 1049,
       "mtime": "2026-08-23T09:27:55.418Z",
       "valid": true,
+      "id": "rust-lantern",
       "error": null
     },
     {
@@ -199,6 +226,7 @@
       "size": 1051,
       "mtime": "2026-08-23T09:27:55.462Z",
       "valid": true,
+      "id": "viridian-core",
       "error": null
     },
     {
@@ -206,6 +234,7 @@
       "size": 1049,
       "mtime": "2026-08-23T09:27:55.442Z",
       "valid": true,
+      "id": "brass-hearth",
       "error": null
     },
     {
@@ -213,6 +242,7 @@
       "size": 1049,
       "mtime": "2026-08-23T09:27:55.416Z",
       "valid": true,
+      "id": "saffron-deck",
       "error": null
     },
     {
@@ -220,6 +250,7 @@
       "size": 1043,
       "mtime": "2026-08-22T21:24:49.326Z",
       "valid": true,
+      "id": "warm-clay",
       "error": null
     }
   ]

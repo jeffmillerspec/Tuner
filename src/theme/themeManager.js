@@ -105,8 +105,10 @@ export async function initTheme({ getThemeId, setThemeId } = {}) {
     getThemeId: getThemeId ?? (() => null),
     setThemeId: setThemeId ?? (() => {}),
   };
-  if (typeof import.meta.glob === 'function') {
+  try {
     bundledThemeModules = import.meta.glob('../../Bundled themes json/*.json', { eager: true });
+  } catch {
+    bundledThemeModules = {};
   }
   state.themes = await loadBundledThemes();
   setupDevHotReload();

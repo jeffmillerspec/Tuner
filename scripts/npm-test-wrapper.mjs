@@ -11,6 +11,7 @@ const nodeTests = [
   'tests/theme-api.test.mjs',
   'tests/theme/shades.test.mjs',
   'tests/theme/persistence.test.mjs',
+  'tests/theme-browser-glob.test.mjs',
 ];
 
 function run(cmd, args) {

@@ -1,11 +1,20 @@
 import { getShadesForTheme, deriveShades, lighten, mixHex } from './shades.js';
 import { COLOR_TO_CSS_VAR, FALLBACK_COLORS, DESIGN_DEFAULTS } from './constants.js';
 
-/** Vite inlines bundled JSON via import.meta.glob during dev/build. */
-const bundledGlob =
-  typeof import.meta !== 'undefined' && typeof import.meta.glob === 'function'
-    ? import.meta.glob('../../Bundled themes json/*.json', { eager: true })
-    : null;
+/**
+ * Vite inlines bundled JSON via import.meta.glob during dev/build, rewriting this call
+ * expression into a plain object literal at transform time. `import.meta.glob` is not a
+ * real runtime function (Vite never polyfills it), so `typeof import.meta.glob` is always
+ * 'undefined' — checking that would defeat the transform. Outside Vite (plain Node, e.g.
+ * tests), the untransformed call throws because `glob` isn't a property of `import.meta`;
+ * catch that instead to fall back to the Node reader below.
+ */
+let bundledGlob = null;
+try {
+  bundledGlob = import.meta.glob('../../Bundled themes json/*.json', { eager: true });
+} catch {
+  bundledGlob = null;
+}
 
 const BUILTIN_THEMES = [
   { id: 'dark', name: 'Dark', colors: { bgApp: '#0f1117', bgSurface: '#171a22', bgSurfaceAlt: '#1e2330', border: '#2a2f3a', text: '#eeeeee', textMuted: '#888888', accent: '#27d8c7', accentContrast: '#03110f', focus: '#4eeaff' } },
