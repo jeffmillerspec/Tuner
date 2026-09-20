@@ -58,6 +58,17 @@ check('theme-engine-exports', () => {
   assert.match(internal, /Bundled themes json/, 'themeInternal must reference bundled JSON dir');
 });
 
+check('media-import-uses-real-paths', () => {
+  const js = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
+  assert.match(js, /@tauri-apps\/plugin-dialog/, 'must import the Tauri dialog plugin for file selection');
+  assert.doesNotMatch(
+    js,
+    /path:\s*f\.name/,
+    '<input type=file> only exposes a bare filename (f.name), never a real filesystem ' +
+      'path — using it as track.path makes convertFileSrc unresolvable and playback fails'
+  );
+});
+
 check('docs', () => {
   const doc = fs.readFileSync(path.join(root, 'docs/queue/modernization-summary.md'), 'utf8');
   assert.match(doc, /queue|theme|scrollbar/i, 'docs must mention queue/theme integration');

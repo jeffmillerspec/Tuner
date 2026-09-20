@@ -6,6 +6,9 @@ import {
 import { mediaType, playTrack } from './player.js';
 import { initTheme, applyTheme, listThemes, subscribe } from './theme/themeManager.js';
 import { bindThemeSelectOnce } from './ui/themeSelect.js';
+import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
+
+const basename = (p) => String(p).replace(/\\/g, '/').split('/').pop();
 
 const $ = (id) => document.getElementById(id);
 const player = $('player');
@@ -286,13 +289,19 @@ function render() {
 }
 
 function bindStaticControls() {
-  $('btn-import')?.addEventListener('click', () => $('file-input')?.click());
-  $('file-input')?.addEventListener('change', (e) => {
-    const files = [...e.target.files || []];
-    if (!files.length) return;
-    state = addTracks(state, files.map((f) => ({ id: uid(), name: f.name, path: f.name })));
+  $('btn-import')?.addEventListener('click', async () => {
+    const selected = await openFileDialog({
+      multiple: true,
+      filters: [{
+        name: 'Media',
+        extensions: ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'mp4', 'webm'],
+      }],
+    });
+    if (!selected) return;
+    const paths = Array.isArray(selected) ? selected : [selected];
+    if (!paths.length) return;
+    state = addTracks(state, paths.map((p) => ({ id: uid(), name: basename(p), path: p })));
     persist();
-    e.target.value = '';
   });
 
   $('btn-create-playlist')?.addEventListener('click', () => {

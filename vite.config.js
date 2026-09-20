@@ -50,6 +50,11 @@ export default defineConfig({
   server: {
     port: 1420,
     strictPort: true,
+    watch: {
+      // Cargo writes/replaces these while `tauri dev` compiles in the background;
+      // watching them races the build and throws EBUSY on Windows.
+      ignored: ['**/target/**', '**/src-tauri/gen/**'],
+    },
   },
   envPrefix: ['VITE_', 'TAURI_'],
   build: {
