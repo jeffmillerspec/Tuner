@@ -9,11 +9,14 @@ import { bindThemeSelectOnce } from './ui/themeSelect.js';
 import { applyWindowMode, getSavedWindowMode, WINDOW_MODE } from './ui/windowMode.js';
 import { fetchTopLocal, fetchTopNational, US_STATES } from './radio/stations.js';
 import './connections/spotify.js';
+import './connections/audius.js';
 import { getConnection } from './connections/registry.js';
 import {
   completeSpotifyLogin, getSpotifyClientId, setSpotifyClientId, getSpotifyRedirectUri,
   parseSpotifyLink, SPOTIFY_DASHBOARD_URL, OAUTH_PORT, getSpotifyDisplayName,
 } from './connections/spotify.js';
+import { playSpotifyFull, spotifyUriFromOpenUrl, disconnectSpotifyPlayer } from './connections/spotifyPlayback.js';
+import { searchAudiusTracks, getCachedAudiusTrack } from './connections/audius.js';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -134,9 +137,46 @@ function hideSpotifyEmbed() {
 function showSpotifyEmbed(url) {
   const wrap = $('spotify-embed-wrap');
   const frame = $('spotify-embed');
+  const full = $('spotify-full-wrap');
+  if (full) full.classList.add('hidden');
   if (!wrap || !frame || !url) return;
-  frame.src = url;
+  // theme=0 keeps dark chrome; embeds are preview-limited unless Spotify Premium is logged into the iframe.
+  frame.src = url.includes('?') ? `${url}&utm_source=tuner` : `${url}?utm_source=tuner`;
   wrap.classList.remove('hidden');
+}
+
+function showSpotifyFullStage(label) {
+  hideSpotifyEmbed();
+  if (player) { player.pause(); player.removeAttribute('src'); }
+  const full = $('spotify-full-wrap');
+  const text = $('spotify-full-label');
+  if (text) text.textContent = label || 'Playing full track via Spotify Premium…';
+  if (full) full.classList.remove('hidden');
+  setLiveBadge(false);
+}
+
+async function playSpotifyFullOrOpen(externalUrl, { preferExternal = false } = {}) {
+  const uri = spotifyUriFromOpenUrl(externalUrl) || externalUrl;
+  const contextUri = uri?.startsWith('spotify:') ? uri : spotifyUriFromOpenUrl(externalUrl);
+
+  if (!preferExternal && getConnection('spotify')?.getStatus() === 'user' && contextUri) {
+    try {
+      const body = contextUri.includes(':track:')
+        ? { uris: [contextUri] }
+        : { contextUri };
+      await playSpotifyFull(body);
+      showSpotifyFullStage(`Full playback · ${contextUri}`);
+      const np = $('now-playing');
+      if (np) np.textContent = 'Spotify Premium · full length';
+      setConnStatusMsg('Playing full length in Tuner (Spotify Premium).');
+      return true;
+    } catch (e) {
+      setConnStatusMsg(e?.message || String(e), true);
+      // Fall through to open Spotify app/web for full tracks.
+    }
+  }
+  if (externalUrl) await openExternal(externalUrl);
+  return false;
 }
 
 function setLiveBadge(on) {
@@ -436,16 +476,20 @@ function setConnectionsOpen(open) {
   const panel = $('connections-panel');
   if (panel) panel.classList.toggle('hidden', !open);
   if (open) {
-    // Guest catalog works immediately — no developer setup required.
+    // Zero-setup catalogs load immediately.
     const spotify = getConnection('spotify');
+    const audius = getConnection('audius');
+    const jobs = [];
     if (spotify && spotify.getStatus() === 'disconnected') {
-      void spotify.connectGuest().then(() => {
-        state = load();
-        void renderConnections();
-      });
-    } else {
-      void renderConnections();
+      jobs.push(spotify.connectGuest());
     }
+    if (audius && audius.getStatus() === 'disconnected') {
+      jobs.push(audius.connectGuest());
+    }
+    void Promise.all(jobs).then(() => {
+      state = load();
+      void renderConnections();
+    });
   }
 }
 
@@ -456,17 +500,52 @@ function setConnStatusMsg(msg, isError = false) {
   el.classList.toggle('error', Boolean(isError && msg));
 }
 
+async function playAudiusTrack(track) {
+  if (!track?.streamUrl || !player) return false;
+  activeStationId = null;
+  hideSpotifyEmbed();
+  $('spotify-full-wrap')?.classList.add('hidden');
+  setLiveBadge(false);
+  state = setCurrent(state, null);
+  save(state);
+  const np = $('now-playing');
+  if (np) np.textContent = `${track.name}${track.artists ? ` · ${track.artists}` : ''} · Audius`;
+  const ok = await playStream(player, track.streamUrl, { muted: false });
+  if (!ok) setConnStatusMsg('Could not start Audius stream — try another track.', true);
+  else setConnStatusMsg('Playing full-length Audius track.');
+  return ok;
+}
+
 async function renderConnections() {
   const host = $('connections-list');
   if (!host) return;
   const spotify = getConnection('spotify');
+  const audius = getConnection('audius');
   const status = spotify?.getStatus?.() || 'disconnected';
   const who = getSpotifyDisplayName();
+  const audiusStatus = audius?.getStatus?.() || 'disconnected';
 
   host.innerHTML = `
+    <article class="conn-card" data-provider="audius">
+      <h3>Audius</h3>
+      <p><strong>Recommended for free full songs.</strong> Open catalog — no account, no API keys, no Premium.</p>
+      <span class="conn-status">${esc(audiusStatus === 'disconnected' ? 'ready' : audiusStatus)}</span>
+      <p id="audius-status-msg" class="conn-hint" aria-live="polite"></p>
+      <div class="conn-field">
+        <label class="field-label" for="audius-search">Search Audius</label>
+        <div class="row">
+          <input id="audius-search" placeholder="Artist, song, mood…" />
+          <button type="button" class="btn-primary" data-conn="audius-search">Search</button>
+          <button type="button" class="btn-secondary" data-conn="audius-trending">Trending</button>
+        </div>
+      </div>
+      <h4 class="section-label">Audius tracks</h4>
+      <ul class="conn-playlists tuner-scrollbars" id="audius-track-list"></ul>
+    </article>
+
     <article class="conn-card" data-provider="spotify">
       <h3>Spotify</h3>
-      <p>Browse Spotify’s catalog as a guest instantly, or sign in once to load your playlists into Tuner.</p>
+      <p>Browse as guest for previews, or sign in with <strong>Spotify Premium</strong> for full-length playback in Tuner. Free accounts and embeds are limited to ~30s previews by Spotify.</p>
       <span class="conn-status">${esc(status)}${who && status === 'user' ? ` · ${esc(who)}` : ''}</span>
       <p id="conn-status-msg" class="conn-hint" aria-live="polite"></p>
 
@@ -479,20 +558,22 @@ async function renderConnections() {
         <label class="field-label" for="spotify-link">Open any Spotify link</label>
         <div class="row">
           <input id="spotify-link" placeholder="Paste playlist / album / track URL" />
-          <button type="button" class="btn-primary" data-conn="spotify-open-link">Play</button>
+          <button type="button" class="btn-primary" data-conn="spotify-open-link">Play full</button>
+          <button type="button" class="btn-ghost" data-conn="spotify-preview-link">Preview</button>
         </div>
-        <span class="conn-hint">Works in guest mode — no account setup required.</span>
+        <span class="conn-hint">Full length uses Spotify Premium (in Tuner or the Spotify app). Preview is the ~30s clip Spotify allows without Premium streaming.</span>
       </div>
 
-      <details class="conn-advanced" ${status === 'user' ? '' : ''}>
+      <details class="conn-advanced">
         <summary>Sign in for your playlists (one-time setup)</summary>
         <ol class="conn-steps">
-          <li>Open the <button type="button" class="linkish" data-conn="spotify-dashboard">Spotify Developer Dashboard</button> and create an app.</li>
+          <li>Open the <button type="button" class="linkish" data-conn="spotify-dashboard">Spotify Developer Dashboard</button> and create an app (owner needs <strong>Spotify Premium</strong>).</li>
           <li>Add redirect URI
             <code id="spotify-redirect-uri">${esc(getSpotifyRedirectUri())}</code>
             <button type="button" class="btn-tiny btn-ghost" data-conn="spotify-copy-uri">Copy</button>
           </li>
-          <li>Paste the Client ID below, then click <strong>Connect Spotify</strong>. Approve in the browser — Tuner finishes automatically.</li>
+          <li><strong>User Management</strong> → Add new user → enter the <em>exact</em> Spotify email you’ll sign in with (required in Development Mode or API calls return 403).</li>
+          <li>Paste the Client ID below, click <strong>Connect Spotify</strong>, approve in the browser. Disconnect/reconnect after changing scopes. Premium is required for full songs in Tuner.</li>
         </ol>
         <div class="conn-field">
           <label class="field-label" for="spotify-client-id">Client ID</label>
@@ -511,10 +592,16 @@ async function renderConnections() {
       <h4 class="section-label">Your Spotify library</h4>
       <ul class="conn-playlists tuner-scrollbars" id="spotify-playlist-list"></ul>
     </article>
-    <p class="conn-hint">More connection types (Apple Music, etc.) can plug into this panel in future releases.</p>
+    <p class="conn-hint">Pandora isn’t available for third-party Connect (no public free stream API). Audius + live Radio cover free full-length listening with no setup.</p>
   `;
 
+  await Promise.all([fillAudiusTrackList(), fillSpotifyPlaylistList()]);
+}
+
+async function fillSpotifyPlaylistList() {
   const list = $('spotify-playlist-list');
+  const spotify = getConnection('spotify');
+  if (!list || !spotify) return;
   try {
     const playlists = await spotify.listPlaylists();
     list.innerHTML = playlists.map((p) => `
@@ -522,13 +609,41 @@ async function renderConnections() {
         <span class="item-title">${esc(p.name)}</span>
         <span class="station-meta">${esc(p.subtitle || '')}</span>
         <span class="actions">
-          ${p.embedUrl ? `<button type="button" data-a="sp-embed" data-url="${esc(p.embedUrl)}">Play in Tuner</button>` : ''}
-          ${p.externalUrl ? `<button type="button" data-a="sp-open" data-url="${esc(p.externalUrl)}">Open</button>` : ''}
+          ${p.externalUrl ? `<button type="button" data-a="sp-full" data-url="${esc(p.externalUrl)}">Play full</button>` : ''}
+          ${p.embedUrl ? `<button type="button" data-a="sp-embed" data-url="${esc(p.embedUrl)}">Preview</button>` : ''}
+          ${p.externalUrl ? `<button type="button" data-a="sp-open" data-url="${esc(p.externalUrl)}">Open Spotify</button>` : ''}
         </span>
       </li>
     `).join('') || '<li class="empty">No playlists yet — try Browse as Guest.</li>';
   } catch (e) {
     list.innerHTML = `<li class="error">${esc(e.message || 'Failed to load playlists')}</li>`;
+  }
+}
+
+async function fillAudiusTrackList(query = '') {
+  const list = $('audius-track-list');
+  const status = $('audius-status-msg');
+  if (!list) return;
+  list.innerHTML = '<li class="empty">Loading Audius…</li>';
+  try {
+    const audius = getConnection('audius');
+    if (audius?.getStatus() === 'disconnected') await audius.connectGuest();
+    const tracks = query
+      ? await searchAudiusTracks(query, 28)
+      : await audius.listPlaylists();
+    if (status) status.textContent = query ? `Results for “${query}”` : 'Trending this week · full-length streams';
+    list.innerHTML = tracks.map((t) => `
+      <li>
+        <span class="item-title">${esc(t.name)}</span>
+        <span class="station-meta">${esc(t.subtitle || '')}</span>
+        <span class="actions">
+          ${t.streamUrl || t.id ? `<button type="button" data-a="audius-play" data-id="${esc(t.id)}">Play</button>` : ''}
+          ${t.externalUrl ? `<button type="button" data-a="audius-open" data-url="${esc(t.externalUrl)}">Open</button>` : ''}
+        </span>
+      </li>
+    `).join('') || '<li class="empty">No tracks found.</li>';
+  } catch (e) {
+    list.innerHTML = `<li class="error">${esc(e.message || 'Audius failed to load')}</li>`;
   }
 }
 
@@ -690,7 +805,11 @@ document.addEventListener('click', async (e) => {
   const connBtn = e.target.closest('[data-conn]');
   if (connBtn) {
     const action = connBtn.dataset.conn;
-    if (action === 'spotify-guest') {
+    if (action === 'audius-trending') {
+      await fillAudiusTrackList('');
+    } else if (action === 'audius-search') {
+      await fillAudiusTrackList($('audius-search')?.value || '');
+    } else if (action === 'spotify-guest') {
       await getConnection('spotify')?.connectGuest();
       state = load();
       setConnStatusMsg('Browsing Spotify as guest.');
@@ -705,6 +824,7 @@ document.addEventListener('click', async (e) => {
       await renderConnections();
     } else if (action === 'spotify-disconnect') {
       await getConnection('spotify')?.disconnect();
+      await disconnectSpotifyPlayer();
       state = load();
       setConnStatusMsg('Disconnected from Spotify.');
       await renderConnections();
@@ -725,12 +845,26 @@ document.addEventListener('click', async (e) => {
         return;
       }
       activeStationId = null;
+      const ok = await playSpotifyFullOrOpen(parsed.externalUrl);
+      if (!ok) {
+        const np = $('now-playing');
+        if (np) np.textContent = `Spotify · ${parsed.type} (opened for full playback)`;
+        setConnStatusMsg('Opened in Spotify for full-length playback.');
+      }
+      setConnectionsOpen(false);
+    } else if (action === 'spotify-preview-link') {
+      const parsed = parseSpotifyLink($('spotify-link')?.value || '');
+      if (!parsed?.embedUrl) {
+        setConnStatusMsg('Paste a valid Spotify link for preview.', true);
+        return;
+      }
+      activeStationId = null;
       setLiveBadge(false);
       if (player) { player.pause(); player.removeAttribute('src'); }
       showSpotifyEmbed(parsed.embedUrl);
       const np = $('now-playing');
-      if (np) np.textContent = `Spotify · ${parsed.type}`;
-      setConnStatusMsg(`Playing ${parsed.type} in Tuner.`);
+      if (np) np.textContent = `Spotify preview · ${parsed.type}`;
+      setConnStatusMsg('Embed preview (~30s unless Spotify Premium is logged into the player).');
       setConnectionsOpen(false);
     }
     return;
@@ -745,13 +879,30 @@ document.addEventListener('click', async (e) => {
   } else if (a === 'listen') {
     const st = findStation(btn.dataset.sid);
     if (st) void listenStation(st);
+  } else if (a === 'audius-play') {
+    const track = getCachedAudiusTrack(btn.dataset.id);
+    if (track) {
+      void playAudiusTrack(track);
+      setConnectionsOpen(false);
+    }
+  } else if (a === 'audius-open') {
+    void openExternal(btn.dataset.url);
+  } else if (a === 'sp-full') {
+    activeStationId = null;
+    void playSpotifyFullOrOpen(btn.dataset.url).then((ok) => {
+      if (!ok) {
+        const np = $('now-playing');
+        if (np) np.textContent = 'Spotify · opened for full playback';
+      }
+      setConnectionsOpen(false);
+    });
   } else if (a === 'sp-embed') {
     activeStationId = null;
     setLiveBadge(false);
     if (player) { player.pause(); player.removeAttribute('src'); }
     showSpotifyEmbed(btn.dataset.url);
     const np = $('now-playing');
-    if (np) np.textContent = 'Spotify · embedded playlist';
+    if (np) np.textContent = 'Spotify preview (~30s)';
     setConnectionsOpen(false);
   } else if (a === 'sp-open') {
     void openExternal(btn.dataset.url);

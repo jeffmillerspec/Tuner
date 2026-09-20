@@ -93,6 +93,7 @@ check('spotify-connections', () => {
   const js = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
   const spotify = fs.readFileSync(path.join(root, 'src/connections/spotify.js'), 'utf8');
   const registry = fs.readFileSync(path.join(root, 'src/connections/registry.js'), 'utf8');
+  const audius = fs.readFileSync(path.join(root, 'src/connections/audius.js'), 'utf8');
   const rust = fs.readFileSync(path.join(root, 'src-tauri/src/lib.rs'), 'utf8');
   assert.match(html, /id="btn-connections"/, 'Connect button missing');
   assert.match(html, /id="connections-panel"/, 'connections panel missing');
@@ -101,7 +102,10 @@ check('spotify-connections', () => {
   assert.match(spotify, /connectUser/, 'spotify user login missing');
   assert.match(spotify, /GUEST_PLAYLISTS/, 'guest catalog missing');
   assert.match(spotify, /parseSpotifyLink/, 'spotify link parser missing');
+  assert.match(audius, /audiusProvider|fetchAudiusTrending/, 'audius provider missing');
+  assert.match(audius, /api\.audius\.co/, 'audius API missing');
   assert.match(js, /startSpotifyLoginFlow|spotify-guest/, 'spotify UI wiring missing');
+  assert.match(js, /audius-play|fillAudiusTrackList/, 'audius UI wiring missing');
   assert.match(js, /await_oauth_redirect/, 'oauth loopback wiring missing');
   assert.match(rust, /await_oauth_redirect/, 'rust oauth listener missing');
 });

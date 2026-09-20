@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tuner 0.5.0</title>
+  <title>Tuner 0.5.1</title>
   <link rel="icon" type="image/png" href="/app-icon.png" />
   <style>
     :root {
@@ -36,7 +36,7 @@
     <header class="app-header">
       <div class="brand" data-tauri-drag-region>
         <img class="brand-logo" src="/app-icon.png" width="28" height="28" alt="" />
-        <h1>Tuner <span id="app-version" class="brand-version">0.5.0</span></h1>
+        <h1>Tuner <span id="app-version" class="brand-version">0.5.1</span></h1>
       </div>
 
       <div class="source-switch" role="tablist" aria-label="Media source">
@@ -110,6 +110,10 @@
           <div class="stage-veil" aria-hidden="true"></div>
           <div id="spotify-embed-wrap" class="spotify-embed-wrap hidden">
             <iframe id="spotify-embed" title="Spotify embed" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+          <div id="spotify-full-wrap" class="spotify-full-wrap hidden">
+            <p id="spotify-full-label">Playing full track via Spotify Premium…</p>
+            <p class="conn-hint">Audio is streamed by Spotify Web Playback (Premium). Use Preview for the short clip, or Open Spotify if playback does not start.</p>
           </div>
         </div>
         <p id="now-playing" class="now-playing">Select a track</p>

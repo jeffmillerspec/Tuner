@@ -1,8 +1,8 @@
 {
-  "version": "0.5.0",
-  "src": "target\\release\\bundle\\nsis\\Tuner_0.5.0_x64-setup.exe",
-  "versioned": "Releases\\Tuner-Setup-0.5.0.exe",
+  "version": "0.5.1",
+  "src": "target\\release\\bundle\\nsis\\Tuner_0.5.1_x64-setup.exe",
+  "versioned": "Releases\\Tuner-Setup-0.5.1.exe",
   "latest": "Releases\\Tuner-Setup-latest.exe",
-  "sha256": "d554cbe92097f15335a4d46233c3c93df987b8405eed1c1bff50f605147934c7",
-  "stagedAt": "2026-09-20T15:51:01.769Z"
+  "sha256": "ff38383e8ddbf78a37b07771f82eea0b13f50360221e3b7eb3d7f92b5a7c1665",
+  "stagedAt": "2026-09-20T18:44:54.811Z"
 }

@@ -14,6 +14,7 @@ const nodeTests = [
   'tests/theme-browser-glob.test.mjs',
   'tests/radio/stations.test.mjs',
   'tests/connections/spotify.test.mjs',
+  'tests/connections/audius.test.mjs',
 ];
 
 function run(cmd, args) {

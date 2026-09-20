@@ -5,11 +5,19 @@ const SPOTIFY_AUTH = 'https://accounts.spotify.com/authorize';
 const SPOTIFY_TOKEN = 'https://accounts.spotify.com/api/token';
 const SPOTIFY_API = 'https://api.spotify.com/v1';
 const SCOPES = [
+  'user-read-private',
+  'user-read-email',
   'playlist-read-private',
   'playlist-read-collaborative',
   'user-library-read',
-  'user-read-email',
+  // Full-length in-app playback (Premium required by Spotify)
+  'streaming',
+  'user-read-playback-state',
+  'user-modify-playback-state',
 ].join(' ');
+
+const DEV_MODE_403_HINT =
+  'Spotify returned 403 (forbidden). For Development Mode apps: (1) Dashboard → your app → User Management → add your Spotify account email, (2) app owner needs active Spotify Premium, (3) Disconnect in Tuner and Connect again so a new token is issued.';
 
 /** Curated public playlists for guest browsing (no Spotify Developer app required). */
 export const GUEST_PLAYLISTS = [
@@ -114,7 +122,22 @@ async function api(path, token) {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
   });
   if (res.status === 401) throw new Error('Spotify session expired — reconnect.');
-  if (!res.ok) throw new Error(`Spotify API ${res.status}`);
+  if (res.status === 403) {
+    let detail = '';
+    try {
+      const body = await res.json();
+      detail = body?.error?.message || body?.error_description || '';
+    } catch { /* ignore */ }
+    throw new Error(detail ? `${DEV_MODE_403_HINT} (${detail})` : DEV_MODE_403_HINT);
+  }
+  if (!res.ok) {
+    let detail = '';
+    try {
+      const body = await res.json();
+      detail = body?.error?.message || '';
+    } catch { /* ignore */ }
+    throw new Error(detail ? `Spotify API ${res.status}: ${detail}` : `Spotify API ${res.status}`);
+  }
   return res.json();
 }
 
@@ -145,6 +168,18 @@ async function refreshIfNeeded() {
     mode: 'user',
   });
   return data.access_token;
+}
+
+/** Public token getter for Web Playback SDK / Connect API. */
+export async function getSpotifyAccessToken() {
+  return refreshIfNeeded();
+}
+
+export async function getSpotifyAccountProduct() {
+  const token = await refreshIfNeeded();
+  if (!token) return null;
+  const me = await api('/me', token);
+  return me.product || null; // 'premium' | 'free' | ...
 }
 
 export const spotifyProvider = registerConnection({
@@ -220,24 +255,40 @@ export const spotifyProvider = registerConnection({
       return GUEST_PLAYLISTS;
     }
     const token = await refreshIfNeeded();
-    const data = await api('/me/playlists?limit=50', token);
-    return (data.items || []).map((p) => ({
-      id: p.id,
-      name: p.name,
-      subtitle: `${p.tracks?.total ?? 0} tracks · ${p.owner?.display_name || 'You'}`,
-      image: p.images?.[0]?.url || '',
-      externalUrl: p.external_urls?.spotify,
-      embedUrl: `https://open.spotify.com/embed/playlist/${p.id}`,
-    }));
+    try {
+      const data = await api('/me/playlists?limit=50', token);
+      return (data.items || []).map((p) => ({
+        id: p.id,
+        name: p.name,
+        subtitle: `${p.tracks?.total ?? p.items?.total ?? 0} tracks · ${p.owner?.display_name || 'You'}`,
+        image: p.images?.[0]?.url || '',
+        externalUrl: p.external_urls?.spotify,
+        embedUrl: `https://open.spotify.com/embed/playlist/${p.id}`,
+      }));
+    } catch (e) {
+      const msg = e?.message || String(e);
+      return [
+        {
+          id: 'spotify-error',
+          name: 'Could not load your playlists',
+          subtitle: msg,
+          image: '',
+          externalUrl: SPOTIFY_DASHBOARD_URL,
+          embedUrl: '',
+        },
+        ...GUEST_PLAYLISTS,
+      ];
+    }
   },
 
   async listTracks(playlistId) {
     if (this.getStatus() !== 'user') return [];
     const token = await refreshIfNeeded();
-    const data = await api(`/playlists/${encodeURIComponent(playlistId)}/tracks?limit=50`, token);
+    // Feb 2026 Dev Mode: /playlists/{id}/tracks was replaced by /playlists/{id}/items
+    const data = await api(`/playlists/${encodeURIComponent(playlistId)}/items?limit=50`, token);
     return (data.items || [])
-      .map((it) => it.track)
-      .filter(Boolean)
+      .map((it) => it.track || it.item || it)
+      .filter((t) => t && t.id)
       .map((t) => ({
         id: t.id,
         name: t.name,
@@ -294,7 +345,19 @@ export async function completeSpotifyLogin(redirectOrCode) {
   try {
     const me = await api('/me', data.access_token);
     displayName = me.display_name || me.id || displayName;
-  } catch { /* optional */ }
+  } catch (e) {
+    // Login can succeed while API calls 403 until the Spotify user is allowlisted.
+    saveSpotify({
+      mode: 'user',
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token || null,
+      expiresAt: Date.now() + (data.expires_in || 3600) * 1000,
+      displayName: 'Spotify user (limited)',
+      pkceVerifier: null,
+      pkceState: null,
+    });
+    return { ok: false, message: e?.message || DEV_MODE_403_HINT };
+  }
   saveSpotify({
     mode: 'user',
     accessToken: data.access_token,
