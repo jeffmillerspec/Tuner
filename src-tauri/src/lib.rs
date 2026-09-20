@@ -2,10 +2,9 @@ use std::io::{Read, Write};
 use std::net::TcpListener;
 use std::time::Duration;
 
-#[tauri::command]
-fn await_oauth_redirect(port: u16, timeout_ms: u64) -> Result<String, String> {
+fn listen_for_oauth_redirect(port: u16, timeout_ms: u64) -> Result<String, String> {
   let listener = TcpListener::bind(("127.0.0.1", port))
-    .map_err(|e| format!("Could not listen on 127.0.0.1:{port}: {e}"))?;
+    .map_err(|e| format!("Could not listen on 127.0.0.1:{port}: {e}. Close other Tuner windows and try again."))?;
   listener
     .set_nonblocking(true)
     .map_err(|e| format!("socket error: {e}"))?;
@@ -13,25 +12,22 @@ fn await_oauth_redirect(port: u16, timeout_ms: u64) -> Result<String, String> {
   let deadline = std::time::Instant::now() + Duration::from_millis(timeout_ms.max(5_000));
   let (mut stream, _) = loop {
     if std::time::Instant::now() > deadline {
-      return Err("Timed out waiting for Spotify login. Try again.".into());
+      return Err("Timed out waiting for Spotify login. Use “Finish login” with the redirect URL, or try Connect again.".into());
     }
     match listener.accept() {
       Ok(conn) => break conn,
       Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-        std::thread::sleep(Duration::from_millis(50));
+        std::thread::sleep(Duration::from_millis(40));
       }
       Err(e) => return Err(format!("accept failed: {e}")),
     }
   };
 
-  stream
-    .set_read_timeout(Some(Duration::from_secs(5)))
-    .ok();
+  let _ = stream.set_read_timeout(Some(Duration::from_secs(5)));
   let mut buf = [0u8; 8192];
   let n = stream.read(&mut buf).map_err(|e| format!("read failed: {e}"))?;
   let req = String::from_utf8_lossy(&buf[..n]);
   let first = req.lines().next().unwrap_or("");
-  // GET /callback?code=...&state=... HTTP/1.1
   let path = first
     .strip_prefix("GET ")
     .and_then(|s| s.split_whitespace().next())
@@ -55,6 +51,14 @@ fn await_oauth_redirect(port: u16, timeout_ms: u64) -> Result<String, String> {
     return Err("Spotify redirect did not include query parameters.".into());
   }
   Ok(format!("http://127.0.0.1:{port}{path}"))
+}
+
+/// Runs on a worker thread so the UI / IPC loop never blocks while waiting for Spotify.
+#[tauri::command]
+async fn await_oauth_redirect(port: u16, timeout_ms: u64) -> Result<String, String> {
+  tauri::async_runtime::spawn_blocking(move || listen_for_oauth_redirect(port, timeout_ms))
+    .await
+    .map_err(|e| format!("OAuth listener failed: {e}"))?
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

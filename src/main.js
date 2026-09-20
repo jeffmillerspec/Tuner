@@ -33,10 +33,62 @@ async function openExternal(url) {
   if (!url) return;
   try {
     const { open } = await import('@tauri-apps/plugin-shell');
-    await open(url);
+    await Promise.race([
+      open(url),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('open-timeout')), 4000);
+      }),
+    ]);
   } catch {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
+}
+
+let spotifyLoginInFlight = false;
+
+async function startSpotifyLoginFlow() {
+  if (spotifyLoginInFlight) {
+    setConnStatusMsg('Spotify login already in progress — finish in the browser, or wait for timeout.');
+    return;
+  }
+  const clientId = $('spotify-client-id')?.value?.trim() || getSpotifyClientId();
+  if (clientId) setSpotifyClientId(clientId);
+  const spotify = getConnection('spotify');
+  const res = await spotify?.connectUser({ clientId });
+  if (!res?.ok) {
+    setConnStatusMsg(res?.message || 'Could not start Spotify login.', true);
+    return;
+  }
+  state = load();
+  spotifyLoginInFlight = true;
+  setConnStatusMsg('Opening Spotify… approve access in your browser. Tuner will stay responsive.');
+
+  // Start loopback listener on a worker thread (async command) BEFORE opening the browser.
+  const waitPromise = invoke('await_oauth_redirect', { port: OAUTH_PORT, timeoutMs: 120_000 });
+  await new Promise((r) => setTimeout(r, 250));
+
+  if (res.authUrl) {
+    void openExternal(res.authUrl);
+  }
+
+  // Do not block the UI click path on the full wait — settle in the background.
+  void waitPromise
+    .then(async (redirectUrl) => {
+      const done = await completeSpotifyLogin(redirectUrl);
+      setConnStatusMsg(done.message, !done.ok);
+      state = load();
+      await renderConnections();
+    })
+    .catch((err) => {
+      const msg = String(err?.message || err || 'Login wait failed');
+      setConnStatusMsg(
+        `${msg} Tip: copy the address bar URL from the browser after approve, paste under Fallback, then Finish login.`,
+        true,
+      );
+    })
+    .finally(() => {
+      spotifyLoginInFlight = false;
+    });
 }
 
 function persist() {
@@ -404,37 +456,6 @@ function setConnStatusMsg(msg, isError = false) {
   el.classList.toggle('error', Boolean(isError && msg));
 }
 
-async function startSpotifyLoginFlow() {
-  const clientId = $('spotify-client-id')?.value?.trim() || getSpotifyClientId();
-  if (clientId) setSpotifyClientId(clientId);
-  const spotify = getConnection('spotify');
-  const res = await spotify?.connectUser({ clientId });
-  if (!res?.ok) {
-    setConnStatusMsg(res?.message || 'Could not start Spotify login.', true);
-    return;
-  }
-  setConnStatusMsg('Waiting for Spotify… approve access in your browser.');
-  state = load();
-
-  // Listen for loopback redirect while opening the auth page.
-  const wait = invoke('await_oauth_redirect', { port: OAUTH_PORT, timeoutMs: 180_000 })
-    .then(async (redirectUrl) => {
-      const done = await completeSpotifyLogin(redirectUrl);
-      setConnStatusMsg(done.message, !done.ok);
-      state = load();
-      await renderConnections();
-    })
-    .catch(async (err) => {
-      setConnStatusMsg(
-        `${err?.message || err} — or paste the redirect URL below and click Finish login.`,
-        true,
-      );
-    });
-
-  if (res.authUrl) await openExternal(res.authUrl);
-  await wait;
-}
-
 async function renderConnections() {
   const host = $('connections-list');
   if (!host) return;
@@ -675,7 +696,7 @@ document.addEventListener('click', async (e) => {
       setConnStatusMsg('Browsing Spotify as guest.');
       await renderConnections();
     } else if (action === 'spotify-login') {
-      await startSpotifyLoginFlow();
+      void startSpotifyLoginFlow();
     } else if (action === 'spotify-finish') {
       const code = $('spotify-code')?.value || '';
       const res = await completeSpotifyLogin(code);
