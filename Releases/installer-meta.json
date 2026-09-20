@@ -1,8 +1,8 @@
 {
   "version": "0.4.0",
-  "src": "src-tauri\\target\\release\\bundle\\nsis\\Tuner_0.2.0_x64-setup.exe",
+  "src": "target\\release\\bundle\\nsis\\Tuner_0.4.0_x64-setup.exe",
   "versioned": "Releases\\Tuner-Setup-0.4.0.exe",
   "latest": "Releases\\Tuner-Setup-latest.exe",
-  "sha256": "e8dbed2ecb7ce8afb3375128acd39b22eca28395df2ecd7175f271c47971c2b1",
-  "stagedAt": "2026-09-19T13:38:37.465Z"
+  "sha256": "1178a70c80151289d02dd51c2e58588c930e1809f4505cb4d26a5851a213d5e5",
+  "stagedAt": "2026-09-20T07:11:19.193Z"
 }
