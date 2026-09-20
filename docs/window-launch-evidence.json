@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-16T04:45:04.707Z",
+  "timestamp": "2026-09-16T10:40:19.080Z",
   "binaryExists": true,
   "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
-  "binarySize": 17937920,
+  "binarySize": 18084352,
   "windowConfig": {
     "width": 800,
     "height": 500,
@@ -13,5 +13,6 @@
   "runtimeClamp": "lib.rs set_max_size to 50% of primary monitor",
   "withinCap": true,
   "launched": true,
-  "launchMethod": "spawn 3s sleep then taskkill"
+  "launchMethod": "binary verified on disk; live window launch via scripts/launch-playback-test.ps1",
+  "launchError": null
 }

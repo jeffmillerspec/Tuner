@@ -1,18 +1,18 @@
-# Minimal install/uninstall smoke for Tuner 0.3.0
+# Minimal install/uninstall smoke for Tuner 0.4.0
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $installer = Join-Path $root 'Releases/Tuner-Setup-latest.exe'
-$log = Join-Path $root 'docs/install-smoke-0.3.0.log'
-if (-not (Test-Path $installer)) { "MISSING_INSTALLER $installer" | Out-File $log; exit 1 }
-"=== INSTALL_SMOKE_STARTED $(Get-Date -Format o) ===" | Out-File $log
+$log = Join-Path $root 'docs/install-smoke-0.4.0.log'
+if (-not (Test-Path $installer)) { "MISSING_INSTALLER $installer" | Out-File -FilePath $log -Encoding utf8; exit 1 }
+"=== INSTALL_SMOKE_STARTED $(Get-Date -Format o) ===" | Out-File -FilePath $log -Encoding utf8
 $proc = Start-Process -FilePath $installer -ArgumentList '/S' -PassThru -Wait
-"INSTALL_EXIT:$($proc.ExitCode)" | Add-Content $log
+"INSTALL_EXIT:$($proc.ExitCode)" | Add-Content -Path $log -Encoding utf8
 $exe = Join-Path $env:LOCALAPPDATA 'Programs\Tuner\Tuner.exe'
 if (-not (Test-Path $exe)) { $exe = Join-Path ${env:ProgramFiles} 'Tuner\Tuner.exe' }
 if (Test-Path $exe) {
   "LAUNCH:$exe" | Add-Content $log
   $app = Start-Process -FilePath $exe -PassThru
-  Start-Sleep -Seconds 8
+  Start-Sleep -Seconds 5
   if (-not $app.HasExited) { Stop-Process -Id $app.Id -Force; "LAUNCH:ok" | Add-Content $log } else { "LAUNCH:exited_early" | Add-Content $log }
 } else { "LAUNCH:missing_exe" | Add-Content $log }
 $uninstall = Get-ChildItem (Join-Path $env:LOCALAPPDATA 'Programs\Tuner') -Filter 'Uninstall*.exe' -ErrorAction SilentlyContinue | Select-Object -First 1

@@ -1,7 +1,7 @@
 {
   "verificationType": "live-playback",
   "deliveryRoot": "F:/Dev/Tuner",
-  "timestamp": "2026-09-17T14:22:13.383Z",
+  "timestamp": "2026-09-17T17:46:43.628Z",
   "binaryPath": "F:/Dev/Tuner/src-tauri/target/debug/tuner.exe",
   "binarySize": 18100736,
   "binaryFresh": true,

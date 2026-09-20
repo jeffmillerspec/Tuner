@@ -1,34 +1,33 @@
+process.env.CI = 'true';
+
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 
 const ROOT = process.cwd();
-let out = '';
-let code = 1;
+const docsDir = path.join(ROOT, 'docs');
+const tmpOut = path.join(docsDir, 'smoke-node-output.txt');
 
-try {
-  out = execSync('node tests/smoke.mjs', {
-    cwd: ROOT,
-    encoding: 'utf8',
-    timeout: 45000,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-  code = 0;
-} catch (e) {
-  out = `${e.stdout || ''}${e.stderr || ''}${e.message || ''}`;
-  code = e.status ?? 1;
-}
+fs.mkdirSync(docsDir, { recursive: true });
 
-fs.mkdirSync(path.join(ROOT, 'docs'), { recursive: true });
+const fd = fs.openSync(tmpOut, 'w');
+const r = spawnSync(process.execPath, ['tests/smoke.mjs'], {
+  cwd: ROOT,
+  timeout: 45000,
+  stdio: ['ignore', fd, fd],
+  windowsHide: true,
+});
+fs.closeSync(fd);
 
-const npmHeader = '> tuner@0.2.0 test\n> node tests/smoke.mjs\n\n';
-const npmOutput = npmHeader + out;
-fs.writeFileSync(path.join(ROOT, 'docs/npm-test-output.txt'), npmOutput, 'utf8');
-fs.writeFileSync(path.join(ROOT, 'docs/smoke-node-output.txt'), out, 'utf8');
-
+const out = fs.readFileSync(tmpOut, 'utf8');
+const code = r.status ?? 1;
 const m = out.match(/TOTAL_FAILURES:\s*(\d+)/i);
 const totalFailures = m ? Number(m[1]) : null;
 const passed = code === 0 && totalFailures === 0;
+
+const npmHeader = '> tuner@0.2.0 test\n> node tests/smoke.mjs\n\n';
+const npmOutput = npmHeader + out;
+fs.writeFileSync(path.join(docsDir, 'npm-test-output.txt'), npmOutput, 'utf8');
 
 const results = {
   timestamp: new Date().toISOString(),
@@ -47,11 +46,13 @@ const results = {
   checks: ['package', 'store', 'player', 'library-ui', 'playback-el', 'persistence', 'persist-roundtrip', 'playlist-crud', 'missing-track-ui', 'window', 'dialog-plugin', 'delivery'],
 };
 
-fs.writeFileSync(path.join(ROOT, 'docs/smoke-test-results.json'), JSON.stringify(results, null, 2) + '\n', 'utf8');
+fs.writeFileSync(path.join(docsDir, 'smoke-test-results.json'), JSON.stringify(results, null, 2) + '\n', 'utf8');
+fs.writeFileSync(
+  path.join(docsDir, 'scheduler-smoke-output.txt'),
+  `=== npm test smoke run ${results.timestamp} ===\n\n=== npm test ===\n\n${npmOutput}`,
+  'utf8'
+);
 
-const schedLine = `=== npm test smoke run ${results.timestamp} ===\n\n=== npm test ===\n\n${npmOutput}`;
-fs.writeFileSync(path.join(ROOT, 'docs/scheduler-smoke-output.txt'), schedLine, 'utf8');
-
+process.stdout.write(out.endsWith('\n') ? out : out + '\n');
 console.log(JSON.stringify({ smokeExit: code, totalFailures, passed }));
-process.stdout.write(out);
-process.exit(code);
+process.exit(passed ? 0 : code || 1);
