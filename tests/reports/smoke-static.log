@@ -5,3 +5,6 @@ PASS:theme-bundled-json
 PASS:theme-engine-exports
 PASS:media-import-uses-real-paths
 PASS:docs
+PASS:radio-ui
+PASS:spotify-connections
+PASS:layout-rail-not-overlapped

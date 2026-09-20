@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tuner 0.4.0</title>
+  <title>Tuner 0.5.0</title>
+  <link rel="icon" type="image/png" href="/app-icon.png" />
   <style>
     :root {
       --tuner-bg-app: #02090e;
@@ -30,14 +31,21 @@
   </style>
   <link rel="stylesheet" href="/src/styles.css" />
 </head>
-<body class="mode-standard">
+<body class="mode-standard source-library">
   <div id="app">
     <header class="app-header">
       <div class="brand" data-tauri-drag-region>
-        <span class="brand-mark" aria-hidden="true"></span>
-        <h1>Tuner <span id="app-version" class="brand-version">0.4.0</span></h1>
+        <img class="brand-logo" src="/app-icon.png" width="28" height="28" alt="" />
+        <h1>Tuner <span id="app-version" class="brand-version">0.5.0</span></h1>
       </div>
+
+      <div class="source-switch" role="tablist" aria-label="Media source">
+        <button type="button" class="source-tab" role="tab" id="tab-library" data-source="library" aria-selected="true">Library</button>
+        <button type="button" class="source-tab" role="tab" id="tab-radio" data-source="radio" aria-selected="false">Radio</button>
+      </div>
+
       <div class="header-actions">
+        <button id="btn-connections" type="button" class="btn-ghost" title="Media connections">Connect</button>
         <label class="field-label" for="theme-select">Theme</label>
         <select id="theme-select" title="Theme" aria-label="Theme"></select>
         <button id="btn-focus-mode" type="button" class="btn-ghost" aria-pressed="false" title="Compact focused window">Focus</button>
@@ -47,7 +55,7 @@
 
     <main class="layout">
       <aside class="rail" aria-label="Library and playlists">
-        <section class="panel library-panel">
+        <section class="panel library-panel" id="library-panel">
           <div class="panel-head">
             <h2>Library</h2>
             <span id="library-count" class="panel-meta"></span>
@@ -56,7 +64,7 @@
           <p id="library-empty" class="empty">No media imported.</p>
         </section>
 
-        <section class="panel playlist-panel">
+        <section class="panel playlist-panel" id="playlist-panel">
           <div class="panel-head">
             <h2>Playlists</h2>
           </div>
@@ -72,15 +80,37 @@
           <ul id="playlist-list" class="media-list tuner-scrollbars"></ul>
           <p id="playlist-empty" class="empty">No playlists.</p>
         </section>
+
+        <section class="panel radio-panel" id="radio-panel">
+          <div class="panel-head">
+            <h2>Live Radio</h2>
+            <button type="button" id="btn-radio-refresh" class="btn-ghost btn-tiny">Refresh</button>
+          </div>
+          <div class="radio-toolbar">
+            <label class="field-label" for="radio-region">Region</label>
+            <select id="radio-region" aria-label="Local region"></select>
+          </div>
+          <div class="radio-sections tuner-scrollbars">
+            <h3 class="section-label">Top Local</h3>
+            <ul id="radio-local-list" class="media-list"></ul>
+            <h3 class="section-label">Top National</h3>
+            <ul id="radio-national-list" class="media-list"></ul>
+          </div>
+          <p id="radio-status" class="empty"></p>
+        </section>
       </aside>
 
       <section class="panel player-panel">
         <div class="panel-head">
           <h2>Now Playing</h2>
+          <span id="play-mode-badge" class="badge hidden">LIVE</span>
         </div>
         <div class="stage">
-          <video id="player" controls playsinline muted></video>
+          <video id="player" controls playsinline></video>
           <div class="stage-veil" aria-hidden="true"></div>
+          <div id="spotify-embed-wrap" class="spotify-embed-wrap hidden">
+            <iframe id="spotify-embed" title="Spotify embed" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
         </div>
         <p id="now-playing" class="now-playing">Select a track</p>
         <div class="transport row">
@@ -89,13 +119,22 @@
         </div>
       </section>
 
-      <section class="panel queue-panel">
+      <section class="panel queue-panel" id="queue-panel">
         <div class="panel-head">
           <h2>Queue</h2>
           <span id="queue-count" class="panel-meta"></span>
         </div>
         <ul id="queue-list" class="tuner-scrollbars"></ul>
         <p id="queue-empty" class="empty">Queue empty.</p>
+      </section>
+
+      <section class="panel connections-panel hidden" id="connections-panel">
+        <div class="panel-head">
+          <h2>Connections</h2>
+          <button type="button" id="btn-connections-close" class="btn-ghost btn-tiny">Close</button>
+        </div>
+        <p class="conn-lead">Connect catalogs like Spotify. Guest browsing works immediately; sign-in is optional for your personal playlists.</p>
+        <div id="connections-list" class="connections-list tuner-scrollbars"></div>
       </section>
     </main>
   </div>

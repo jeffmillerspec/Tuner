@@ -74,6 +74,45 @@ check('docs', () => {
   assert.match(doc, /queue|theme|scrollbar/i, 'docs must mention queue/theme integration');
 });
 
+check('radio-ui', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const js = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
+  const radio = fs.readFileSync(path.join(root, 'src/radio/stations.js'), 'utf8');
+  assert.match(html, /id="tab-radio"/, 'Library|Radio switch missing');
+  assert.match(html, /id="radio-panel"/, 'radio panel missing');
+  assert.match(html, /id="radio-local-list"/, 'local stations list missing');
+  assert.match(html, /id="radio-national-list"/, 'national stations list missing');
+  assert.match(js, /setMediaSource\('radio'\)|data-source="radio"/, 'radio source wiring missing');
+  assert.match(js, /listenStation|fetchTopNational/, 'radio playback wiring missing');
+  assert.match(radio, /FALLBACK_STATIONS/, 'radio fallbacks missing');
+  assert.match(radio, /api\.radio-browser\.info/, 'radio browser API missing');
+});
+
+check('spotify-connections', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const js = fs.readFileSync(path.join(root, 'src/main.js'), 'utf8');
+  const spotify = fs.readFileSync(path.join(root, 'src/connections/spotify.js'), 'utf8');
+  const registry = fs.readFileSync(path.join(root, 'src/connections/registry.js'), 'utf8');
+  const rust = fs.readFileSync(path.join(root, 'src-tauri/src/lib.rs'), 'utf8');
+  assert.match(html, /id="btn-connections"/, 'Connect button missing');
+  assert.match(html, /id="connections-panel"/, 'connections panel missing');
+  assert.match(registry, /registerConnection/, 'connection registry missing');
+  assert.match(spotify, /connectGuest/, 'spotify guest mode missing');
+  assert.match(spotify, /connectUser/, 'spotify user login missing');
+  assert.match(spotify, /GUEST_PLAYLISTS/, 'guest catalog missing');
+  assert.match(spotify, /parseSpotifyLink/, 'spotify link parser missing');
+  assert.match(js, /startSpotifyLoginFlow|spotify-guest/, 'spotify UI wiring missing');
+  assert.match(js, /await_oauth_redirect/, 'oauth loopback wiring missing');
+  assert.match(rust, /await_oauth_redirect/, 'rust oauth listener missing');
+});
+
+check('layout-rail-not-overlapped', () => {
+  const css = fs.readFileSync(path.join(root, 'src/styles.css'), 'utf8');
+  assert.match(css, /grid-template-areas:\s*"rail player queue"/, 'explicit grid areas required');
+  assert.match(css, /\.rail\s*\{[^}]*z-index:\s*2/s, 'rail must stack above player');
+  assert.match(css, /\.media-list\s*>\s*li\s*\{[^}]*grid-template-columns/s, 'library rows must stack controls');
+});
+
 fs.mkdirSync(reportsDir, { recursive: true });
 fs.writeFileSync(path.join(reportsDir, 'smoke-static.log'), log.join('\n') + '\n', 'utf8');
 console.log(log.join('\n'));

@@ -7,7 +7,7 @@ export const WINDOW_MODE = {
 };
 
 export const WINDOW_SIZES = {
-  standard: { width: 1080, height: 680, minWidth: 720, minHeight: 480 },
+  standard: { width: 1180, height: 720, minWidth: 900, minHeight: 560 },
   focused: { width: 440, height: 340, minWidth: 360, minHeight: 280 },
 };
 

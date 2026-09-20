@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "allow-await-oauth-redirect"
+description = "Allows Tuner to listen on localhost for the Spotify OAuth redirect."
+commands.allow = ["await_oauth_redirect"]
