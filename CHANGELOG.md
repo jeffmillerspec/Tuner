@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.4 - 2026-09-21
+
+- Apple Music Connect (above Spotify): zero-setup catalog search via iTunes Search.
+- Play song previews in Tuner; Apple Music embeds for longer listening; open full tracks in Apple Music.
+- Optional MusicKit developer token for Apple Music catalog API search.
+- Full DRM streaming inside WebView2 is not supported on Windows; use embed or the Apple Music app.
+- Installer staged to `Releases/Tuner-Setup-0.5.4.exe` (NSIS, Windows x64, unsigned).
+
 ## 0.5.3 - 2026-09-21
 
 - Fix Podcasts Connect fetch failures in the desktop WebView (iTunes `text/javascript` + nosniff).

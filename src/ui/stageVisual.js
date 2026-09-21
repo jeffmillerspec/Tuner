@@ -3,7 +3,7 @@
  * Shows play-style icons (local, radio, Spotify, Audius, Archive, Podcasts) or linked artwork.
  */
 
-/** @typedef {'mp4' | 'radio' | 'spotify' | 'audius' | 'archive' | 'podcast'} PlayStyle */
+/** @typedef {'mp4' | 'radio' | 'spotify' | 'audius' | 'archive' | 'podcast' | 'apple-music'} PlayStyle */
 
 export const PLAY_STYLE_ICONS = {
   mp4: new URL('../../assets/play-styles/mp4.png', import.meta.url).href,
@@ -12,6 +12,7 @@ export const PLAY_STYLE_ICONS = {
   audius: new URL('../../assets/play-styles/audius.png', import.meta.url).href,
   archive: new URL('../../assets/play-styles/archive.svg', import.meta.url).href,
   podcast: new URL('../../assets/play-styles/podcast.svg', import.meta.url).href,
+  'apple-music': new URL('../../assets/play-styles/apple-music.svg', import.meta.url).href,
 };
 
 export const PLAY_STYLE_LABELS = {
@@ -21,6 +22,7 @@ export const PLAY_STYLE_LABELS = {
   audius: 'Audius',
   archive: 'Archive',
   podcast: 'Podcast',
+  'apple-music': 'Apple Music',
 };
 
 /**

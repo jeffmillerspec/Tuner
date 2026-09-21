@@ -13,6 +13,7 @@ import './connections/spotify.js';
 import './connections/audius.js';
 import './connections/archive.js';
 import './connections/podcasts.js';
+import './connections/appleMusic.js';
 import { getConnection } from './connections/registry.js';
 import {
   completeSpotifyLogin, getSpotifyClientId, setSpotifyClientId, getSpotifyRedirectUri,
@@ -27,6 +28,10 @@ import {
   searchPodcastShows, fetchPodcastEpisodes, browseFeaturedPodcasts,
   getCachedPodcastShow, getCachedPodcastEpisode,
 } from './connections/podcasts.js';
+import {
+  searchAppleMusicCatalog, browseFeaturedAppleMusic, getCachedAppleMusicTrack,
+  getAppleMusicDeveloperToken, setAppleMusicDeveloperToken,
+} from './connections/appleMusic.js';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -154,6 +159,10 @@ function hideSpotifyEmbed() {
   const frame = $('spotify-embed');
   if (wrap) wrap.classList.add('hidden');
   if (frame) frame.removeAttribute('src');
+  const amw = $('apple-music-embed-wrap');
+  const amf = $('apple-music-embed');
+  if (amw) amw.classList.add('hidden');
+  if (amf) amf.removeAttribute('src');
 }
 
 function showSpotifyEmbed(url) {
@@ -503,7 +512,7 @@ function setConnectionsOpen(open) {
   if (open) {
     // Zero-setup catalogs load immediately.
     const jobs = [];
-    for (const id of ['spotify', 'audius', 'archive', 'podcasts']) {
+    for (const id of ['spotify', 'audius', 'archive', 'podcasts', 'appleMusic']) {
       const conn = getConnection(id);
       if (conn && conn.getStatus() === 'disconnected') jobs.push(conn.connectGuest());
     }
@@ -598,6 +607,58 @@ async function playPodcastEpisode(episode) {
   return ok;
 }
 
+async function playAppleMusicTrack(track) {
+  if (!track || !player) return false;
+  activeStationId = null;
+  hideSpotifyEmbed();
+  hideAppleMusicEmbed();
+  $('spotify-full-wrap')?.classList.add('hidden');
+  setLiveBadge(false);
+  state = setCurrent(state, null);
+  save(state);
+  applyPlayStyleVisual({ style: 'apple-music', artworkUrl: track.image || '', hasVideo: false });
+  const np = $('now-playing');
+  if (np) np.textContent = `${track.name}${track.artists ? ` · ${track.artists}` : ''} · Apple Music`;
+  const preview = track.streamUrl || track.previewUrl;
+  if (preview) {
+    const ok = await playStream(player, preview, { muted: false });
+    if (!ok) setConnStatusMsg('Could not start Apple Music preview — try Embed or Open in Apple Music.', true);
+    else setConnStatusMsg('Playing Apple Music preview (~30s). Use Embed / Open for full tracks. Panel stays open.');
+    return ok;
+  }
+  if (track.embedUrl) {
+    showAppleMusicEmbed(track.embedUrl);
+    setConnStatusMsg('Apple Music embed — sign in inside the player for full-length playback when available.');
+    return true;
+  }
+  setConnStatusMsg('No preview for this track — open it in Apple Music.', true);
+  return false;
+}
+
+function hideAppleMusicEmbed() {
+  const wrap = $('apple-music-embed-wrap');
+  const frame = $('apple-music-embed');
+  if (wrap) wrap.classList.add('hidden');
+  if (frame) frame.removeAttribute('src');
+}
+
+function showAppleMusicEmbed(url) {
+  // Clear Spotify chrome without calling hideSpotifyEmbed (avoids clearing this embed).
+  const sw = $('spotify-embed-wrap');
+  const sf = $('spotify-embed');
+  if (sw) sw.classList.add('hidden');
+  if (sf) sf.removeAttribute('src');
+  $('spotify-full-wrap')?.classList.add('hidden');
+  if (player) { player.pause(); player.removeAttribute('src'); }
+  const wrap = $('apple-music-embed-wrap');
+  const frame = $('apple-music-embed');
+  if (!wrap || !frame || !url) return;
+  frame.src = url;
+  wrap.classList.remove('hidden');
+  applyPlayStyleVisual({ style: 'apple-music', artworkUrl: '', hasVideo: true });
+}
+
+
 async function renderConnections() {
   const host = $('connections-list');
   if (!host) return;
@@ -605,11 +666,14 @@ async function renderConnections() {
   const audius = getConnection('audius');
   const archive = getConnection('archive');
   const podcasts = getConnection('podcasts');
+  const appleMusic = getConnection('appleMusic');
   const status = spotify?.getStatus?.() || 'disconnected';
   const who = getSpotifyDisplayName();
   const audiusStatus = audius?.getStatus?.() || 'disconnected';
   const archiveStatus = archive?.getStatus?.() || 'disconnected';
   const podcastStatus = podcasts?.getStatus?.() || 'disconnected';
+  const appleStatus = appleMusic?.getStatus?.() || 'disconnected';
+  const appleToken = getAppleMusicDeveloperToken();
   const cat = archiveCategory;
 
   host.innerHTML = `
@@ -674,6 +738,36 @@ async function renderConnections() {
       <ul class="conn-playlists tuner-scrollbars" id="podcast-episode-list"></ul>
     </article>
 
+
+    <article class="conn-card" data-provider="appleMusic">
+      <h3>Apple Music</h3>
+      <p>Search the Apple Music catalog with <strong>no setup</strong>. Play song previews in Tuner, use the embed for longer listening, or open full tracks in Apple Music.</p>
+      <span class="conn-status">${esc(appleStatus === 'disconnected' ? 'ready' : appleStatus)}</span>
+      <p id="apple-music-status-msg" class="conn-hint" aria-live="polite"></p>
+      <div class="conn-field">
+        <label class="field-label" for="apple-music-search">Search Apple Music</label>
+        <div class="row">
+          <input id="apple-music-search" placeholder="Artist, song, album…" />
+          <button type="button" class="btn-primary" data-conn="apple-music-search">Search</button>
+          <button type="button" class="btn-secondary" data-conn="apple-music-featured">Featured</button>
+        </div>
+      </div>
+      <details class="conn-advanced">
+        <summary>Optional MusicKit developer token</summary>
+        <p class="conn-hint">For richer catalog search via Apple’s Music API. Create a MusicKit key in your Apple Developer account, mint a developer token (JWT), and paste it here. Full DRM streaming still uses the embed or Apple Music app on Windows.</p>
+        <div class="conn-field">
+          <label class="field-label" for="apple-music-token">Developer token</label>
+          <input id="apple-music-token" placeholder="eyJhbGciOi…" value="${esc(appleToken)}" />
+        </div>
+        <div class="conn-actions">
+          <button type="button" class="btn-secondary" data-conn="apple-music-save-token">Save token</button>
+          <button type="button" class="btn-ghost" data-conn="apple-music-clear-token">Clear</button>
+        </div>
+      </details>
+      <h4 class="section-label">Songs</h4>
+      <ul class="conn-playlists tuner-scrollbars" id="apple-music-track-list"></ul>
+    </article>
+
     <article class="conn-card" data-provider="spotify">
       <h3>Spotify</h3>
       <p>Browse as guest for previews, or sign in with <strong>Spotify Premium</strong> for full-length playback in Tuner. Free accounts and embeds are limited to ~30s previews by Spotify.</p>
@@ -723,10 +817,42 @@ async function renderConnections() {
       <h4 class="section-label">Your Spotify library</h4>
       <ul class="conn-playlists tuner-scrollbars" id="spotify-playlist-list"></ul>
     </article>
-    <p class="conn-hint">Pandora isn’t available for third-party Connect (no public free stream API). Audius, Archive, Podcasts, and live Radio cover free listening with little or no setup.</p>
+    <p class="conn-hint">Pandora isn’t available for third-party Connect (no public free stream API). Apple Music, Audius, Archive, Podcasts, and live Radio cover browsing with little or no setup.</p>
   `;
 
-  await Promise.all([fillAudiusTrackList(), fillArchiveItemList(), fillPodcastShowList(), fillSpotifyPlaylistList()]);
+  await Promise.all([fillAudiusTrackList(), fillArchiveItemList(), fillPodcastShowList(), fillAppleMusicTrackList(), fillSpotifyPlaylistList()]);
+}
+
+
+async function fillAppleMusicTrackList(query = '') {
+  const list = $('apple-music-track-list');
+  const status = $('apple-music-status-msg');
+  if (!list) return;
+  list.innerHTML = '<li class="empty">Loading Apple Music…</li>';
+  try {
+    const am = getConnection('appleMusic');
+    if (am?.getStatus() === 'disconnected') await am.connectGuest();
+    const tracks = query
+      ? await searchAppleMusicCatalog(query, 24)
+      : await browseFeaturedAppleMusic(20);
+    if (status) status.textContent = query ? `Songs for “${query}”` : 'Featured catalog picks · previews in Tuner';
+    list.innerHTML = tracks.map((t) => `
+      <li>
+        <span class="item-title">${esc(t.name)}</span>
+        <span class="station-meta">${esc(t.subtitle || '')}</span>
+        <span class="actions">
+          ${(t.streamUrl || t.previewUrl) ? `<button type="button" data-a="apple-music-play" data-id="${esc(t.id)}">Preview</button>` : ''}
+          ${t.embedUrl ? `<button type="button" data-a="apple-music-embed" data-url="${esc(t.embedUrl)}">Embed</button>` : ''}
+          ${t.externalUrl ? `<button type="button" data-a="apple-music-open" data-url="${esc(t.externalUrl)}">Open</button>` : ''}
+        </span>
+      </li>
+    `).join('') || '<li class="empty">No songs found.</li>';
+  } catch (e) {
+    const msg = e?.message || String(e) || 'Apple Music failed to load';
+    list.innerHTML = `<li class="error">${esc(msg)}</li>`;
+    if (status) status.textContent = 'Apple Music search failed — try again in a moment.';
+    setConnStatusMsg(msg, true);
+  }
 }
 
 async function fillSpotifyPlaylistList() {
@@ -1062,6 +1188,23 @@ document.addEventListener('click', async (e) => {
       await fillPodcastShowList('');
     } else if (action === 'podcast-search') {
       await fillPodcastShowList($('podcast-search')?.value || '');
+
+    } else if (action === 'apple-music-featured') {
+      await fillAppleMusicTrackList('');
+    } else if (action === 'apple-music-search') {
+      await fillAppleMusicTrackList($('apple-music-search')?.value || '');
+    } else if (action === 'apple-music-save-token') {
+      setAppleMusicDeveloperToken($('apple-music-token')?.value || '');
+      await getConnection('appleMusic')?.connectGuest();
+      setConnStatusMsg(getAppleMusicDeveloperToken()
+        ? 'MusicKit developer token saved — catalog API search enabled when valid.'
+        : 'Token cleared — using public iTunes Search.');
+      await renderConnections();
+    } else if (action === 'apple-music-clear-token') {
+      setAppleMusicDeveloperToken('');
+      setConnStatusMsg('MusicKit token cleared.');
+      await renderConnections();
+
     } else if (action === 'spotify-guest') {
       await getConnection('spotify')?.connectGuest();
       state = load();
@@ -1161,6 +1304,20 @@ document.addEventListener('click', async (e) => {
       }
       setConnectionsOpen(false);
     });
+
+  } else if (a === 'apple-music-play') {
+    const track = getCachedAppleMusicTrack(btn.dataset.id);
+    if (track) void playAppleMusicTrack(track);
+  } else if (a === 'apple-music-embed') {
+    activeStationId = null;
+    setLiveBadge(false);
+    showAppleMusicEmbed(btn.dataset.url);
+    const np = $('now-playing');
+    if (np) np.textContent = 'Apple Music embed';
+    setConnStatusMsg('Apple Music embed — sign in inside the player for full tracks when available.');
+  } else if (a === 'apple-music-open') {
+    void openExternal(btn.dataset.url);
+
   } else if (a === 'sp-embed') {
     activeStationId = null;
     setLiveBadge(false);

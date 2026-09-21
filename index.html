@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tuner 0.5.3</title>
+  <title>Tuner 0.5.4</title>
   <link rel="icon" type="image/png" href="/app-icon.png" />
   <style>
     :root {
@@ -36,7 +36,7 @@
     <header class="app-header">
       <div class="brand" data-tauri-drag-region>
         <img class="brand-logo" src="/app-icon.png" width="28" height="28" alt="" />
-        <h1>Tuner <span id="app-version" class="brand-version">0.5.3</span></h1>
+        <h1>Tuner <span id="app-version" class="brand-version">0.5.4</span></h1>
       </div>
 
       <div class="source-switch" role="tablist" aria-label="Media source">
@@ -114,6 +114,9 @@
           <div class="stage-veil" aria-hidden="true"></div>
           <div id="spotify-embed-wrap" class="spotify-embed-wrap hidden">
             <iframe id="spotify-embed" title="Spotify embed" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+          <div id="apple-music-embed-wrap" class="apple-music-embed-wrap hidden">
+            <iframe id="apple-music-embed" title="Apple Music embed" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" loading="lazy"></iframe>
           </div>
           <div id="spotify-full-wrap" class="spotify-full-wrap hidden">
             <p id="spotify-full-label">Playing full track via Spotify Premium…</p>

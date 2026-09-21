@@ -531,6 +531,17 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   z-index: 1;
 }
 
+.apple-music-embed-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #0a0a0c;
+}
+.apple-music-embed-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 .spotify-embed-wrap {
   position: absolute;
   inset: 0;
@@ -1121,6 +1132,9 @@ button.linkish:hover {
   background:
     radial-gradient(520px 260px at 50% 38%, color-mix(in srgb, #f6d978 18%, transparent), transparent 62%),
     linear-gradient(165deg, #0c0904 0%, #000 55%, #141008 100%);
+}
+.stage[data-play-style="apple-music"] .stage-fallback {
+  background: radial-gradient(ellipse at 40% 30%, #3a1018 0%, #0c080a 70%);
 }
 .stage[data-play-style="podcast"] .stage-fallback {
   background:

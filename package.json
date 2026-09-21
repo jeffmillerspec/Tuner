@@ -1,6 +1,6 @@
 {
   "name": "tuner",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "smoke:static": "node tests/smoke.mjs",
     "smoke:full": "powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1",
     "test": "node scripts/npm-test-wrapper.mjs",
-    "test:node": "node --test tests/theme-validate.test.mjs tests/theme-shades.test.mjs tests/theme-persist.test.mjs tests/theme-api.test.mjs tests/theme/shades.test.mjs tests/theme/persistence.test.mjs tests/theme-browser-glob.test.mjs tests/radio/stations.test.mjs tests/connections/spotify.test.mjs tests/connections/audius.test.mjs tests/connections/archive.test.mjs tests/connections/podcasts.test.mjs",
+    "test:node": "node --test tests/theme-validate.test.mjs tests/theme-shades.test.mjs tests/theme-persist.test.mjs tests/theme-api.test.mjs tests/theme/shades.test.mjs tests/theme/persistence.test.mjs tests/theme-browser-glob.test.mjs tests/radio/stations.test.mjs tests/connections/spotify.test.mjs tests/connections/audius.test.mjs tests/connections/archive.test.mjs tests/connections/podcasts.test.mjs tests/connections/appleMusic.test.mjs",
     "test:report": "node scripts/npm-test-wrapper.mjs",
     "validate:themes": "node tools/validate-themes.mjs",
     "test:vitest": "node scripts/run-vitest.mjs",
