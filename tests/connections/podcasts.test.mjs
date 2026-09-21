@@ -16,6 +16,8 @@ const {
   searchPodcastShows,
   fetchPodcastEpisodes,
   browseFeaturedPodcasts,
+  parseItunesPayload,
+  parsePodcastFeedXml,
 } = await import('../../src/connections/podcasts.js');
 const { getConnection } = await import('../../src/connections/registry.js');
 
@@ -31,6 +33,34 @@ describe('podcasts connection', () => {
     const res = await podcastsProvider.connectGuest();
     assert.equal(res.ok, true);
     assert.equal(podcastsProvider.getStatus(), 'guest');
+  });
+
+  it('parseItunesPayload accepts JSON and JSONP wrappers', () => {
+    const plain = parseItunesPayload('{"resultCount":1,"results":[{"collectionId":1}]}');
+    assert.equal(plain.resultCount, 1);
+    const padded = parseItunesPayload('callbackName({"resultCount":2,"results":[]});');
+    assert.equal(padded.resultCount, 2);
+  });
+
+  it('parsePodcastFeedXml extracts enclosure episodes', () => {
+    const xml = `<?xml version="1.0"?>
+      <rss><channel>
+        <item>
+          <title><![CDATA[Hello & Welcome]]></title>
+          <enclosure url="https://cdn.example/ep1.mp3" type="audio/mpeg"/>
+          <guid>ep-1</guid>
+          <pubDate>Mon, 01 Jan 2024 12:00:00 GMT</pubDate>
+        </item>
+        <item>
+          <title>Plain Title</title>
+          <enclosure url="https://cdn.example/ep2.m4a"/>
+        </item>
+      </channel></rss>`;
+    const items = parsePodcastFeedXml(xml, { id: 'show1', name: 'Demo Show', artists: 'Host' });
+    assert.equal(items.length, 2);
+    assert.equal(items[0].name, 'Hello & Welcome');
+    assert.equal(items[0].streamUrl, 'https://cdn.example/ep1.mp3');
+    assert.equal(items[1].name, 'Plain Title');
   });
 
   it('searchPodcastShows returns shows with feed metadata', async () => {

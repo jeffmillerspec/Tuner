@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.3 - 2026-09-21
+
+- Fix Podcasts Connect fetch failures in the desktop WebView (iTunes `text/javascript` + nosniff).
+- Use Tauri HTTP, then JSONP, then browser fetch; RSS enclosure fallback for episodes.
+- Installer staged to `Releases/Tuner-Setup-0.5.3.exe` (NSIS, Windows x64, unsigned).
+
 ## 0.5.2 - 2026-09-20
 
 - Stage visuals: custom play-style icons when audio has no video frames (local, radio, Spotify, Audius, Archive, Podcasts).

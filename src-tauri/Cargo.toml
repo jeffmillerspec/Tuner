@@ -1,6 +1,6 @@
 [package]
 name = "tuner"
-version = "0.5.2"
+version = "0.5.3"
 edition = "2021"
 
 [lib]
@@ -18,3 +18,4 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
+tauri-plugin-http = "2.6.1"

@@ -851,7 +851,10 @@ async function fillPodcastShowList(query = '') {
       </li>
     `).join('') || '<li class="empty">No shows found.</li>';
   } catch (e) {
-    list.innerHTML = `<li class="error">${esc(e.message || 'Podcasts failed to load')}</li>`;
+    const msg = e?.message || String(e) || 'Podcasts failed to load';
+    list.innerHTML = `<li class="error">${esc(msg)}</li>`;
+    if (status) status.textContent = 'Podcast search failed — try again in a moment.';
+    setConnStatusMsg(msg, true);
   }
 }
 
@@ -875,7 +878,10 @@ async function fillPodcastEpisodeList(showId) {
       </li>
     `).join('') || '<li class="empty">No episodes with playable audio.</li>';
   } catch (e) {
-    list.innerHTML = `<li class="error">${esc(e.message || 'Could not load episodes')}</li>`;
+    const msg = e?.message || String(e) || 'Could not load episodes';
+    list.innerHTML = `<li class="error">${esc(msg)}</li>`;
+    if (status) status.textContent = 'Episode lookup failed — try another show.';
+    setConnStatusMsg(msg, true);
   }
 }
 

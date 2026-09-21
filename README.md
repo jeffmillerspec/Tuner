@@ -22,7 +22,7 @@ Releases are published on the [GitHub Releases](https://github.com/jeffmillerspe
 - Installers are not code-signed. Windows SmartScreen will warn. Verify the SHA-256 published with the release before running:
 
 ```powershell
-Get-FileHash .\Tuner-Setup-0.5.0.exe -Algorithm SHA256
+Get-FileHash .\Tuner-Setup-0.5.3.exe -Algorithm SHA256
 ```
 
 ## Develop

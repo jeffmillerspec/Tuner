@@ -12,6 +12,15 @@
     "core:window:allow-inner-size",
     "shell:allow-open",
     "dialog:default",
-    "allow-await-oauth-redirect"
+    "allow-await-oauth-redirect",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://itunes.apple.com/*" },
+        { "url": "https://*.itunes.apple.com/*" },
+        { "url": "https://podcasts.apple.com/*" },
+        { "url": "https://**" }
+      ]
+    }
   ]
 }
